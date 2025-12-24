@@ -1139,6 +1139,7 @@
             <button class="tab active" data-tab="video">📹 Video</button>
             <button class="tab" data-tab="image">🖼️ Image</button>
             <button class="tab" data-tab="ebook">📚 Ebook</button>
+            <button class="tab" data-tab="apk">📱 APK</button>
             <button class="tab" data-tab="reverse">🔍 Reverse</button>
         </div>
 
@@ -1424,6 +1425,78 @@
             </div>
         </div>
 
+        <!-- APK MOD TAB -->
+        <div class="tab-content" id="apk-tab">
+            <div class="search-wrapper">
+                <input type="text" id="apkInput" class="search-input" placeholder="Tên app, game...">
+            </div>
+
+            <div class="section">
+                <div class="section-title">🔥 Forum Uy Tín <span class="badge hot">HOT</span></div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="mobilism"><span class="platform-label"><span
+                                class="platform-icon">📋</span>Mobilism</span></label>
+                    <label class="platform"><input type="checkbox" data-p="platinmods"><span
+                            class="platform-label"><span class="platform-icon">🎮</span>Platinmods</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🌍 Global Sites</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="modyolo"><span class="platform-label"><span
+                                class="platform-icon">📦</span>Modyolo</span></label>
+                    <label class="platform"><input type="checkbox" data-p="liteapks"><span class="platform-label"><span
+                                class="platform-icon">⚡</span>Liteapks</span></label>
+                    <label class="platform"><input type="checkbox" data-p="apkdone"><span class="platform-label"><span
+                                class="platform-icon">✅</span>APKdone</span></label>
+                    <label class="platform"><input type="checkbox" data-p="happymod"><span class="platform-label"><span
+                                class="platform-icon">😊</span>Happymod</span></label>
+                    <label class="platform"><input type="checkbox" data-p="an1"><span class="platform-label"><span
+                                class="platform-icon">1️⃣</span>An1.com</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇷🇺 Nga / Đông Âu</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="androeed"><span class="platform-label"><span
+                                class="platform-icon">🇷🇺</span>Androeed</span></label>
+                    <label class="platform"><input type="checkbox" data-p="5play"><span class="platform-label"><span
+                                class="platform-icon">5️⃣</span>5play.ru</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇨🇳 Trung Quốc</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="huluxia"><span class="platform-label"><span
+                                class="platform-icon">🫛</span>葫芦侠</span></label>
+                    <label class="platform"><input type="checkbox" data-p="coolapk"><span class="platform-label"><span
+                                class="platform-icon">🍏</span>酷安</span></label>
+                    <label class="platform"><input type="checkbox" data-p="ddooo"><span class="platform-label"><span
+                                class="platform-icon">📱</span>多多软件</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📦 APK Official</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="apkpure"><span class="platform-label"><span
+                                class="platform-icon">🟣</span>APKPure</span></label>
+                    <label class="platform"><input type="checkbox" data-p="apkmirror"><span class="platform-label"><span
+                                class="platform-icon">🪞</span>APKMirror</span></label>
+                    <label class="platform"><input type="checkbox" data-p="uptodown"><span class="platform-label"><span
+                                class="platform-icon">⬇️</span>Uptodown</span></label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn-search" id="apkSearchBtn">Search<span class="count" id="apkCount">0</span></button>
+                <button class="btn-select" onclick="toggleAll('apk')">Toggle</button>
+            </div>
+        </div>
+
         <!-- REVERSE IMAGE SEARCH TAB -->
         <div class="tab-content" id="reverse-tab">
             <!-- Upload Section -->
@@ -1592,6 +1665,34 @@
             // Academic
             bookboon: q => `https://bookboon.com/en/search?q=${encodeURIComponent(q)}`,
             googlebooks: q => `https://www.google.com/search?tbm=bks&q=${encodeURIComponent(q)}`
+        };
+
+        // APK MOD SEARCH URLS
+        const APK_URLS = {
+            // Forum Uy Tín
+            mobilism: q => `https://forum.mobilism.org/search.php?keywords=${encodeURIComponent(q)}&sr=topics&sf=titleonly`,
+            platinmods: q => `https://platinmods.com/search/?q=${encodeURIComponent(q)}`,
+
+            // Global Sites
+            modyolo: q => `https://modyolo.com/?s=${encodeURIComponent(q)}`,
+            liteapks: q => `https://liteapks.com/?s=${encodeURIComponent(q)}`,
+            apkdone: q => `https://apkdone.com/?s=${encodeURIComponent(q)}`,
+            happymod: q => `https://happymod.com/search.html?q=${encodeURIComponent(q)}`,
+            an1: q => `https://an1.com/search/?q=${encodeURIComponent(q)}`,
+
+            // Russia
+            androeed: q => `https://androeed.ru/search/?q=${encodeURIComponent(q)}`,
+            '5play': q => `https://5play.ru/en/search/?q=${encodeURIComponent(q)}`,
+
+            // China
+            huluxia: q => `https://www.huluxia.com/search?q=${encodeURIComponent(q)}`,
+            coolapk: q => `https://www.coolapk.com/search?q=${encodeURIComponent(q)}`,
+            ddooo: q => `https://www.ddooo.com/search?wd=${encodeURIComponent(q)}`,
+
+            // APK Official
+            apkpure: q => `https://apkpure.com/search?q=${encodeURIComponent(q)}`,
+            apkmirror: q => `https://www.apkmirror.com/?s=${encodeURIComponent(q)}`,
+            uptodown: q => `https://en.uptodown.com/android/search?q=${encodeURIComponent(q)}`
         };
 
         // REVERSE IMAGE SEARCH URLS - Direct upload pages
@@ -2787,6 +2888,7 @@ Trả về JSON (chỉ JSON, không text khác):
             document.getElementById('videoCount').textContent = document.querySelectorAll('#video-tab .platform input:checked').length;
             document.getElementById('imageCount').textContent = document.querySelectorAll('#image-tab .platform input:checked').length;
             document.getElementById('ebookCount').textContent = document.querySelectorAll('#ebook-tab .platform input:checked').length;
+            document.getElementById('apkCount').textContent = document.querySelectorAll('#apk-tab .platform input:checked').length;
             document.getElementById('reverseCount').textContent = document.querySelectorAll('#reverse-tab .platform input:checked').length;
         }
 
@@ -2818,6 +2920,11 @@ Trả về JSON (chỉ JSON, không text khác):
                 urls = EBOOK_URLS;
                 query = input.value.trim();
                 if (!query) { toast('Nhập tên sách hoặc tác giả'); return; }
+            } else if (currentTab === 'apk') {
+                input = document.getElementById('apkInput');
+                urls = APK_URLS;
+                query = input.value.trim();
+                if (!query) { toast('Nhập tên app hoặc game'); return; }
             } else {
                 // Reverse tab - no input needed
                 urls = REVERSE_URLS;
@@ -2837,10 +2944,12 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('videoSearchBtn').addEventListener('click', search);
         document.getElementById('imageSearchBtn').addEventListener('click', search);
         document.getElementById('ebookSearchBtn').addEventListener('click', search);
+        document.getElementById('apkSearchBtn').addEventListener('click', search);
         document.getElementById('reverseSearchBtn').addEventListener('click', search);
         document.getElementById('videoInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('imageInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('ebookInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
+        document.getElementById('apkInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
         // History
         function addHistory(q) {
