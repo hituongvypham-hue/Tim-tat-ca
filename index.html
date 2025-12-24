@@ -1150,7 +1150,6 @@
             <button class="tab" data-tab="image" draggable="true">🖼️ Image</button>
             <button class="tab" data-tab="ebook" draggable="true">📚 Ebook</button>
             <button class="tab" data-tab="apk" draggable="true">📱 APK</button>
-            <button class="tab" data-tab="music" draggable="true">🎵 Music</button>
             <button class="tab" data-tab="reverse" draggable="true">🔍 Reverse</button>
         </div>
 
@@ -1436,78 +1435,6 @@
             </div>
         </div>
 
-        <!-- MUSIC TAB -->
-        <div class="tab-content" id="music-tab">
-            <div class="search-wrapper">
-                <input type="text" id="musicInput" class="search-input" placeholder="Tên bài hát, nghệ sĩ, album...">
-            </div>
-
-            <div class="section">
-                <div class="section-title">🔥 Free & Legal <span class="badge hot">HOT</span></div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="bandcamp"><span class="platform-label"><span
-                                class="platform-icon">🎸</span>Bandcamp</span></label>
-                    <label class="platform"><input type="checkbox" data-p="soundcloud"><span
-                            class="platform-label"><span class="platform-icon">☁️</span>SoundCloud</span></label>
-                    <label class="platform"><input type="checkbox" data-p="jamendo"><span class="platform-label"><span
-                                class="platform-icon">🎵</span>Jamendo</span></label>
-                    <label class="platform"><input type="checkbox" data-p="freemusicarchive"><span
-                            class="platform-label"><span class="platform-icon">📚</span>Free Music
-                            Archive</span></label>
-                    <label class="platform"><input type="checkbox" data-p="internetarchive"><span
-                            class="platform-label"><span class="platform-icon">🏛️</span>Internet
-                            Archive</span></label>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🌍 Global Download</div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="mp3daddy"><span class="platform-label"><span
-                                class="platform-icon">💿</span>MP3 Daddy</span></label>
-                    <label class="platform"><input type="checkbox" data-p="myfreemp3"><span class="platform-label"><span
-                                class="platform-icon">🎧</span>MyFreeMP3</span></label>
-                    <label class="platform"><input type="checkbox" data-p="dabyeet"><span class="platform-label"><span
-                                class="platform-icon">⚡</span>dab.yeet.su</span></label>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🇨🇳 Trung Quốc</div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="gequbao"><span class="platform-label"><span
-                                class="platform-icon">🎤</span>歌曲宝</span></label>
-                    <label class="platform"><input type="checkbox" data-p="wusun"><span class="platform-label"><span
-                                class="platform-icon">🎼</span>无损控</span></label>
-                    <label class="platform"><input type="checkbox" data-p="onelai"><span class="platform-label"><span
-                                class="platform-icon">🎹</span>万籁音乐</span></label>
-                    <label class="platform"><input type="checkbox" data-p="fangpi"><span class="platform-label"><span
-                                class="platform-icon">🔊</span>放屁网</span></label>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🎧 Streaming</div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="spotify"><span class="platform-label"><span
-                                class="platform-icon">💚</span>Spotify</span></label>
-                    <label class="platform"><input type="checkbox" data-p="youtubemusic"><span
-                            class="platform-label"><span class="platform-icon">▶️</span>YouTube Music</span></label>
-                    <label class="platform"><input type="checkbox" data-p="applemusic"><span
-                            class="platform-label"><span class="platform-icon">🍎</span>Apple Music</span></label>
-                    <label class="platform"><input type="checkbox" data-p="neteasemusic"><span
-                            class="platform-label"><span class="platform-icon">🎵</span>网易云音乐</span></label>
-                    <label class="platform"><input type="checkbox" data-p="qqmusic"><span class="platform-label"><span
-                                class="platform-icon">🎶</span>QQ音乐</span></label>
-                </div>
-            </div>
-
-            <div class="actions">
-                <button class="btn-search" id="musicSearchBtn">Search<span class="count"
-                        id="musicCount">0</span></button>
-                <button class="btn-select" onclick="toggleAll('music')">Toggle</button>
-            </div>
-        </div>
 
         <!-- APK MOD TAB -->
         <div class="tab-content" id="apk-tab">
@@ -1777,34 +1704,6 @@
             apkpure: q => `https://apkpure.com/search?q=${encodeURIComponent(q)}`,
             apkmirror: q => `https://www.apkmirror.com/?s=${encodeURIComponent(q)}`,
             uptodown: q => `https://en.uptodown.com/android/search?q=${encodeURIComponent(q)}`
-        };
-
-        // MUSIC SEARCH URLS
-        const MUSIC_URLS = {
-            // Free & Legal
-            bandcamp: q => `https://bandcamp.com/search?q=${encodeURIComponent(q)}`,
-            soundcloud: q => `https://soundcloud.com/search?q=${encodeURIComponent(q)}`,
-            jamendo: q => `https://www.jamendo.com/search?q=${encodeURIComponent(q)}`,
-            freemusicarchive: q => `https://freemusicarchive.org/search?quicksearch=${encodeURIComponent(q)}`,
-            internetarchive: q => `https://archive.org/search?query=${encodeURIComponent(q)}&and[]=mediatype%3A%22audio%22`,
-
-            // Global Download
-            mp3daddy: q => `https://mp3-daddy.com/search?q=${encodeURIComponent(q)}`,
-            myfreemp3: q => `https://myfreemp3juices.cc/search/${encodeURIComponent(q)}`,
-            dabyeet: q => `https://dab.yeet.su/search?q=${encodeURIComponent(q)}`,
-
-            // China
-            gequbao: q => `https://www.gequbao.com/s/${encodeURIComponent(q)}`,
-            wusun: q => `https://www.wusunk.com/search?q=${encodeURIComponent(q)}`,
-            onelai: q => `https://www.onelai.cn/search?q=${encodeURIComponent(q)}`,
-            fangpi: q => `https://www.fangpi.net/s/${encodeURIComponent(q)}`,
-
-            // Streaming
-            spotify: q => `https://open.spotify.com/search/${encodeURIComponent(q)}`,
-            youtubemusic: q => `https://music.youtube.com/search?q=${encodeURIComponent(q)}`,
-            applemusic: q => `https://music.apple.com/search?term=${encodeURIComponent(q)}`,
-            neteasemusic: q => `https://music.163.com/#/search/m/?s=${encodeURIComponent(q)}`,
-            qqmusic: q => `https://y.qq.com/n/ryqq/search?w=${encodeURIComponent(q)}`
         };
 
         // REVERSE IMAGE SEARCH URLS - Direct upload pages
@@ -3001,7 +2900,6 @@ Trả về JSON (chỉ JSON, không text khác):
             document.getElementById('imageCount').textContent = document.querySelectorAll('#image-tab .platform input:checked').length;
             document.getElementById('ebookCount').textContent = document.querySelectorAll('#ebook-tab .platform input:checked').length;
             document.getElementById('apkCount').textContent = document.querySelectorAll('#apk-tab .platform input:checked').length;
-            document.getElementById('musicCount').textContent = document.querySelectorAll('#music-tab .platform input:checked').length;
             document.getElementById('reverseCount').textContent = document.querySelectorAll('#reverse-tab .platform input:checked').length;
         }
 
@@ -3038,11 +2936,6 @@ Trả về JSON (chỉ JSON, không text khác):
                 urls = APK_URLS;
                 query = input.value.trim();
                 if (!query) { toast('Nhập tên app hoặc game'); return; }
-            } else if (currentTab === 'music') {
-                input = document.getElementById('musicInput');
-                urls = MUSIC_URLS;
-                query = input.value.trim();
-                if (!query) { toast('Nhập tên bài hát hoặc nghệ sĩ'); return; }
             } else {
                 // Reverse tab - no input needed
                 urls = REVERSE_URLS;
@@ -3063,13 +2956,12 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('imageSearchBtn').addEventListener('click', search);
         document.getElementById('ebookSearchBtn').addEventListener('click', search);
         document.getElementById('apkSearchBtn').addEventListener('click', search);
-        document.getElementById('musicSearchBtn').addEventListener('click', search);
         document.getElementById('reverseSearchBtn').addEventListener('click', search);
         document.getElementById('videoInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('imageInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('ebookInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('apkInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
-        document.getElementById('musicInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
+
 
         // History
         function addHistory(q) {
