@@ -1239,6 +1239,24 @@
                 </div>
             </div>
 
+            <div class="section">
+                <div class="section-title">🎬 Stock Free</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="pexelsvideo"><span
+                            class="platform-label"><span class="platform-icon">🎥</span>Pexels Video</span></label>
+                    <label class="platform"><input type="checkbox" data-p="pixabayvideo"><span
+                            class="platform-label"><span class="platform-icon">🎞️</span>Pixabay Video</span></label>
+                    <label class="platform"><input type="checkbox" data-p="videvo"><span class="platform-label"><span
+                                class="platform-icon">📽️</span>Videvo</span></label>
+                    <label class="platform"><input type="checkbox" data-p="coverr"><span class="platform-label"><span
+                                class="platform-icon">🎬</span>Coverr</span></label>
+                    <label class="platform"><input type="checkbox" data-p="mixkit"><span class="platform-label"><span
+                                class="platform-icon">🎭</span>Mixkit</span></label>
+                    <label class="platform"><input type="checkbox" data-p="videezy"><span class="platform-label"><span
+                                class="platform-icon">📹</span>Videezy</span></label>
+                </div>
+            </div>
+
             <div class="actions">
                 <button class="btn-search" id="videoSearchBtn">Search<span class="count"
                         id="videoCount">10</span></button>
@@ -1710,7 +1728,14 @@
             bilibili: q => `https://search.bilibili.com/all?keyword=${encodeURIComponent(q)}`,
             kuaishou: q => `https://www.kuaishou.com/search/video?searchKey=${encodeURIComponent(q)}`,
             xiaohongshu: q => `https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(q)}`,
-            weibo: q => `https://s.weibo.com/video?q=${encodeURIComponent(q)}`
+            weibo: q => `https://s.weibo.com/video?q=${encodeURIComponent(q)}`,
+            // Stock Free
+            pexelsvideo: q => `https://www.pexels.com/search/videos/${encodeURIComponent(q)}/`,
+            pixabayvideo: q => `https://pixabay.com/videos/search/${encodeURIComponent(q)}/`,
+            videvo: q => `https://www.videvo.net/search/${encodeURIComponent(q)}/`,
+            coverr: q => `https://coverr.co/search?q=${encodeURIComponent(q)}`,
+            mixkit: q => `https://mixkit.co/free-stock-video/${encodeURIComponent(q.replace(/\s+/g, '-'))}/`,
+            videezy: q => `https://www.videezy.com/free-video/${encodeURIComponent(q)}`
         };
 
         const IMAGE_URLS = {
@@ -1802,6 +1827,12 @@
             kuaishou: 'https://www.kuaishou.com',
             xiaohongshu: 'https://www.xiaohongshu.com',
             weibo: 'https://weibo.com',
+            pexelsvideo: 'https://www.pexels.com/videos/',
+            pixabayvideo: 'https://pixabay.com/videos/',
+            videvo: 'https://www.videvo.net',
+            coverr: 'https://coverr.co',
+            mixkit: 'https://mixkit.co/free-stock-video/',
+            videezy: 'https://www.videezy.com',
 
             // Image
             googleimages: 'https://images.google.com',
