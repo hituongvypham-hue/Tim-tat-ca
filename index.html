@@ -1272,6 +1272,10 @@
                                 class="platform-icon">🎨</span>Mazwai</span></label>
                     <label class="platform"><input type="checkbox" data-p="vidsplay"><span class="platform-label"><span
                                 class="platform-icon">▶️</span>Vidsplay</span></label>
+                    <label class="platform"><input type="checkbox" data-p="vecteezy"><span class="platform-label"><span
+                                class="platform-icon">🎯</span>Vecteezy</span></label>
+                    <label class="platform"><input type="checkbox" data-p="dareful"><span class="platform-label"><span
+                                class="platform-icon">🌟</span>Dareful</span></label>
                 </div>
             </div>
 
@@ -1764,7 +1768,9 @@
             youku: q => `https://so.youku.com/search_video/q_${encodeURIComponent(q)}`,
             iqiyi: q => `https://so.iqiyi.com/so/q_${encodeURIComponent(q)}`,
             tencentvideo: q => `https://v.qq.com/x/search/?q=${encodeURIComponent(q)}`,
-            mangotv: q => `https://so.mgtv.com/so?k=${encodeURIComponent(q)}`
+            mangotv: q => `https://so.mgtv.com/so?k=${encodeURIComponent(q)}`,
+            vecteezy: q => `https://www.vecteezy.com/free-videos/${encodeURIComponent(q)}`,
+            dareful: q => `https://www.dareful.com/?s=${encodeURIComponent(q)}`
         };
 
         const IMAGE_URLS = {
@@ -1871,6 +1877,8 @@
             iqiyi: 'https://www.iqiyi.com',
             tencentvideo: 'https://v.qq.com',
             mangotv: 'https://www.mgtv.com',
+            vecteezy: 'https://www.vecteezy.com/free-videos',
+            dareful: 'https://www.dareful.com',
 
             // Image
             googleimages: 'https://images.google.com',
