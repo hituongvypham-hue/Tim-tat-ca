@@ -1246,14 +1246,16 @@
                             class="platform-label"><span class="platform-icon">🎥</span>Pexels Video</span></label>
                     <label class="platform"><input type="checkbox" data-p="pixabayvideo"><span
                             class="platform-label"><span class="platform-icon">🎞️</span>Pixabay Video</span></label>
-                    <label class="platform"><input type="checkbox" data-p="videvo"><span class="platform-label"><span
-                                class="platform-icon">📽️</span>Videvo</span></label>
                     <label class="platform"><input type="checkbox" data-p="coverr"><span class="platform-label"><span
                                 class="platform-icon">🎬</span>Coverr</span></label>
-                    <label class="platform"><input type="checkbox" data-p="mixkit"><span class="platform-label"><span
-                                class="platform-icon">🎭</span>Mixkit</span></label>
                     <label class="platform"><input type="checkbox" data-p="videezy"><span class="platform-label"><span
                                 class="platform-icon">📹</span>Videezy</span></label>
+                    <label class="platform"><input type="checkbox" data-p="lifeofvids"><span
+                            class="platform-label"><span class="platform-icon">🌿</span>Life of Vids</span></label>
+                    <label class="platform"><input type="checkbox" data-p="mazwai"><span class="platform-label"><span
+                                class="platform-icon">🎨</span>Mazwai</span></label>
+                    <label class="platform"><input type="checkbox" data-p="vidsplay"><span class="platform-label"><span
+                                class="platform-icon">▶️</span>Vidsplay</span></label>
                 </div>
             </div>
 
@@ -1732,10 +1734,11 @@
             // Stock Free
             pexelsvideo: q => `https://www.pexels.com/search/videos/${encodeURIComponent(q)}/`,
             pixabayvideo: q => `https://pixabay.com/videos/search/${encodeURIComponent(q)}/`,
-            videvo: q => `https://www.videvo.net/search/${encodeURIComponent(q)}/`,
             coverr: q => `https://coverr.co/search?q=${encodeURIComponent(q)}`,
-            mixkit: q => `https://mixkit.co/free-stock-video/${encodeURIComponent(q.replace(/\s+/g, '-'))}/`,
-            videezy: q => `https://www.videezy.com/free-video/${encodeURIComponent(q)}`
+            videezy: q => `https://www.videezy.com/free-video/${encodeURIComponent(q)}`,
+            lifeofvids: q => `https://lifeofvids.com/?s=${encodeURIComponent(q)}`,
+            mazwai: q => `https://mazwai.com/search?q=${encodeURIComponent(q)}`,
+            vidsplay: q => `https://www.vidsplay.com/?s=${encodeURIComponent(q)}`
         };
 
         const IMAGE_URLS = {
@@ -1829,10 +1832,11 @@
             weibo: 'https://weibo.com',
             pexelsvideo: 'https://www.pexels.com/videos/',
             pixabayvideo: 'https://pixabay.com/videos/',
-            videvo: 'https://www.videvo.net',
             coverr: 'https://coverr.co',
-            mixkit: 'https://mixkit.co/free-stock-video/',
             videezy: 'https://www.videezy.com',
+            lifeofvids: 'https://lifeofvids.com',
+            mazwai: 'https://mazwai.com',
+            vidsplay: 'https://www.vidsplay.com',
 
             // Image
             googleimages: 'https://images.google.com',
