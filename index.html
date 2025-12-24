@@ -2596,13 +2596,138 @@ Trả về JSON (chỉ JSON, không text khác):
             return str.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": "&#39;" }[c]));
         }
 
-        // Use keyword
-        window.useKeyword = function (type, keyword) {
+        // Use keyword - now triggers deep dive AI analysis
+        window.useKeyword = async function (type, keyword) {
             const input = document.getElementById(`${type}Input`);
             input.value = keyword;
             input.focus();
-            toast(`Đã chọn: ${keyword}`);
+            toast(`🔍 Phân tích sâu: ${keyword}`);
+
+            // Trigger deep dive analysis for this specific keyword
+            await deepDiveAnalysis(type, keyword);
         };
+
+        // Deep dive analysis for a specific keyword
+        async function deepDiveAnalysis(type, keyword) {
+            const apiKey = localStorage.getItem('geminiApiKey');
+            if (!apiKey) {
+                toast('Cần API key để phân tích sâu');
+                return;
+            }
+
+            const aiSuggestions = document.getElementById('aiSuggestions');
+            const aiLoading = document.getElementById('aiLoading');
+            const aiContent = document.getElementById('aiSuggestionContent');
+
+            aiSuggestions.style.display = 'block';
+            aiLoading.style.display = 'flex';
+            aiContent.innerHTML = '';
+
+            const deepPrompt = `Bạn là chuyên gia nghiên cứu dự án "${keyword}". 
+
+Hãy phân tích CHI TIẾT và cung cấp thông tin CỤ THỂ về dự án/công trình này.
+
+Trả về JSON (chỉ JSON, không text khác):
+{
+  "topic": "${keyword}",
+  "context": "Mô tả ngắn gọn về dự án: vị trí, quy mô, mục đích, năm hoàn thành",
+  "keywords": {
+    "main": ["3-5 khía cạnh chính của dự án này: giai đoạn xây dựng, công ty thi công, chi phí, etc"],
+    "phases": ["Các giai đoạn cụ thể của dự án: Phase 1, Phase 2, hoặc các mốc thời gian quan trọng"],
+    "companies": ["Các công ty, tổ chức tham gia: nhà thầu, nhà đầu tư, công ty kỹ thuật"],
+    "impacts": ["Tác động của dự án: môi trường, kinh tế, xã hội, dân cư bị ảnh hưởng"],
+    "related": ["Các dự án tương tự hoặc cạnh tranh trên thế giới"],
+    "controversy": ["Tranh cãi hoặc vấn đề nổi bật: chi phí vượt mức, delay, phản đối"],
+    "broll": ["5-8 từ khóa b-roll specific cho dự án này"],
+    "news": ["Từ khóa tìm tin tức mới nhất về dự án"]
+  }
+}`;
+
+            try {
+                const models = ['gemini-2.0-flash-exp', 'gemini-1.5-flash-latest', 'gemini-1.5-flash'];
+                let result = null;
+
+                for (const model of models) {
+                    try {
+                        const response = await fetch(
+                            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+                            {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    contents: [{ parts: [{ text: deepPrompt }] }],
+                                    generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+                                })
+                            }
+                        );
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                            if (text) {
+                                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                                if (jsonMatch) {
+                                    result = JSON.parse(jsonMatch[0]);
+                                    break;
+                                }
+                            }
+                        }
+                    } catch (e) { continue; }
+                }
+
+                aiLoading.style.display = 'none';
+
+                if (result) {
+                    displayDeepDiveSuggestions(type, result);
+                    toast('✅ Đã phân tích xong');
+                } else {
+                    aiContent.innerHTML = '<p style="color:var(--text-secondary)">Không thể phân tích. Thử lại sau.</p>';
+                }
+            } catch (e) {
+                aiLoading.style.display = 'none';
+                console.error(e);
+                toast('Lỗi phân tích sâu');
+            }
+        }
+
+        // Display deep dive suggestions
+        function displayDeepDiveSuggestions(type, aiResult) {
+            const content = document.getElementById('aiSuggestionContent');
+
+            let html = `
+                <div class="ai-section">
+                    <div class="ai-section-title" style="color: var(--google-blue);">🔬 Phân tích sâu: ${escapeHtml(aiResult.topic || '')}</div>
+                    ${aiResult.context ? `<p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.75rem;line-height:1.5;">${escapeHtml(aiResult.context)}</p>` : ''}
+            `;
+
+            const categories = [
+                { key: 'main', label: '📌 Chi tiết dự án' },
+                { key: 'phases', label: '📅 Các giai đoạn' },
+                { key: 'companies', label: '🏢 Công ty tham gia' },
+                { key: 'impacts', label: '💥 Tác động' },
+                { key: 'controversy', label: '⚠️ Tranh cãi' },
+                { key: 'related', label: '🔗 Dự án liên quan' },
+                { key: 'broll', label: '🎬 B-roll footage' },
+                { key: 'news', label: '📰 Tin tức mới nhất' }
+            ];
+
+            categories.forEach(cat => {
+                const kws = aiResult.keywords?.[cat.key] || [];
+                if (kws.length > 0) {
+                    html += `
+                        <div class="suggestion-group">
+                            <div class="suggestion-label">${cat.label}</div>
+                            <div class="suggestion-keywords">
+                                ${kws.map(k => `<span class="keyword-chip ai" onclick="useKeyword('${type}', '${escapeHtml(k)}')">${escapeHtml(k)}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            html += '</div>';
+            content.innerHTML = html;
+        }
 
         // Translate and use
         window.translateAndUse = async function (type, keyword, lang) {
