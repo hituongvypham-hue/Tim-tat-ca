@@ -1698,11 +1698,12 @@
             `;
 
             const categories = [
-                { key: 'main', label: '🎯 Từ khóa chính', isMain: true },
-                { key: 'broll', label: '🎬 B-roll footage' },
+                { key: 'main', label: '🏗️ Dự án nổi bật', isMain: true },
+                { key: 'realProjects', label: '🌍 Công trình thực tế' },
+                { key: 'countrySpecific', label: '🗺️ Theo quốc gia' },
                 { key: 'official', label: '🏢 Nguồn chính thức' },
-                { key: 'related', label: '🔗 Liên quan' },
-                { key: 'trending', label: '🔥 Trending 2024' }
+                { key: 'broll', label: '🎬 B-roll footage' },
+                { key: 'trending', label: '🔥 Trending 2024-2025' }
             ];
 
             categories.forEach(cat => {
@@ -2045,20 +2046,27 @@
 
             if (!apiKey || !enableAI) return null;
 
-            const prompt = `Bạn là chuyên gia tìm video stock footage. Phân tích input sau và gợi ý từ khóa tiếng Anh để tìm video minh họa chính xác nhất.
+            const prompt = `Bạn là chuyên gia nghiên cứu các dự án công trình lớn trên thế giới. Phân tích input sau và GỢI Ý CÁC DỰ ÁN/CÔNG TRÌNH CÓ THẬT để tìm video minh họa.
+
+QUAN TRỌNG: Luôn gợi ý TÊN CỤ THỂ của các dự án/công trình thật, không dùng từ khóa chung chung.
 
 Input: "${input}"
+
+Ví dụ: Nếu input là "kênh dẫn nước", hãy gợi ý:
+- Các dự án thật: "Kachhi Canal Pakistan", "Three Gorges Dam", "Grand Ethiopian Renaissance Dam", "South-North Water Transfer China"
+- KHÔNG gợi ý: "water canal", "irrigation system" (quá chung chung)
 
 Trả về JSON (chỉ JSON, không text khác):
 {
   "topic": "tên chủ đề chính bằng tiếng Anh",
-  "context": "giải thích ngắn 1 dòng về chủ đề này",
+  "context": "giải thích ngắn về chủ đề và các dự án nổi bật",
   "keywords": {
-    "main": ["3-5 từ khóa chính"],
-    "official": ["2-3 từ khóa tìm nguồn chính thức"],
-    "broll": ["5-8 từ khóa b-roll stock footage"],
-    "related": ["3-5 khái niệm liên quan"],
-    "trending": ["2-3 từ khóa trending 2024"]
+    "main": ["3-5 TÊN DỰ ÁN/CÔNG TRÌNH CỤ THỂ CÓ THẬT nổi tiếng nhất liên quan"],
+    "realProjects": ["5-8 dự án thực tế khác trên thế giới, ưu tiên các dự án lớn, gây tranh cãi, hoặc mới hoàn thành"],
+    "official": ["2-3 nguồn chính thức: tên cơ quan, tổ chức quản lý dự án"],
+    "broll": ["5-8 từ khóa b-roll stock footage cho loại công trình này"],
+    "countrySpecific": ["3-5 dự án tương tự ở các quốc gia khác nhau, format: TênDựÁn + Quốc gia"],
+    "trending": ["2-3 dự án đang được chú ý năm 2024-2025"]
   }
 }`;
 
