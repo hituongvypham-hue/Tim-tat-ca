@@ -1220,6 +1220,14 @@
                                 class="platform-icon">📘</span>Facebook</span></label>
                     <label class="platform"><input type="checkbox" data-p="googlevideos"><span
                             class="platform-label"><span class="platform-icon">🔍</span>Google</span></label>
+                    <label class="platform"><input type="checkbox" data-p="vimeo"><span class="platform-label"><span
+                                class="platform-icon">🎬</span>Vimeo</span></label>
+                    <label class="platform"><input type="checkbox" data-p="dailymotion"><span
+                            class="platform-label"><span class="platform-icon">📹</span>Dailymotion</span></label>
+                    <label class="platform"><input type="checkbox" data-p="twitch"><span class="platform-label"><span
+                                class="platform-icon">🎮</span>Twitch</span></label>
+                    <label class="platform"><input type="checkbox" data-p="rumble"><span class="platform-label"><span
+                                class="platform-icon">📺</span>Rumble</span></label>
                 </div>
             </div>
 
@@ -1236,6 +1244,14 @@
                             class="platform-label"><span class="platform-icon">📕</span>小红书</span></label>
                     <label class="platform"><input type="checkbox" data-p="weibo"><span class="platform-label"><span
                                 class="platform-icon">🔴</span>Weibo</span></label>
+                    <label class="platform"><input type="checkbox" data-p="youku"><span class="platform-label"><span
+                                class="platform-icon">🎭</span>优酷</span></label>
+                    <label class="platform"><input type="checkbox" data-p="iqiyi"><span class="platform-label"><span
+                                class="platform-icon">🎬</span>爱奇艺</span></label>
+                    <label class="platform"><input type="checkbox" data-p="tencentvideo"><span
+                            class="platform-label"><span class="platform-icon">📱</span>腾讯视频</span></label>
+                    <label class="platform"><input type="checkbox" data-p="mangotv"><span class="platform-label"><span
+                                class="platform-icon">🥭</span>芒果TV</span></label>
                 </div>
             </div>
 
@@ -1738,7 +1754,17 @@
             videezy: q => `https://www.videezy.com/free-video/${encodeURIComponent(q)}`,
             lifeofvids: q => `https://lifeofvids.com/?s=${encodeURIComponent(q)}`,
             mazwai: q => `https://mazwai.com/search?q=${encodeURIComponent(q)}`,
-            vidsplay: q => `https://www.vidsplay.com/?s=${encodeURIComponent(q)}`
+            vidsplay: q => `https://www.vidsplay.com/?s=${encodeURIComponent(q)}`,
+            // More Global
+            vimeo: q => `https://vimeo.com/search?q=${encodeURIComponent(q)}`,
+            dailymotion: q => `https://www.dailymotion.com/search/${encodeURIComponent(q)}`,
+            twitch: q => `https://www.twitch.tv/search?term=${encodeURIComponent(q)}`,
+            rumble: q => `https://rumble.com/search/video?q=${encodeURIComponent(q)}`,
+            // More China
+            youku: q => `https://so.youku.com/search_video/q_${encodeURIComponent(q)}`,
+            iqiyi: q => `https://so.iqiyi.com/so/q_${encodeURIComponent(q)}`,
+            tencentvideo: q => `https://v.qq.com/x/search/?q=${encodeURIComponent(q)}`,
+            mangotv: q => `https://so.mgtv.com/so?k=${encodeURIComponent(q)}`
         };
 
         const IMAGE_URLS = {
@@ -1837,6 +1863,14 @@
             lifeofvids: 'https://lifeofvids.com',
             mazwai: 'https://mazwai.com',
             vidsplay: 'https://www.vidsplay.com',
+            vimeo: 'https://vimeo.com',
+            dailymotion: 'https://www.dailymotion.com',
+            twitch: 'https://www.twitch.tv',
+            rumble: 'https://rumble.com',
+            youku: 'https://www.youku.com',
+            iqiyi: 'https://www.iqiyi.com',
+            tencentvideo: 'https://v.qq.com',
+            mangotv: 'https://www.mgtv.com',
 
             // Image
             googleimages: 'https://images.google.com',
