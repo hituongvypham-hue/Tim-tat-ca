@@ -1150,6 +1150,7 @@
             <button class="tab" data-tab="image" draggable="true">🖼️ Image</button>
             <button class="tab" data-tab="ebook" draggable="true">📚 Ebook</button>
             <button class="tab" data-tab="apk" draggable="true">📱 APK</button>
+            <button class="tab" data-tab="ai" draggable="true">🤖 AI</button>
             <button class="tab" data-tab="reverse" draggable="true">🔍 Reverse</button>
         </div>
 
@@ -1508,6 +1509,88 @@
             </div>
         </div>
 
+        <!-- AI TAB -->
+        <div class="tab-content" id="ai-tab">
+            <div class="section">
+                <div class="section-title">🌍 Global - Big 3 <span class="badge hot">TOP</span></div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="chatgpt"><span class="platform-label"><span
+                                class="platform-icon">💬</span>ChatGPT</span></label>
+                    <label class="platform"><input type="checkbox" data-p="claude"><span class="platform-label"><span
+                                class="platform-icon">🧠</span>Claude</span></label>
+                    <label class="platform"><input type="checkbox" data-p="gemini"><span class="platform-label"><span
+                                class="platform-icon">✨</span>Gemini</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🔥 Global - More</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="perplexity"><span
+                            class="platform-label"><span class="platform-icon">🔍</span>Perplexity</span></label>
+                    <label class="platform"><input type="checkbox" data-p="copilot"><span class="platform-label"><span
+                                class="platform-icon">🪟</span>Copilot</span></label>
+                    <label class="platform"><input type="checkbox" data-p="grok"><span class="platform-label"><span
+                                class="platform-icon">🚀</span>Grok (X)</span></label>
+                    <label class="platform"><input type="checkbox" data-p="poe"><span class="platform-label"><span
+                                class="platform-icon">📱</span>Poe</span></label>
+                    <label class="platform"><input type="checkbox" data-p="you"><span class="platform-label"><span
+                                class="platform-icon">🌐</span>You.com</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">💻 Coding AI</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="cursor"><span class="platform-label"><span
+                                class="platform-icon">⌨️</span>Cursor</span></label>
+                    <label class="platform"><input type="checkbox" data-p="replit"><span class="platform-label"><span
+                                class="platform-icon">💾</span>Replit AI</span></label>
+                    <label class="platform"><input type="checkbox" data-p="codeium"><span class="platform-label"><span
+                                class="platform-icon">🔧</span>Codeium</span></label>
+                    <label class="platform"><input type="checkbox" data-p="phind"><span class="platform-label"><span
+                                class="platform-icon">🔎</span>Phind</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇨🇳 Trung Quốc</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="ernie"><span class="platform-label"><span
+                                class="platform-icon">🐼</span>文心一言</span></label>
+                    <label class="platform"><input type="checkbox" data-p="qianwen"><span class="platform-label"><span
+                                class="platform-icon">☁️</span>通义千问</span></label>
+                    <label class="platform"><input type="checkbox" data-p="kimi"><span class="platform-label"><span
+                                class="platform-icon">🌙</span>Kimi</span></label>
+                    <label class="platform"><input type="checkbox" data-p="doubao"><span class="platform-label"><span
+                                class="platform-icon">🎁</span>豆包</span></label>
+                    <label class="platform"><input type="checkbox" data-p="deepseek"><span class="platform-label"><span
+                                class="platform-icon">🔬</span>DeepSeek</span></label>
+                    <label class="platform"><input type="checkbox" data-p="zhipu"><span class="platform-label"><span
+                                class="platform-icon">🎯</span>智谱清言</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🎨 Image AI</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="midjourney"><span
+                            class="platform-label"><span class="platform-icon">🎨</span>Midjourney</span></label>
+                    <label class="platform"><input type="checkbox" data-p="dalle"><span class="platform-label"><span
+                                class="platform-icon">🖼️</span>DALL-E 3</span></label>
+                    <label class="platform"><input type="checkbox" data-p="ideogram"><span class="platform-label"><span
+                                class="platform-icon">✏️</span>Ideogram</span></label>
+                    <label class="platform"><input type="checkbox" data-p="leonardo"><span class="platform-label"><span
+                                class="platform-icon">🎭</span>Leonardo</span></label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn-search" id="aiSearchBtn">Open<span class="count" id="aiCount">0</span></button>
+                <button class="btn-select" onclick="toggleAll('ai')">Toggle</button>
+            </div>
+        </div>
+
         <!-- REVERSE IMAGE SEARCH TAB -->
         <div class="tab-content" id="reverse-tab">
             <!-- Upload Section -->
@@ -1789,7 +1872,31 @@
             baidureverse: 'https://graph.baidu.com',
             sogouimage: 'https://pic.sogou.com',
             '360reverse': 'https://st.so.com',
-            taobaoimage: 'https://s.taobao.com'
+            taobaoimage: 'https://s.taobao.com',
+
+            // AI
+            chatgpt: 'https://chat.openai.com',
+            claude: 'https://claude.ai',
+            gemini: 'https://gemini.google.com',
+            perplexity: 'https://www.perplexity.ai',
+            copilot: 'https://copilot.microsoft.com',
+            grok: 'https://grok.x.ai',
+            poe: 'https://poe.com',
+            you: 'https://you.com',
+            cursor: 'https://cursor.sh',
+            replit: 'https://replit.com',
+            codeium: 'https://codeium.com',
+            phind: 'https://www.phind.com',
+            ernie: 'https://yiyan.baidu.com',
+            qianwen: 'https://tongyi.aliyun.com',
+            kimi: 'https://kimi.moonshot.cn',
+            doubao: 'https://www.doubao.com',
+            deepseek: 'https://chat.deepseek.com',
+            zhipu: 'https://chatglm.cn',
+            midjourney: 'https://www.midjourney.com',
+            dalle: 'https://openai.com/dall-e-3',
+            ideogram: 'https://ideogram.ai',
+            leonardo: 'https://leonardo.ai'
         };
 
         // REVERSE IMAGE SEARCH URLS - Direct upload pages
@@ -2986,6 +3093,7 @@ Trả về JSON (chỉ JSON, không text khác):
             document.getElementById('imageCount').textContent = document.querySelectorAll('#image-tab .platform input:checked').length;
             document.getElementById('ebookCount').textContent = document.querySelectorAll('#ebook-tab .platform input:checked').length;
             document.getElementById('apkCount').textContent = document.querySelectorAll('#apk-tab .platform input:checked').length;
+            document.getElementById('aiCount').textContent = document.querySelectorAll('#ai-tab .platform input:checked').length;
             document.getElementById('reverseCount').textContent = document.querySelectorAll('#reverse-tab .platform input:checked').length;
         }
 
@@ -3049,6 +3157,7 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('imageSearchBtn').addEventListener('click', search);
         document.getElementById('ebookSearchBtn').addEventListener('click', search);
         document.getElementById('apkSearchBtn').addEventListener('click', search);
+        document.getElementById('aiSearchBtn').addEventListener('click', search);
         document.getElementById('reverseSearchBtn').addEventListener('click', search);
         document.getElementById('videoInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('imageInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
