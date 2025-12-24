@@ -3055,6 +3055,55 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('ebookInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('apkInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
+        // Direct click on platform label to open
+        document.querySelectorAll('.platform-label').forEach(label => {
+            label.style.cursor = 'pointer';
+            label.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const checkbox = label.parentElement.querySelector('input[type="checkbox"]');
+                const platformKey = checkbox ? checkbox.dataset.p : null;
+                if (!platformKey) return;
+
+                // Get current input value
+                let query = '';
+                let urls = null;
+
+                if (currentTab === 'video') {
+                    const input = document.getElementById('videoInput');
+                    query = input ? input.value.trim() : '';
+                    urls = VIDEO_URLS;
+                } else if (currentTab === 'image') {
+                    const input = document.getElementById('imageInput');
+                    query = input ? input.value.trim() : '';
+                    urls = IMAGE_URLS;
+                } else if (currentTab === 'ebook') {
+                    const input = document.getElementById('ebookInput');
+                    query = input ? input.value.trim() : '';
+                    urls = EBOOK_URLS;
+                } else if (currentTab === 'apk') {
+                    const input = document.getElementById('apkInput');
+                    query = input ? input.value.trim() : '';
+                    urls = APK_URLS;
+                } else {
+                    urls = REVERSE_URLS;
+                }
+
+                // Open URL
+                if (query && urls && urls[platformKey]) {
+                    window.open(urls[platformKey](query), '_blank');
+                    addHistory(query);
+                } else {
+                    const homepage = HOMEPAGE_URLS[platformKey];
+                    if (homepage) {
+                        window.open(homepage, '_blank');
+                    } else if (urls && urls[platformKey]) {
+                        window.open(urls[platformKey](''), '_blank');
+                    }
+                }
+            });
+        });
 
         // History
         function addHistory(q) {
