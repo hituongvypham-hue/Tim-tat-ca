@@ -511,7 +511,10 @@
         }
 
         .platform-icon {
-            font-size: 1rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            object-fit: contain;
         }
 
         /* Actions */
@@ -3584,6 +3587,148 @@ Trả về JSON (chỉ JSON, không text khác):
         }
 
         loadTabOrder();
+
+        // Replace emoji icons with real favicons
+        const FAVICON_DOMAINS = {
+            // Video - Global
+            youtube: 'youtube.com',
+            tiktok: 'tiktok.com',
+            instagram: 'instagram.com',
+            facebook: 'facebook.com',
+            googlevideos: 'google.com',
+            vimeo: 'vimeo.com',
+            dailymotion: 'dailymotion.com',
+            twitch: 'twitch.tv',
+            rumble: 'rumble.com',
+            // Video - China
+            douyin: 'douyin.com',
+            bilibili: 'bilibili.com',
+            kuaishou: 'kuaishou.com',
+            xiaohongshu: 'xiaohongshu.com',
+            weibo: 'weibo.com',
+            youku: 'youku.com',
+            iqiyi: 'iqiyi.com',
+            tencentvideo: 'v.qq.com',
+            mangotv: 'mgtv.com',
+            // Video - Stock
+            pexelsvideo: 'pexels.com',
+            pixabayvideo: 'pixabay.com',
+            coverr: 'coverr.co',
+            videezy: 'videezy.com',
+            lifeofvids: 'lifeofvids.com',
+            mazwai: 'mazwai.com',
+            vidsplay: 'vidsplay.com',
+            vecteezy: 'vecteezy.com',
+            dareful: 'dareful.com',
+            // Image
+            googleimages: 'google.com',
+            yandex: 'yandex.com',
+            bingimages: 'bing.com',
+            pinterest: 'pinterest.com',
+            tineye: 'tineye.com',
+            lenso: 'lenso.ai',
+            unsplash: 'unsplash.com',
+            pexels: 'pexels.com',
+            pixabay: 'pixabay.com',
+            freepik: 'freepik.com',
+            behance: 'behance.net',
+            dribbble: 'dribbble.com',
+            artstation: 'artstation.com',
+            baidu: 'baidu.com',
+            sogou: 'sogou.com',
+            huaban: 'huaban.com',
+            // Ebook
+            annas: 'annas-archive.org',
+            libgen: 'libgen.is',
+            zlibrary: 'z-lib.id',
+            pdfdrive: 'pdfdrive.com',
+            oceanofpdf: 'oceanofpdf.com',
+            gutenberg: 'gutenberg.org',
+            openlibrary: 'openlibrary.org',
+            standardebooks: 'standardebooks.org',
+            manybooks: 'manybooks.net',
+            smashwords: 'smashwords.com',
+            obooko: 'obooko.com',
+            epubbooks: 'epubbooks.com',
+            bookboon: 'bookboon.com',
+            googlebooks: 'books.google.com',
+            // APK
+            mobilism: 'mobilism.org',
+            platinmods: 'platinmods.com',
+            modyolo: 'modyolo.com',
+            liteapks: 'liteapks.com',
+            apkdone: 'apkdone.com',
+            happymod: 'happymod.com',
+            an1: 'an1.com',
+            androeed: 'androeed.ru',
+            '5play': '5play.ru',
+            huluxia: 'huluxia.com',
+            coolapk: 'coolapk.com',
+            ddooo: 'ddooo.com',
+            apkpure: 'apkpure.com',
+            apkmirror: 'apkmirror.com',
+            uptodown: 'uptodown.com',
+            // AI
+            chatgpt: 'chat.openai.com',
+            claude: 'claude.ai',
+            gemini: 'gemini.google.com',
+            perplexity: 'perplexity.ai',
+            copilot: 'copilot.microsoft.com',
+            grok: 'x.ai',
+            poe: 'poe.com',
+            you: 'you.com',
+            cursor: 'cursor.sh',
+            replit: 'replit.com',
+            codeium: 'codeium.com',
+            phind: 'phind.com',
+            ernie: 'yiyan.baidu.com',
+            qianwen: 'tongyi.aliyun.com',
+            kimi: 'kimi.moonshot.cn',
+            doubao: 'doubao.com',
+            deepseek: 'deepseek.com',
+            zhipu: 'chatglm.cn',
+            midjourney: 'midjourney.com',
+            dalle: 'openai.com',
+            ideogram: 'ideogram.ai',
+            leonardo: 'leonardo.ai',
+            // Reverse
+            yandexreverse: 'yandex.com',
+            googlereverse: 'google.com',
+            bingreverse: 'bing.com',
+            copyseeker: 'copyseeker.net',
+            pimeyes: 'pimeyes.com',
+            reversely: 'reversely.ai',
+            imgops: 'imgops.com',
+            duplichecker: 'duplichecker.com',
+            smallseotools: 'smallseotools.com',
+            saucenao: 'saucenao.com',
+            iqdb: 'iqdb.org',
+            trace: 'trace.moe',
+            baidureverse: 'baidu.com',
+            sogouimage: 'sogou.com',
+            '360reverse': 'so.com',
+            taobaoimage: 'taobao.com'
+        };
+
+        function replaceFavicons() {
+            document.querySelectorAll('.platform input[data-p]').forEach(input => {
+                const platformKey = input.dataset.p;
+                const domain = FAVICON_DOMAINS[platformKey];
+                if (domain) {
+                    const iconSpan = input.parentElement.querySelector('.platform-icon');
+                    if (iconSpan) {
+                        const img = document.createElement('img');
+                        img.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+                        img.alt = platformKey;
+                        img.className = 'platform-icon';
+                        img.onerror = () => { img.style.display = 'none'; };
+                        iconSpan.replaceWith(img);
+                    }
+                }
+            });
+        }
+
+        replaceFavicons();
     </script>
 </body>
 
