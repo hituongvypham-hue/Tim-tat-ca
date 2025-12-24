@@ -1706,6 +1706,92 @@
             uptodown: q => `https://en.uptodown.com/android/search?q=${encodeURIComponent(q)}`
         };
 
+        // HOMEPAGE URLs - for when no search query
+        const HOMEPAGE_URLS = {
+            // Video
+            youtube: 'https://www.youtube.com',
+            tiktok: 'https://www.tiktok.com',
+            instagram: 'https://www.instagram.com/explore/',
+            facebook: 'https://www.facebook.com/watch/',
+            googlevideos: 'https://www.google.com/videohp',
+            douyin: 'https://www.douyin.com',
+            bilibili: 'https://www.bilibili.com',
+            kuaishou: 'https://www.kuaishou.com',
+            xiaohongshu: 'https://www.xiaohongshu.com',
+            weibo: 'https://weibo.com',
+
+            // Image
+            googleimages: 'https://images.google.com',
+            yandex: 'https://yandex.com/images/',
+            bingimages: 'https://www.bing.com/images',
+            pinterest: 'https://www.pinterest.com',
+            tineye: 'https://tineye.com',
+            lenso: 'https://lenso.ai',
+            unsplash: 'https://unsplash.com',
+            pexels: 'https://www.pexels.com',
+            pixabay: 'https://pixabay.com',
+            freepik: 'https://www.freepik.com',
+            behance: 'https://www.behance.net',
+            dribbble: 'https://dribbble.com',
+            artstation: 'https://www.artstation.com',
+            baidu: 'https://image.baidu.com',
+            sogou: 'https://pic.sogou.com',
+            huaban: 'https://huaban.com',
+
+            // Ebook
+            annas: 'https://annas-archive.org',
+            libgen: 'https://libgen.is',
+            zlibrary: 'https://z-lib.id',
+            pdfdrive: 'https://www.pdfdrive.com',
+            oceanofpdf: 'https://oceanofpdf.com',
+            gutenberg: 'https://www.gutenberg.org',
+            openlibrary: 'https://openlibrary.org',
+            standardebooks: 'https://standardebooks.org',
+            manybooks: 'https://manybooks.net',
+            smashwords: 'https://www.smashwords.com',
+            obooko: 'https://www.obooko.com',
+            epubbooks: 'https://www.epubbooks.com',
+            bookboon: 'https://bookboon.com',
+            googlebooks: 'https://books.google.com',
+
+            // APK
+            mobilism: 'https://forum.mobilism.org',
+            platinmods: 'https://platinmods.com',
+            modyolo: 'https://modyolo.com',
+            liteapks: 'https://liteapks.com',
+            apkdone: 'https://apkdone.com',
+            happymod: 'https://happymod.com',
+            an1: 'https://an1.com',
+            androeed: 'https://androeed.ru',
+            '5play': 'https://5play.ru',
+            huluxia: 'https://www.huluxia.com',
+            coolapk: 'https://www.coolapk.com',
+            ddooo: 'https://www.ddooo.com',
+            apkpure: 'https://apkpure.com',
+            apkmirror: 'https://www.apkmirror.com',
+            uptodown: 'https://en.uptodown.com/android',
+
+            // Reverse
+            tineye: 'https://tineye.com',
+            yandexreverse: 'https://yandex.com/images/',
+            googlereverse: 'https://images.google.com',
+            bingreverse: 'https://www.bing.com/visualsearch',
+            lenso: 'https://lenso.ai',
+            copyseeker: 'https://copyseeker.net',
+            pimeyes: 'https://pimeyes.com',
+            reversely: 'https://reversely.ai',
+            imgops: 'https://imgops.com',
+            duplichecker: 'https://www.duplichecker.com/reverse-image-search.php',
+            smallseotools: 'https://smallseotools.com/reverse-image-search/',
+            saucenao: 'https://saucenao.com',
+            iqdb: 'https://iqdb.org',
+            trace: 'https://trace.moe',
+            baidureverse: 'https://graph.baidu.com',
+            sogouimage: 'https://pic.sogou.com',
+            '360reverse': 'https://st.so.com',
+            taobaoimage: 'https://s.taobao.com'
+        };
+
         // REVERSE IMAGE SEARCH URLS - Direct upload pages
         const REVERSE_URLS = {
             // Top Reverse Search
@@ -2919,23 +3005,19 @@ Trả về JSON (chỉ JSON, không text khác):
             if (currentTab === 'video') {
                 input = document.getElementById('videoInput');
                 urls = VIDEO_URLS;
-                query = input.value.trim();
-                if (!query) { toast('Nhập từ khóa'); return; }
+                query = input ? input.value.trim() : '';
             } else if (currentTab === 'image') {
                 input = document.getElementById('imageInput');
                 urls = IMAGE_URLS;
-                query = input.value.trim();
-                if (!query) { toast('Nhập từ khóa'); return; }
+                query = input ? input.value.trim() : '';
             } else if (currentTab === 'ebook') {
                 input = document.getElementById('ebookInput');
                 urls = EBOOK_URLS;
-                query = input.value.trim();
-                if (!query) { toast('Nhập tên sách hoặc tác giả'); return; }
+                query = input ? input.value.trim() : '';
             } else if (currentTab === 'apk') {
                 input = document.getElementById('apkInput');
                 urls = APK_URLS;
-                query = input.value.trim();
-                if (!query) { toast('Nhập tên app hoặc game'); return; }
+                query = input ? input.value.trim() : '';
             } else {
                 // Reverse tab - no input needed
                 urls = REVERSE_URLS;
@@ -2946,10 +3028,21 @@ Trả về JSON (chỉ JSON, không text khác):
 
             if (!selected.length) { toast('Chọn ít nhất 1 tool'); return; }
 
-            if (query) addHistory(query);
-            toast(`Mở ${selected.length} tabs...`);
-
-            selected.forEach((p, i) => setTimeout(() => window.open(urls[p](query), '_blank'), i * 400));
+            if (query) {
+                // Search with keyword
+                addHistory(query);
+                toast(`Tìm "${query}" trên ${selected.length} trang...`);
+                selected.forEach((p, i) => setTimeout(() => window.open(urls[p](query), '_blank'), i * 400));
+            } else {
+                // No keyword - open homepages
+                toast(`Mở ${selected.length} trang chủ...`);
+                selected.forEach((p, i) => {
+                    const homepage = HOMEPAGE_URLS[p] || (urls[p] ? urls[p]('') : null);
+                    if (homepage) {
+                        setTimeout(() => window.open(homepage, '_blank'), i * 400);
+                    }
+                });
+            }
         }
 
         document.getElementById('videoSearchBtn').addEventListener('click', search);
