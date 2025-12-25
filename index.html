@@ -1120,6 +1120,261 @@
                 transform: scale(0.98);
             }
         }
+
+        /* ========== NEW UX FEATURES ========== */
+
+        /* Scroll to Top FAB */
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 1.5rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--google-blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 90;
+        }
+
+        .scroll-top-btn.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top-btn:hover {
+            background: var(--google-blue-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Tab Scroll Indicator */
+        .tabs-wrapper {
+            position: relative;
+        }
+
+        .tabs-wrapper::after {
+            content: '→';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(to left, var(--bg) 60%, transparent);
+            padding-left: 2rem;
+            padding-right: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tabs-wrapper.show-indicator::after {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .tabs-wrapper::after {
+                opacity: 1;
+            }
+
+            .tabs-wrapper.scrolled-end::after {
+                opacity: 0;
+            }
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            margin-left: 0.5rem;
+        }
+
+        .lang-toggle-btn {
+            padding: 0.25rem 0.5rem;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .lang-toggle-btn.active {
+            background: var(--google-blue);
+            color: white;
+        }
+
+        /* Clear All Button */
+        .btn-clear {
+            padding: 0.6rem 1rem;
+            background: transparent;
+            border: 1px solid var(--google-red);
+            border-radius: 4px;
+            color: var(--google-red);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-clear:hover {
+            background: var(--google-red);
+            color: white;
+        }
+
+        /* Favorite Star */
+        .fav-star {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            width: 20px;
+            height: 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+            color: var(--text-secondary);
+        }
+
+        .platform:hover .fav-star {
+            opacity: 1;
+        }
+
+        .fav-star.active {
+            opacity: 1;
+            color: var(--google-yellow);
+        }
+
+        /* Export/Import buttons */
+        .export-import-btns {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-export,
+        .btn-import {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            background: var(--card);
+            border-radius: 6px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-export:hover,
+        .btn-import:hover {
+            border-color: var(--google-blue);
+            color: var(--google-blue);
+        }
+
+        /* Batch Warning Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            max-width: 320px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.show .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.cancel {
+            background: var(--bg-secondary);
+            color: var(--text);
+        }
+
+        .modal-btn.confirm {
+            background: var(--google-blue);
+            color: white;
+        }
+
+        .modal-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Header flex adjustments */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
     </style>
 </head>
 
@@ -1127,36 +1382,49 @@
     <div class="container">
         <!-- Settings Toggle -->
         <div class="settings-bar">
-            <span class="app-title">🎬 Media Search Pro</span>
-            <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+            <span class="app-title" id="appTitle">🎬 Media Search Pro</span>
+            <div class="header-actions">
+                <div class="lang-toggle">
+                    <button class="lang-toggle-btn active" data-lang="vi" onclick="setLanguage('vi')">VI</button>
+                    <button class="lang-toggle-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+                </div>
+                <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+            </div>
         </div>
 
         <!-- Settings Panel -->
         <div class="settings-panel" id="settingsPanel" style="display: none;">
             <div class="setting-item">
-                <label>🤖 Gemini API Key</label>
+                <label id="lblApiKey">🤖 Gemini API Key</label>
                 <input type="password" id="geminiApiKey" class="api-key-input"
                     placeholder="Paste API key từ aistudio.google.com">
-                <a href="https://aistudio.google.com/apikey" target="_blank" class="api-link">Lấy key miễn phí →</a>
+                <a href="https://aistudio.google.com/apikey" target="_blank" class="api-link" id="lblGetKey">Lấy key
+                    miễn phí →</a>
             </div>
             <div class="setting-item">
                 <label>
                     <input type="checkbox" id="enableAI" checked>
-                    Bật AI gợi ý thông minh
+                    <span id="lblEnableAI">Bật AI gợi ý thông minh</span>
                 </label>
             </div>
-            <button class="save-settings-btn" onclick="saveSettings()">💾 Lưu cài đặt</button>
+            <button class="save-settings-btn" onclick="saveSettings()" id="btnSaveSettings">💾 Lưu cài đặt</button>
+            <div class="export-import-btns">
+                <button class="btn-export" onclick="exportSettings()" id="btnExport">📤 Export</button>
+                <button class="btn-import" onclick="importSettings()" id="btnImport">📥 Import</button>
+            </div>
         </div>
 
-        <div class="tabs" id="tabsContainer">
-            <button class="tab active" data-tab="video" draggable="true">📹 Video</button>
-            <button class="tab" data-tab="image" draggable="true">🖼️ Image</button>
-            <button class="tab" data-tab="ebook" draggable="true">📚 Ebook</button>
-            <button class="tab" data-tab="apk" draggable="true">📱 APK</button>
-            <button class="tab" data-tab="ai" draggable="true">🤖 AI</button>
-            <button class="tab" data-tab="reverse" draggable="true">🔍 Reverse</button>
-            <button class="tab" data-tab="discover" draggable="true">🌐 Discover</button>
-            <button class="tab" data-tab="vision" draggable="true">👁️ Vision</button>
+        <div class="tabs-wrapper" id="tabsWrapper">
+            <div class="tabs" id="tabsContainer">
+                <button class="tab active" data-tab="video" draggable="true">📹 Video</button>
+                <button class="tab" data-tab="image" draggable="true">🖼️ Image</button>
+                <button class="tab" data-tab="ebook" draggable="true">📚 Ebook</button>
+                <button class="tab" data-tab="apk" draggable="true">📱 APK</button>
+                <button class="tab" data-tab="ai" draggable="true">🤖 AI</button>
+                <button class="tab" data-tab="reverse" draggable="true">🔍 Reverse</button>
+                <button class="tab" data-tab="discover" draggable="true">🌐 Discover</button>
+                <button class="tab" data-tab="vision" draggable="true">👁️ Vision</button>
+            </div>
         </div>
 
         <!-- VIDEO TAB -->
@@ -1932,6 +2200,23 @@
         <div class="section" style="margin-top: 2rem;">
             <div class="section-title">Recent</div>
             <div class="history" id="historyList"><span class="empty">No recent</span></div>
+        </div>
+    </div>
+
+    <!-- Scroll to Top FAB -->
+    <button class="scroll-top-btn" id="scrollTopBtn" onclick="scrollToTop()">↑</button>
+
+    <!-- Batch Warning Modal -->
+    <div class="modal-overlay" id="batchModal">
+        <div class="modal-box">
+            <div class="modal-icon">⚠️</div>
+            <div class="modal-title" id="modalTitle">Mở nhiều tab</div>
+            <div class="modal-text" id="modalText">Bạn đang mở <span id="tabCount">0</span> trang cùng lúc. Trình duyệt
+                có thể chặn popup.</div>
+            <div class="modal-btns">
+                <button class="modal-btn cancel" onclick="closeBatchModal()" id="btnCancel">Hủy</button>
+                <button class="modal-btn confirm" onclick="confirmBatchOpen()" id="btnConfirm">Tiếp tục</button>
+            </div>
         </div>
     </div>
 
@@ -4055,6 +4340,245 @@ Trả về JSON (chỉ JSON, không text khác):
         }
 
         replaceFavicons();
+
+        // ========== NEW UX FEATURES ==========
+
+        // Language system
+        const TRANSLATIONS = {
+            vi: {
+                appTitle: '🎬 Media Search Pro',
+                lblApiKey: '🤖 Gemini API Key',
+                lblGetKey: 'Lấy key miễn phí →',
+                lblEnableAI: 'Bật AI gợi ý thông minh',
+                btnSaveSettings: '💾 Lưu cài đặt',
+                btnExport: '📤 Export',
+                btnImport: '📥 Import',
+                modalTitle: 'Mở nhiều tab',
+                modalText: 'Bạn đang mở {count} trang cùng lúc. Trình duyệt có thể chặn popup.',
+                btnCancel: 'Hủy',
+                btnConfirm: 'Tiếp tục',
+                toastOpening: 'Đang mở {count} trang...',
+                toastSearch: 'Tìm {count} nền tảng...',
+                toastExported: 'Đã export cài đặt!',
+                toastImported: 'Đã import cài đặt!',
+                toastSaved: 'Đã lưu cài đặt!'
+            },
+            en: {
+                appTitle: '🎬 Media Search Pro',
+                lblApiKey: '🤖 Gemini API Key',
+                lblGetKey: 'Get free key →',
+                lblEnableAI: 'Enable AI smart suggestions',
+                btnSaveSettings: '💾 Save Settings',
+                btnExport: '📤 Export',
+                btnImport: '📥 Import',
+                modalTitle: 'Opening many tabs',
+                modalText: 'You are opening {count} pages at once. Browser may block popups.',
+                btnCancel: 'Cancel',
+                btnConfirm: 'Continue',
+                toastOpening: 'Opening {count} pages...',
+                toastSearch: 'Searching {count} platforms...',
+                toastExported: 'Settings exported!',
+                toastImported: 'Settings imported!',
+                toastSaved: 'Settings saved!'
+            }
+        };
+
+        let currentLang = localStorage.getItem('lang') || 'vi';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            document.querySelectorAll('.lang-toggle-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            applyTranslations();
+        }
+
+        function applyTranslations() {
+            const t = TRANSLATIONS[currentLang];
+            Object.keys(t).forEach(key => {
+                const el = document.getElementById(key);
+                if (el && !key.includes('toast') && !key.includes('modal')) {
+                    el.textContent = t[key];
+                }
+            });
+        }
+
+        function t(key, replacements = {}) {
+            let text = TRANSLATIONS[currentLang][key] || key;
+            Object.keys(replacements).forEach(k => {
+                text = text.replace(`{${k}}`, replacements[k]);
+            });
+            return text;
+        }
+
+        // Scroll to Top
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Tab Scroll Indicator
+        const tabsEl = document.getElementById('tabsContainer');
+        const tabsWrapper = document.getElementById('tabsWrapper');
+
+        if (tabsEl && tabsWrapper) {
+            tabsEl.addEventListener('scroll', () => {
+                const isAtEnd = tabsEl.scrollLeft + tabsEl.clientWidth >= tabsEl.scrollWidth - 10;
+                tabsWrapper.classList.toggle('scrolled-end', isAtEnd);
+            });
+        }
+
+        // Batch Warning Modal
+        let pendingBatchSearch = null;
+
+        function showBatchWarning(count, callback) {
+            document.getElementById('tabCount').textContent = count;
+            document.getElementById('modalTitle').textContent = t('modalTitle');
+            document.getElementById('modalText').innerHTML = t('modalText', { count });
+            document.getElementById('btnCancel').textContent = t('btnCancel');
+            document.getElementById('btnConfirm').textContent = t('btnConfirm');
+            document.getElementById('batchModal').classList.add('show');
+            pendingBatchSearch = callback;
+        }
+
+        function closeBatchModal() {
+            document.getElementById('batchModal').classList.remove('show');
+            pendingBatchSearch = null;
+        }
+
+        function confirmBatchOpen() {
+            closeBatchModal();
+            if (pendingBatchSearch) {
+                pendingBatchSearch();
+            }
+        }
+
+        // Override search function to add batch warning
+        const originalSearch = search;
+        search = function () {
+            const selected = document.querySelectorAll(`#${currentTab}-tab .platform input:checked`);
+            if (selected.length > 10) {
+                showBatchWarning(selected.length, () => originalSearch());
+            } else {
+                originalSearch();
+            }
+        };
+
+        // Rebind search buttons with new search function
+        document.getElementById('videoSearchBtn').removeEventListener('click', originalSearch);
+        document.getElementById('imageSearchBtn').removeEventListener('click', originalSearch);
+        document.getElementById('ebookSearchBtn').removeEventListener('click', originalSearch);
+        document.getElementById('apkSearchBtn').removeEventListener('click', originalSearch);
+        document.getElementById('aiSearchBtn').removeEventListener('click', originalSearch);
+        document.getElementById('reverseSearchBtn').removeEventListener('click', originalSearch);
+        document.getElementById('discoverSearchBtn').removeEventListener('click', originalSearch);
+        document.getElementById('visionSearchBtn').removeEventListener('click', originalSearch);
+
+        document.getElementById('videoSearchBtn').addEventListener('click', search);
+        document.getElementById('imageSearchBtn').addEventListener('click', search);
+        document.getElementById('ebookSearchBtn').addEventListener('click', search);
+        document.getElementById('apkSearchBtn').addEventListener('click', search);
+        document.getElementById('aiSearchBtn').addEventListener('click', search);
+        document.getElementById('reverseSearchBtn').addEventListener('click', search);
+        document.getElementById('discoverSearchBtn').addEventListener('click', search);
+        document.getElementById('visionSearchBtn').addEventListener('click', search);
+
+        // Export/Import Settings
+        function exportSettings() {
+            const settings = {
+                favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
+                apiKey: localStorage.getItem('geminiApiKey') || '',
+                enableAI: localStorage.getItem('enableAI') !== 'false',
+                lang: currentLang,
+                history: JSON.parse(localStorage.getItem('searchHistory') || '[]')
+            };
+            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'media-search-settings.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            toast(t('toastExported'));
+        }
+
+        function importSettings() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = event => {
+                    try {
+                        const settings = JSON.parse(event.target.result);
+                        if (settings.favorites) localStorage.setItem('favorites', JSON.stringify(settings.favorites));
+                        if (settings.apiKey) localStorage.setItem('geminiApiKey', settings.apiKey);
+                        if (settings.enableAI !== undefined) localStorage.setItem('enableAI', settings.enableAI ? 'true' : 'false');
+                        if (settings.lang) setLanguage(settings.lang);
+                        if (settings.history) localStorage.setItem('searchHistory', JSON.stringify(settings.history));
+                        toast(t('toastImported'));
+                        location.reload();
+                    } catch (err) {
+                        toast('Import failed');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        // Favorites
+        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+
+        function toggleFavorite(platform) {
+            const idx = favorites.indexOf(platform);
+            if (idx > -1) {
+                favorites.splice(idx, 1);
+            } else {
+                favorites.push(platform);
+            }
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateFavoriteStars();
+        }
+
+        function updateFavoriteStars() {
+            document.querySelectorAll('.fav-star').forEach(star => {
+                const platform = star.dataset.platform;
+                star.classList.toggle('active', favorites.includes(platform));
+                star.textContent = favorites.includes(platform) ? '★' : '☆';
+            });
+        }
+
+        // Clear All function
+        function clearAll(tabId) {
+            const tab = document.getElementById(tabId + '-tab');
+            if (tab) {
+                tab.querySelectorAll('.platform input:checked').forEach(cb => cb.checked = false);
+                const input = tab.querySelector('.search-input');
+                if (input) input.value = '';
+                updateCount();
+            }
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply saved language
+            const savedLang = localStorage.getItem('lang');
+            if (savedLang) {
+                setLanguage(savedLang);
+            }
+        });
     </script>
 </body>
 
