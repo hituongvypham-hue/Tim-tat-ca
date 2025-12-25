@@ -1156,6 +1156,7 @@
             <button class="tab" data-tab="ai" draggable="true">🤖 AI</button>
             <button class="tab" data-tab="reverse" draggable="true">🔍 Reverse</button>
             <button class="tab" data-tab="discover" draggable="true">🌐 Discover</button>
+            <button class="tab" data-tab="vision" draggable="true">👁️ Vision</button>
         </div>
 
         <!-- VIDEO TAB -->
@@ -1845,6 +1846,88 @@
             </div>
         </div>
 
+        <!-- VISION TAB -->
+        <div class="tab-content" id="vision-tab">
+            <div class="section">
+                <div class="section-title">📸 Image Description <span class="badge hot">HOT</span></div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="chatgptvision"><span
+                            class="platform-label"><span class="platform-icon">💬</span>ChatGPT Vision</span></label>
+                    <label class="platform"><input type="checkbox" data-p="geminivision"><span
+                            class="platform-label"><span class="platform-icon">💎</span>Gemini Vision</span></label>
+                    <label class="platform"><input type="checkbox" data-p="claudevision"><span
+                            class="platform-label"><span class="platform-icon">🟠</span>Claude Vision</span></label>
+                    <label class="platform"><input type="checkbox" data-p="llava"><span class="platform-label"><span
+                                class="platform-icon">🦙</span>LLaVA (Free)</span></label>
+                    <label class="platform"><input type="checkbox" data-p="huggingfacecaption"><span
+                            class="platform-label"><span class="platform-icon">🤗</span>HuggingFace</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🎬 Video Storyboard - Global</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="storyboardhero"><span
+                            class="platform-label"><span class="platform-icon">🎬</span>StoryboardHero</span></label>
+                    <label class="platform"><input type="checkbox" data-p="adobefirefly"><span
+                            class="platform-label"><span class="platform-icon">🔥</span>Adobe Firefly</span></label>
+                    <label class="platform"><input type="checkbox" data-p="ltxstudio"><span class="platform-label"><span
+                                class="platform-icon">🎥</span>LTX Studio</span></label>
+                    <label class="platform"><input type="checkbox" data-p="boords"><span class="platform-label"><span
+                                class="platform-icon">📋</span>Boords</span></label>
+                    <label class="platform"><input type="checkbox" data-p="katalist"><span class="platform-label"><span
+                                class="platform-icon">🎯</span>Katalist AI</span></label>
+                    <label class="platform"><input type="checkbox" data-p="higgsfield"><span
+                            class="platform-label"><span class="platform-icon">🍿</span>Higgsfield</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇨🇳 China Vision AI</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="qwenvl"><span class="platform-label"><span
+                                class="platform-icon">☁️</span>通义千问VL</span></label>
+                    <label class="platform"><input type="checkbox" data-p="glm4v"><span class="platform-label"><span
+                                class="platform-icon">🎯</span>智谱GLM-4V</span></label>
+                    <label class="platform"><input type="checkbox" data-p="doubaovision"><span
+                            class="platform-label"><span class="platform-icon">🎁</span>豆包Vision</span></label>
+                    <label class="platform"><input type="checkbox" data-p="deepseekv"><span class="platform-label"><span
+                                class="platform-icon">🔬</span>DeepSeek-VL</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🎞️ China Storyboard</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="kemengai"><span class="platform-label"><span
+                                class="platform-icon">🎭</span>可梦AI</span></label>
+                    <label class="platform"><input type="checkbox" data-p="senseseko"><span class="platform-label"><span
+                                class="platform-icon">🤖</span>Seko 2.0</span></label>
+                    <label class="platform"><input type="checkbox" data-p="yiyuanai"><span class="platform-label"><span
+                                class="platform-icon">📹</span>易元AI</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📝 Video Caption</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="submagic"><span class="platform-label"><span
+                                class="platform-icon">✨</span>Submagic</span></label>
+                    <label class="platform"><input type="checkbox" data-p="captionsai"><span
+                            class="platform-label"><span class="platform-icon">💬</span>Captions.ai</span></label>
+                    <label class="platform"><input type="checkbox" data-p="veedio"><span class="platform-label"><span
+                                class="platform-icon">🎬</span>VEED.io</span></label>
+                    <label class="platform"><input type="checkbox" data-p="vmakerai"><span class="platform-label"><span
+                                class="platform-icon">🆓</span>Vmaker (Free)</span></label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn-search" id="visionSearchBtn">Open<span class="count"
+                        id="visionCount">0</span></button>
+                <button class="btn-select" onclick="toggleAll('vision')">Toggle</button>
+            </div>
+        </div>
         <!-- History -->
         <div class="section" style="margin-top: 2rem;">
             <div class="section-title">Recent</div>
@@ -2123,7 +2206,35 @@
             yandexru: 'https://yandex.ru',
             dzen: 'https://dzen.ru',
             vk: 'https://vk.com',
-            '2gis': 'https://2gis.ru'
+            '2gis': 'https://2gis.ru',
+
+            // Vision - Image Description
+            chatgptvision: 'https://chat.openai.com',
+            geminivision: 'https://gemini.google.com',
+            claudevision: 'https://claude.ai',
+            llava: 'https://llava-vl.github.io',
+            huggingfacecaption: 'https://huggingface.co/spaces/Salesforce/BLIP',
+            // Vision - Video Storyboard Global
+            storyboardhero: 'https://storyboardhero.ai',
+            adobefirefly: 'https://firefly.adobe.com',
+            ltxstudio: 'https://ltx.studio',
+            boords: 'https://boords.com',
+            katalist: 'https://katalist.ai',
+            higgsfield: 'https://higgsfield.ai',
+            // Vision - China
+            qwenvl: 'https://tongyi.aliyun.com',
+            glm4v: 'https://chatglm.cn',
+            doubaovision: 'https://www.doubao.com',
+            deepseekv: 'https://chat.deepseek.com',
+            // Vision - China Storyboard
+            kemengai: 'https://www.kemeng.com',
+            senseseko: 'https://www.sensetime.com/seko',
+            yiyuanai: 'https://yiyuanai.com',
+            // Vision - Video Caption
+            submagic: 'https://www.submagic.co',
+            captionsai: 'https://www.captions.ai',
+            veedio: 'https://www.veed.io',
+            vmakerai: 'https://www.vmaker.com'
         };
 
         // REVERSE IMAGE SEARCH URLS - Direct upload pages
@@ -3323,6 +3434,7 @@ Trả về JSON (chỉ JSON, không text khác):
             document.getElementById('aiCount').textContent = document.querySelectorAll('#ai-tab .platform input:checked').length;
             document.getElementById('reverseCount').textContent = document.querySelectorAll('#reverse-tab .platform input:checked').length;
             document.getElementById('discoverCount').textContent = document.querySelectorAll('#discover-tab .platform input:checked').length;
+            document.getElementById('visionCount').textContent = document.querySelectorAll('#vision-tab .platform input:checked').length;
         }
 
         document.querySelectorAll('.platform input').forEach(cb => cb.addEventListener('change', updateCount));
@@ -3388,6 +3500,7 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('aiSearchBtn').addEventListener('click', search);
         document.getElementById('reverseSearchBtn').addEventListener('click', search);
         document.getElementById('discoverSearchBtn').addEventListener('click', search);
+        document.getElementById('visionSearchBtn').addEventListener('click', search);
         document.getElementById('videoInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('imageInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('ebookInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
@@ -3892,7 +4005,35 @@ Trả về JSON (chỉ JSON, không text khác):
             yandexru: 'yandex.ru',
             dzen: 'dzen.ru',
             vk: 'vk.com',
-            '2gis': '2gis.ru'
+            '2gis': '2gis.ru',
+
+            // Vision - Image Description
+            chatgptvision: 'openai.com',
+            geminivision: 'gemini.google.com',
+            claudevision: 'claude.ai',
+            llava: 'llava-vl.github.io',
+            huggingfacecaption: 'huggingface.co',
+            // Vision - Video Storyboard Global
+            storyboardhero: 'storyboardhero.ai',
+            adobefirefly: 'firefly.adobe.com',
+            ltxstudio: 'ltx.studio',
+            boords: 'boords.com',
+            katalist: 'katalist.ai',
+            higgsfield: 'higgsfield.ai',
+            // Vision - China
+            qwenvl: 'tongyi.aliyun.com',
+            glm4v: 'chatglm.cn',
+            doubaovision: 'doubao.com',
+            deepseekv: 'deepseek.com',
+            // Vision - China Storyboard
+            kemengai: 'kemeng.com',
+            senseseko: 'sensetime.com',
+            yiyuanai: 'yiyuanai.com',
+            // Vision - Video Caption
+            submagic: 'submagic.co',
+            captionsai: 'captions.ai',
+            veedio: 'veed.io',
+            vmakerai: 'vmaker.com'
         };
 
         function replaceFavicons() {
