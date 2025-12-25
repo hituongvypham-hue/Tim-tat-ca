@@ -1375,6 +1375,223 @@
             align-items: center;
             gap: 0.5rem;
         }
+
+        /* ========== DRAG-DROP PLATFORMS ========== */
+        .platform[draggable="true"] {
+            cursor: grab;
+        }
+
+        .platform.dragging {
+            opacity: 0.4;
+            cursor: grabbing;
+        }
+
+        .platform.drag-over .platform-label {
+            border-color: var(--google-blue);
+            border-style: dashed;
+            background: #e8f0fe;
+        }
+
+        .drag-handle {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: grab;
+            opacity: 0;
+            transition: opacity 0.2s;
+            margin-right: 0.25rem;
+        }
+
+        .platform:hover .drag-handle {
+            opacity: 0.6;
+        }
+
+        /* ========== ADD CUSTOM SITE ========== */
+        .add-custom-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 0.875rem;
+            background: transparent;
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .add-custom-btn:hover {
+            border-color: var(--google-blue);
+            color: var(--google-blue);
+            background: #e8f0fe;
+        }
+
+        .custom-site-badge {
+            background: var(--google-green);
+            color: white;
+            font-size: 0.5rem;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            margin-left: 0.25rem;
+        }
+
+        .platform.custom .platform-label {
+            border-style: dashed;
+        }
+
+        .delete-custom {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--google-red);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 0.65rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .platform.custom:hover .delete-custom {
+            opacity: 1;
+        }
+
+        /* Custom Site Modal */
+        .add-site-modal .modal-box {
+            max-width: 400px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            color: var(--text);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--google-blue);
+        }
+
+        .form-group .hint {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .icon-picker {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .icon-option {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--card);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .icon-option:hover,
+        .icon-option.selected {
+            border-color: var(--google-blue);
+            background: #e8f0fe;
+        }
+
+        /* ========== CLOUD SYNC ========== */
+        .sync-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .sync-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .sync-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .sync-input {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: monospace;
+        }
+
+        .sync-btn {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            background: var(--card);
+            border-radius: 6px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .sync-btn:hover {
+            border-color: var(--google-blue);
+            color: var(--google-blue);
+        }
+
+        .sync-btn.primary {
+            background: var(--google-blue);
+            color: white;
+            border-color: var(--google-blue);
+        }
+
+        .sync-status {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+        }
+
+        .sync-status.success {
+            color: var(--google-green);
+        }
+
+        .sync-status.error {
+            color: var(--google-red);
+        }
     </style>
 </head>
 
@@ -1411,6 +1628,20 @@
             <div class="export-import-btns">
                 <button class="btn-export" onclick="exportSettings()" id="btnExport">📤 Export</button>
                 <button class="btn-import" onclick="importSettings()" id="btnImport">📥 Import</button>
+            </div>
+
+            <!-- Cloud Sync Section -->
+            <div class="sync-section">
+                <div class="sync-title">☁️ <span id="lblCloudSync">Cloud Sync</span></div>
+                <div class="sync-input-group">
+                    <input type="text" class="sync-input" id="syncBinId" placeholder="Bin ID (để trống để tạo mới)">
+                    <button class="sync-btn" onclick="createNewBin()" id="btnCreateBin">Tạo mới</button>
+                </div>
+                <div class="sync-input-group">
+                    <button class="sync-btn primary" onclick="syncToCloud()" id="btnSyncUp">⬆️ Sync lên</button>
+                    <button class="sync-btn" onclick="syncFromCloud()" id="btnSyncDown">⬇️ Sync xuống</button>
+                </div>
+                <div class="sync-status" id="syncStatus"></div>
             </div>
         </div>
 
@@ -2217,6 +2448,47 @@
                 <button class="modal-btn cancel" onclick="closeBatchModal()" id="btnCancel">Hủy</button>
                 <button class="modal-btn confirm" onclick="confirmBatchOpen()" id="btnConfirm">Tiếp tục</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Add Custom Site Modal -->
+    <div class="modal-overlay add-site-modal" id="addSiteModal">
+        <div class="modal-box">
+            <div class="modal-icon">➕</div>
+            <div class="modal-title" id="addSiteTitle">Thêm trang web</div>
+            <form id="addSiteForm" onsubmit="return submitCustomSite(event)">
+                <div class="form-group">
+                    <label>Tên hiển thị *</label>
+                    <input type="text" id="customSiteName" placeholder="Ví dụ: My Site" required>
+                </div>
+                <div class="form-group">
+                    <label>URL trang chủ *</label>
+                    <input type="url" id="customSiteUrl" placeholder="https://example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>URL tìm kiếm (tuỳ chọn)</label>
+                    <input type="text" id="customSiteSearch" placeholder="https://example.com/search?q={query}">
+                    <div class="hint">Dùng {query} làm placeholder cho từ khoá</div>
+                </div>
+                <div class="form-group">
+                    <label>Icon</label>
+                    <div class="icon-picker" id="iconPicker">
+                        <button type="button" class="icon-option selected" data-icon="🌐">🌐</button>
+                        <button type="button" class="icon-option" data-icon="🔗">🔗</button>
+                        <button type="button" class="icon-option" data-icon="⭐">⭐</button>
+                        <button type="button" class="icon-option" data-icon="📌">📌</button>
+                        <button type="button" class="icon-option" data-icon="🎯">🎯</button>
+                        <button type="button" class="icon-option" data-icon="💡">💡</button>
+                        <button type="button" class="icon-option" data-icon="🔥">🔥</button>
+                        <button type="button" class="icon-option" data-icon="💎">💎</button>
+                    </div>
+                </div>
+                <input type="hidden" id="customSiteTab" value="">
+                <div class="modal-btns">
+                    <button type="button" class="modal-btn cancel" onclick="closeAddSiteModal()">Hủy</button>
+                    <button type="submit" class="modal-btn confirm">Thêm</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -4579,6 +4851,451 @@ Trả về JSON (chỉ JSON, không text khác):
                 setLanguage(savedLang);
             }
         });
+
+        // ========== DRAG-DROP PLATFORMS ==========
+        let draggedPlatform = null;
+
+        function initPlatformDragDrop() {
+            document.querySelectorAll('.platforms').forEach(container => {
+                container.querySelectorAll('.platform').forEach(platform => {
+                    platform.setAttribute('draggable', 'true');
+
+                    platform.addEventListener('dragstart', e => {
+                        draggedPlatform = platform;
+                        platform.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
+                    });
+
+                    platform.addEventListener('dragend', () => {
+                        platform.classList.remove('dragging');
+                        document.querySelectorAll('.platform.drag-over').forEach(p => p.classList.remove('drag-over'));
+                        draggedPlatform = null;
+                        savePlatformOrder();
+                    });
+
+                    platform.addEventListener('dragover', e => {
+                        e.preventDefault();
+                        if (draggedPlatform && draggedPlatform !== platform) {
+                            platform.classList.add('drag-over');
+                        }
+                    });
+
+                    platform.addEventListener('dragleave', () => {
+                        platform.classList.remove('drag-over');
+                    });
+
+                    platform.addEventListener('drop', e => {
+                        e.preventDefault();
+                        platform.classList.remove('drag-over');
+                        if (draggedPlatform && draggedPlatform !== platform) {
+                            const container = platform.closest('.platforms');
+                            const allPlatforms = [...container.querySelectorAll('.platform')];
+                            const draggedIdx = allPlatforms.indexOf(draggedPlatform);
+                            const targetIdx = allPlatforms.indexOf(platform);
+
+                            if (draggedIdx < targetIdx) {
+                                platform.after(draggedPlatform);
+                            } else {
+                                platform.before(draggedPlatform);
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        function savePlatformOrder() {
+            const order = {};
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                const tabId = tab.id;
+                order[tabId] = [];
+                tab.querySelectorAll('.platforms').forEach((container, sectionIdx) => {
+                    order[tabId][sectionIdx] = [];
+                    container.querySelectorAll('.platform input[data-p]').forEach(input => {
+                        order[tabId][sectionIdx].push(input.dataset.p);
+                    });
+                });
+            });
+            localStorage.setItem('platformOrder', JSON.stringify(order));
+        }
+
+        function loadPlatformOrder() {
+            const saved = localStorage.getItem('platformOrder');
+            if (!saved) return;
+
+            try {
+                const order = JSON.parse(saved);
+                Object.keys(order).forEach(tabId => {
+                    const tab = document.getElementById(tabId);
+                    if (!tab) return;
+
+                    const containers = tab.querySelectorAll('.platforms');
+                    order[tabId].forEach((platformKeys, sectionIdx) => {
+                        const container = containers[sectionIdx];
+                        if (!container) return;
+
+                        platformKeys.forEach(key => {
+                            const platform = container.querySelector(`input[data-p="${key}"]`)?.closest('.platform');
+                            if (platform) {
+                                container.appendChild(platform);
+                            }
+                        });
+                    });
+                });
+            } catch (e) {
+                console.error('Error loading platform order:', e);
+            }
+        }
+
+        // ========== CUSTOM SITES ==========
+        let customSites = JSON.parse(localStorage.getItem('customSites') || '{}');
+
+        function openAddSiteModal(tabId) {
+            document.getElementById('customSiteTab').value = tabId;
+            document.getElementById('customSiteName').value = '';
+            document.getElementById('customSiteUrl').value = '';
+            document.getElementById('customSiteSearch').value = '';
+            document.querySelectorAll('#iconPicker .icon-option').forEach((btn, i) => {
+                btn.classList.toggle('selected', i === 0);
+            });
+            document.getElementById('addSiteModal').classList.add('show');
+        }
+
+        function closeAddSiteModal() {
+            document.getElementById('addSiteModal').classList.remove('show');
+        }
+
+        function submitCustomSite(e) {
+            e.preventDefault();
+
+            const tabId = document.getElementById('customSiteTab').value;
+            const name = document.getElementById('customSiteName').value.trim();
+            const url = document.getElementById('customSiteUrl').value.trim();
+            const searchUrl = document.getElementById('customSiteSearch').value.trim();
+            const icon = document.querySelector('#iconPicker .icon-option.selected')?.dataset.icon || '🌐';
+
+            if (!name || !url) return;
+
+            // Generate unique key
+            const key = 'custom_' + Date.now();
+
+            // Save to customSites
+            if (!customSites[tabId]) customSites[tabId] = [];
+            customSites[tabId].push({ key, name, url, searchUrl, icon });
+            localStorage.setItem('customSites', JSON.stringify(customSites));
+
+            // Add to DOM
+            addCustomSiteToDOM(tabId, { key, name, url, searchUrl, icon });
+
+            closeAddSiteModal();
+            toast('Đã thêm ' + name);
+            updateCount();
+        }
+
+        function addCustomSiteToDOM(tabId, site) {
+            const tab = document.getElementById(tabId);
+            if (!tab) return;
+
+            // Find the last platforms container or create one
+            let container = tab.querySelector('.platforms');
+            if (!container) return;
+
+            // Find or create add-custom button
+            let addBtn = container.querySelector('.add-custom-btn');
+
+            const platform = document.createElement('label');
+            platform.className = 'platform custom';
+            platform.draggable = true;
+            platform.innerHTML = `
+                <input type="checkbox" data-p="${site.key}">
+                <span class="platform-label">
+                    <span class="platform-icon">${site.icon}</span>${site.name}
+                </span>
+                <button class="delete-custom" onclick="deleteCustomSite('${tabId}', '${site.key}', event)">×</button>
+            `;
+
+            // Add HOMEPAGE_URLS entry
+            if (site.url) {
+                HOMEPAGE_URLS[site.key] = site.url;
+            }
+
+            // Add search URL if provided
+            if (site.searchUrl) {
+                // Add to appropriate URL object based on tab
+                const urlObj = tabId === 'video-tab' ? VIDEO_URLS :
+                    tabId === 'image-tab' ? IMAGE_URLS :
+                        tabId === 'ebook-tab' ? EBOOK_URLS :
+                            tabId === 'apk-tab' ? APK_URLS : null;
+                if (urlObj) {
+                    urlObj[site.key] = q => site.searchUrl.replace('{query}', encodeURIComponent(q));
+                }
+            }
+
+            if (addBtn) {
+                addBtn.before(platform);
+            } else {
+                container.appendChild(platform);
+            }
+
+            // Reinit drag for new element
+            initSinglePlatformDrag(platform);
+
+            // Add change listener
+            platform.querySelector('input').addEventListener('change', updateCount);
+        }
+
+        function initSinglePlatformDrag(platform) {
+            platform.setAttribute('draggable', 'true');
+
+            platform.addEventListener('dragstart', e => {
+                draggedPlatform = platform;
+                platform.classList.add('dragging');
+            });
+
+            platform.addEventListener('dragend', () => {
+                platform.classList.remove('dragging');
+                draggedPlatform = null;
+                savePlatformOrder();
+            });
+
+            platform.addEventListener('dragover', e => {
+                e.preventDefault();
+                if (draggedPlatform && draggedPlatform !== platform) {
+                    platform.classList.add('drag-over');
+                }
+            });
+
+            platform.addEventListener('dragleave', () => {
+                platform.classList.remove('drag-over');
+            });
+
+            platform.addEventListener('drop', e => {
+                e.preventDefault();
+                platform.classList.remove('drag-over');
+                if (draggedPlatform && draggedPlatform !== platform) {
+                    const container = platform.closest('.platforms');
+                    platform.before(draggedPlatform);
+                }
+            });
+        }
+
+        function deleteCustomSite(tabId, key, e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (!confirm('Xóa trang web này?')) return;
+
+            // Remove from customSites
+            if (customSites[tabId]) {
+                customSites[tabId] = customSites[tabId].filter(s => s.key !== key);
+                localStorage.setItem('customSites', JSON.stringify(customSites));
+            }
+
+            // Remove from DOM
+            const platform = document.querySelector(`input[data-p="${key}"]`)?.closest('.platform');
+            if (platform) platform.remove();
+
+            toast('Đã xóa');
+            updateCount();
+        }
+
+        function loadCustomSites() {
+            Object.keys(customSites).forEach(tabId => {
+                customSites[tabId].forEach(site => {
+                    addCustomSiteToDOM(tabId, site);
+                });
+            });
+        }
+
+        function addCustomButtonsToAllTabs() {
+            const tabs = ['video-tab', 'image-tab', 'ebook-tab', 'apk-tab', 'ai-tab', 'reverse-tab', 'discover-tab', 'vision-tab'];
+            tabs.forEach(tabId => {
+                const tab = document.getElementById(tabId);
+                if (!tab) return;
+
+                const containers = tab.querySelectorAll('.platforms');
+                containers.forEach(container => {
+                    // Check if add button already exists
+                    if (container.querySelector('.add-custom-btn')) return;
+
+                    const addBtn = document.createElement('button');
+                    addBtn.className = 'add-custom-btn';
+                    addBtn.innerHTML = '➕ Thêm';
+                    addBtn.onclick = () => openAddSiteModal(tabId);
+                    container.appendChild(addBtn);
+                });
+            });
+        }
+
+        // Icon picker
+        document.querySelectorAll('#iconPicker .icon-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#iconPicker .icon-option').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+            });
+        });
+
+        // ========== CLOUD SYNC (JSONbin.io) ==========
+        const JSONBIN_API = 'https://api.jsonbin.io/v3';
+        const JSONBIN_MASTER_KEY = '$2a$10$YOUR_API_KEY_HERE'; // Users should get their own free key
+
+        function getSyncData() {
+            return {
+                customSites,
+                platformOrder: JSON.parse(localStorage.getItem('platformOrder') || '{}'),
+                favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
+                history: JSON.parse(localStorage.getItem('searchHistory') || '[]'),
+                settings: {
+                    apiKey: localStorage.getItem('geminiApiKey') || '',
+                    enableAI: localStorage.getItem('enableAI') !== 'false',
+                    lang: currentLang
+                },
+                lastSync: new Date().toISOString()
+            };
+        }
+
+        function applySyncData(data) {
+            if (data.customSites) {
+                customSites = data.customSites;
+                localStorage.setItem('customSites', JSON.stringify(customSites));
+            }
+            if (data.platformOrder) {
+                localStorage.setItem('platformOrder', JSON.stringify(data.platformOrder));
+            }
+            if (data.favorites) {
+                localStorage.setItem('favorites', JSON.stringify(data.favorites));
+            }
+            if (data.history) {
+                localStorage.setItem('searchHistory', JSON.stringify(data.history));
+            }
+            if (data.settings) {
+                if (data.settings.apiKey) localStorage.setItem('geminiApiKey', data.settings.apiKey);
+                if (data.settings.enableAI !== undefined) localStorage.setItem('enableAI', data.settings.enableAI ? 'true' : 'false');
+                if (data.settings.lang) localStorage.setItem('lang', data.settings.lang);
+            }
+        }
+
+        async function createNewBin() {
+            const statusEl = document.getElementById('syncStatus');
+            statusEl.textContent = 'Đang tạo...';
+            statusEl.className = 'sync-status';
+
+            try {
+                const data = getSyncData();
+                const res = await fetch(JSONBIN_API + '/b', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_MASTER_KEY,
+                        'X-Bin-Private': 'false'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!res.ok) throw new Error('API error');
+
+                const result = await res.json();
+                const binId = result.metadata.id;
+
+                document.getElementById('syncBinId').value = binId;
+                localStorage.setItem('syncBinId', binId);
+
+                statusEl.textContent = '✓ Đã tạo! Lưu Bin ID này để đồng bộ.';
+                statusEl.className = 'sync-status success';
+                toast('Đã tạo Cloud Bin: ' + binId);
+            } catch (e) {
+                statusEl.textContent = '✗ Lỗi: ' + e.message;
+                statusEl.className = 'sync-status error';
+            }
+        }
+
+        async function syncToCloud() {
+            const binId = document.getElementById('syncBinId').value.trim() || localStorage.getItem('syncBinId');
+            const statusEl = document.getElementById('syncStatus');
+
+            if (!binId) {
+                statusEl.textContent = 'Vui lòng nhập Bin ID hoặc tạo mới';
+                statusEl.className = 'sync-status error';
+                return;
+            }
+
+            statusEl.textContent = 'Đang sync lên...';
+            statusEl.className = 'sync-status';
+
+            try {
+                const data = getSyncData();
+                const res = await fetch(JSONBIN_API + '/b/' + binId, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_MASTER_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!res.ok) throw new Error('API error');
+
+                localStorage.setItem('syncBinId', binId);
+                statusEl.textContent = '✓ Đã sync lên cloud!';
+                statusEl.className = 'sync-status success';
+                toast('Đã sync lên cloud!');
+            } catch (e) {
+                statusEl.textContent = '✗ Lỗi: ' + e.message;
+                statusEl.className = 'sync-status error';
+            }
+        }
+
+        async function syncFromCloud() {
+            const binId = document.getElementById('syncBinId').value.trim() || localStorage.getItem('syncBinId');
+            const statusEl = document.getElementById('syncStatus');
+
+            if (!binId) {
+                statusEl.textContent = 'Vui lòng nhập Bin ID';
+                statusEl.className = 'sync-status error';
+                return;
+            }
+
+            statusEl.textContent = 'Đang tải xuống...';
+            statusEl.className = 'sync-status';
+
+            try {
+                const res = await fetch(JSONBIN_API + '/b/' + binId + '/latest', {
+                    headers: {
+                        'X-Master-Key': JSONBIN_MASTER_KEY
+                    }
+                });
+
+                if (!res.ok) throw new Error('API error');
+
+                const result = await res.json();
+                applySyncData(result.record);
+
+                localStorage.setItem('syncBinId', binId);
+                statusEl.textContent = '✓ Đã sync xuống! Đang reload...';
+                statusEl.className = 'sync-status success';
+                toast('Đã sync xuống!');
+
+                setTimeout(() => location.reload(), 1500);
+            } catch (e) {
+                statusEl.textContent = '✗ Lỗi: ' + e.message;
+                statusEl.className = 'sync-status error';
+            }
+        }
+
+        // Init on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load saved bin ID
+            const savedBinId = localStorage.getItem('syncBinId');
+            if (savedBinId) {
+                document.getElementById('syncBinId').value = savedBinId;
+            }
+        });
+
+        // Initialize all features
+        loadPlatformOrder();
+        loadCustomSites();
+        addCustomButtonsToAllTabs();
+        initPlatformDragDrop();
     </script>
 </body>
 
