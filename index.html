@@ -1155,6 +1155,7 @@
             <button class="tab" data-tab="apk" draggable="true">📱 APK</button>
             <button class="tab" data-tab="ai" draggable="true">🤖 AI</button>
             <button class="tab" data-tab="reverse" draggable="true">🔍 Reverse</button>
+            <button class="tab" data-tab="discover" draggable="true">🌐 Discover</button>
         </div>
 
         <!-- VIDEO TAB -->
@@ -1735,6 +1736,93 @@
             </div>
         </div>
 
+        <!-- DISCOVER TAB -->
+        <div class="tab-content" id="discover-tab">
+            <div class="section">
+                <div class="section-title">🚀 Product Discovery <span class="badge hot">HOT</span></div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="producthunt"><span
+                            class="platform-label"><span class="platform-icon">🚀</span>Product Hunt</span></label>
+                    <label class="platform"><input type="checkbox" data-p="betalist"><span class="platform-label"><span
+                                class="platform-icon">📋</span>BetaList</span></label>
+                    <label class="platform"><input type="checkbox" data-p="indiehackers"><span
+                            class="platform-label"><span class="platform-icon">💻</span>Indie Hackers</span></label>
+                    <label class="platform"><input type="checkbox" data-p="alternativeto"><span
+                            class="platform-label"><span class="platform-icon">🔄</span>AlternativeTo</span></label>
+                    <label class="platform"><input type="checkbox" data-p="saashub"><span class="platform-label"><span
+                                class="platform-icon">📦</span>SaaSHub</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🤖 AI Tool Directories</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="futurepedia"><span
+                            class="platform-label"><span class="platform-icon">🔮</span>Futurepedia</span></label>
+                    <label class="platform"><input type="checkbox" data-p="toolify"><span class="platform-label"><span
+                                class="platform-icon">🛠️</span>Toolify.ai</span></label>
+                    <label class="platform"><input type="checkbox" data-p="theresanai"><span
+                            class="platform-label"><span class="platform-icon">✨</span>There's An AI</span></label>
+                    <label class="platform"><input type="checkbox" data-p="aitoolhunt"><span
+                            class="platform-label"><span class="platform-icon">🎯</span>AI Tool Hunt</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🎨 Design Inspiration</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="awwwards"><span class="platform-label"><span
+                                class="platform-icon">🏆</span>Awwwards</span></label>
+                    <label class="platform"><input type="checkbox" data-p="cssawards"><span class="platform-label"><span
+                                class="platform-icon">🎨</span>CSS Awards</span></label>
+                    <label class="platform"><input type="checkbox" data-p="siteinspire"><span
+                            class="platform-label"><span class="platform-icon">💡</span>SiteInspire</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇨🇳 China Navigation</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="hao123"><span class="platform-label"><span
+                                class="platform-icon">🏠</span>hao123</span></label>
+                    <label class="platform"><input type="checkbox" data-p="360nav"><span class="platform-label"><span
+                                class="platform-icon">🌐</span>360导航</span></label>
+                    <label class="platform"><input type="checkbox" data-p="2345nav"><span class="platform-label"><span
+                                class="platform-icon">📱</span>2345导航</span></label>
+                    <label class="platform"><input type="checkbox" data-p="360ai"><span class="platform-label"><span
+                                class="platform-icon">🤖</span>360AI导航</span></label>
+                    <label class="platform"><input type="checkbox" data-p="aigcnav"><span class="platform-label"><span
+                                class="platform-icon">🔧</span>AIGC导航</span></label>
+                    <label class="platform"><input type="checkbox" data-p="uisdc"><span class="platform-label"><span
+                                class="platform-icon">🎨</span>优设导航</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇷🇺 Russia</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="yandexru"><span class="platform-label"><span
+                                class="platform-icon">🔴</span>Yandex</span></label>
+                    <label class="platform"><input type="checkbox" data-p="dzen"><span class="platform-label"><span
+                                class="platform-icon">📰</span>Dzen</span></label>
+                    <label class="platform"><input type="checkbox" data-p="vk"><span class="platform-label"><span
+                                class="platform-icon">💬</span>VK</span></label>
+                    <label class="platform"><input type="checkbox" data-p="mailru"><span class="platform-label"><span
+                                class="platform-icon">📧</span>Mail.ru</span></label>
+                    <label class="platform"><input type="checkbox" data-p="2gis"><span class="platform-label"><span
+                                class="platform-icon">🗺️</span>2GIS</span></label>
+                    <label class="platform"><input type="checkbox" data-p="avito"><span class="platform-label"><span
+                                class="platform-icon">🛒</span>Avito</span></label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn-search" id="discoverSearchBtn">Open<span class="count"
+                        id="discoverCount">0</span></button>
+                <button class="btn-select" onclick="toggleAll('discover')">Toggle</button>
+            </div>
+        </div>
+
         <!-- History -->
         <div class="section" style="margin-top: 2rem;">
             <div class="section-title">Recent</div>
@@ -1976,7 +2064,35 @@
             midjourney: 'https://www.midjourney.com',
             dalle: 'https://openai.com/dall-e-3',
             ideogram: 'https://ideogram.ai',
-            leonardo: 'https://leonardo.ai'
+            leonardo: 'https://leonardo.ai',
+
+            // Discover - Global
+            producthunt: 'https://www.producthunt.com',
+            betalist: 'https://betalist.com',
+            indiehackers: 'https://www.indiehackers.com',
+            alternativeto: 'https://alternativeto.net',
+            saashub: 'https://www.saashub.com',
+            futurepedia: 'https://www.futurepedia.io',
+            toolify: 'https://www.toolify.ai',
+            theresanai: 'https://theresanaiforthat.com',
+            aitoolhunt: 'https://www.aitoolhunt.com',
+            awwwards: 'https://www.awwwards.com',
+            cssawards: 'https://www.cssdesignawards.com',
+            siteinspire: 'https://www.siteinspire.com',
+            // Discover - China
+            hao123: 'https://www.hao123.com',
+            '360nav': 'https://hao.360.com',
+            '2345nav': 'https://www.2345.com',
+            '360ai': 'https://ai.360.com',
+            aigcnav: 'https://www.aigc.cn',
+            uisdc: 'https://hao.uisdc.com',
+            // Discover - Russia
+            yandexru: 'https://yandex.ru',
+            dzen: 'https://dzen.ru',
+            vk: 'https://vk.com',
+            mailru: 'https://mail.ru',
+            '2gis': 'https://2gis.ru',
+            avito: 'https://www.avito.ru'
         };
 
         // REVERSE IMAGE SEARCH URLS - Direct upload pages
@@ -3175,6 +3291,7 @@ Trả về JSON (chỉ JSON, không text khác):
             document.getElementById('apkCount').textContent = document.querySelectorAll('#apk-tab .platform input:checked').length;
             document.getElementById('aiCount').textContent = document.querySelectorAll('#ai-tab .platform input:checked').length;
             document.getElementById('reverseCount').textContent = document.querySelectorAll('#reverse-tab .platform input:checked').length;
+            document.getElementById('discoverCount').textContent = document.querySelectorAll('#discover-tab .platform input:checked').length;
         }
 
         document.querySelectorAll('.platform input').forEach(cb => cb.addEventListener('change', updateCount));
@@ -3239,6 +3356,7 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('apkSearchBtn').addEventListener('click', search);
         document.getElementById('aiSearchBtn').addEventListener('click', search);
         document.getElementById('reverseSearchBtn').addEventListener('click', search);
+        document.getElementById('discoverSearchBtn').addEventListener('click', search);
         document.getElementById('videoInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('imageInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('ebookInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
@@ -3707,7 +3825,34 @@ Trả về JSON (chỉ JSON, không text khác):
             baidureverse: 'baidu.com',
             sogouimage: 'sogou.com',
             '360reverse': 'so.com',
-            taobaoimage: 'taobao.com'
+            taobaoimage: 'taobao.com',
+            // Discover - Global
+            producthunt: 'producthunt.com',
+            betalist: 'betalist.com',
+            indiehackers: 'indiehackers.com',
+            alternativeto: 'alternativeto.net',
+            saashub: 'saashub.com',
+            futurepedia: 'futurepedia.io',
+            toolify: 'toolify.ai',
+            theresanai: 'theresanaiforthat.com',
+            aitoolhunt: 'aitoolhunt.com',
+            awwwards: 'awwwards.com',
+            cssawards: 'cssdesignawards.com',
+            siteinspire: 'siteinspire.com',
+            // Discover - China
+            hao123: 'hao123.com',
+            '360nav': '360.com',
+            '2345nav': '2345.com',
+            '360ai': '360.com',
+            aigcnav: 'aigc.cn',
+            uisdc: 'uisdc.com',
+            // Discover - Russia
+            yandexru: 'yandex.ru',
+            dzen: 'dzen.ru',
+            vk: 'vk.com',
+            mailru: 'mail.ru',
+            '2gis': '2gis.ru',
+            avito: 'avito.ru'
         };
 
         function replaceFavicons() {
