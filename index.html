@@ -6263,9 +6263,9 @@ Trả về JSON (chỉ JSON, không text khác):
                     const suggestion = await callGeminiForSuggestion(subject, geminiApiKey);
                     if (suggestion) {
                         applyAISuggestion(suggestion);
-                        showToast('✨ AI đã gợi ý các tùy chọn!');
                         btn.disabled = false;
-                        btn.textContent = '🤖 AI';
+                        btn.textContent = '🔄 Khác';
+                        btn.title = 'Thử hướng sáng tạo khác';
                         return;
                     }
                 } catch (e) {
@@ -6318,18 +6318,47 @@ Trả về JSON (chỉ JSON, không text khác):
             if (suggestion.composition) setSelectByValue('pbComposition', suggestion.composition);
             if (suggestion.aspectRatio) setSelectByValue('pbAspectRatio', suggestion.aspectRatio);
             updateFinalPrompt();
+
+            // Show direction info
+            if (suggestion.direction) {
+                showToast(`🎨 Hướng: ${suggestion.direction}`);
+            }
         }
 
         async function callGeminiForSuggestion(subject, apiKey) {
-            const prompt = `Analyze this image subject and suggest optimal settings. Subject: "${subject}"
-Return JSON only, no explanation:
+            // Random creative directions for variety
+            const directions = [
+                "cinematic movie poster style",
+                "fine art museum painting",
+                "dramatic editorial photography",
+                "dreamy ethereal fantasy",
+                "gritty realistic documentary",
+                "vintage retro aesthetic",
+                "futuristic sci-fi concept",
+                "dark moody atmospheric",
+                "bright cheerful commercial",
+                "artistic abstract interpretation"
+            ];
+            const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+
+            const prompt = `You are a creative director for image generation. 
+Subject: "${subject}"
+Creative direction: ${randomDirection}
+
+Imagine ONE complete, cohesive vision for this image. Think deeply about:
+- What story does this image tell?
+- What emotions should it evoke?
+- What makes this composition compelling?
+
+Return ONLY valid JSON, no explanation:
 {
-  "details": "additional details like clothing, expression, features",
-  "setting": "environment/background description",
-  "style": "one of: digital art, oil painting, watercolor, anime style, cyberpunk style, fantasy art, photorealistic, 8K UHD, ultra-detailed, DSLR quality, shot on Canon EOS R5, 85mm f/1.4 lens, shallow depth of field, natural bokeh, detailed skin texture, visible pores",
-  "lighting": "one of: natural lighting, golden hour lighting, dramatic lighting, soft diffused lighting, neon lights, backlit, rim lighting, studio lighting, cinematic lighting",
-  "composition": "one of: close-up portrait, wide shot, portrait, centered, bird's eye view, low angle shot, symmetrical composition, rule of thirds, macro shot",
-  "aspectRatio": "one of: 1:1 square format, 9:16 vertical portrait format, 16:9 horizontal landscape format, 3:4 portrait format, 4:3 landscape format, 3:2 classic photo format"
+  "direction": "${randomDirection}",
+  "details": "specific visual details: clothing, expression, texture, material, colors (be vivid and specific, 20-40 words)",
+  "setting": "complete environment description with mood and atmosphere (15-30 words)",
+  "style": "pick ONE style that fits this vision from: photorealistic 8K UHD DSLR Canon EOS R5 85mm f/1.4 shallow depth of field natural bokeh skin texture | digital art | oil painting | anime style | cyberpunk style | fantasy art | Studio Ghibli style | watercolor",
+  "lighting": "pick ONE from: natural lighting | golden hour lighting | dramatic lighting | soft diffused lighting | neon lights | cinematic lighting | studio lighting | backlit rim lighting",
+  "composition": "pick ONE from: close-up portrait | wide shot | portrait centered | bird's eye view | low angle shot | rule of thirds | macro shot",
+  "aspectRatio": "pick ONE from: 1:1 square format | 9:16 vertical portrait format | 16:9 horizontal landscape format | 3:4 portrait format"
 }`;
 
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
@@ -6337,7 +6366,7 @@ Return JSON only, no explanation:
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 0.7 }
+                    generationConfig: { temperature: 1.0 }
                 })
             });
 
