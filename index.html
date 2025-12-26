@@ -667,6 +667,25 @@
             cursor: wait;
         }
 
+        .toggle-key-btn {
+            padding: 10px 12px;
+            background: #f1f3f4;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .toggle-key-btn:hover {
+            background: #e8eaed;
+        }
+
+        .api-key-section .section-title small {
+            font-weight: 400;
+            color: #5f6368;
+            font-size: 11px;
+        }
+
         .pb-input:focus,
         .pb-select:focus {
             outline: none;
@@ -2427,6 +2446,15 @@
 
         <!-- CREATE TAB - Prompt Builder -->
         <div class="tab-content" id="create-tab">
+            <div class="section api-key-section">
+                <div class="section-title">🔑 Gemini API Key <small>(tùy chọn, để dùng AI thông minh)</small></div>
+                <div class="pb-input-group">
+                    <input type="password" id="geminiApiKeyInput" class="pb-input"
+                        placeholder="Dán API key từ aistudio.google.com/app/apikey"
+                        onchange="saveGeminiApiKey(this.value)">
+                    <button type="button" class="toggle-key-btn" onclick="toggleApiKeyVisibility()">👁️</button>
+                </div>
+            </div>
             <div class="section">
                 <div class="section-title">🎨 Prompt Builder</div>
                 <div class="prompt-builder">
@@ -6189,6 +6217,38 @@ Return JSON only, no explanation:
             }
             return null;
         }
+
+        // 8. Gemini API Key Management
+        function saveGeminiApiKey(key) {
+            if (key && key.trim()) {
+                localStorage.setItem('geminiApiKey', key.trim());
+                showToast('✅ API key đã lưu!');
+            } else {
+                localStorage.removeItem('geminiApiKey');
+                showToast('🗑️ API key đã xóa!');
+            }
+        }
+
+        function toggleApiKeyVisibility() {
+            const input = document.getElementById('geminiApiKeyInput');
+            const btn = document.querySelector('.toggle-key-btn');
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁️';
+            }
+        }
+
+        // Load saved API key on page load
+        (function loadSavedApiKey() {
+            const savedKey = localStorage.getItem('geminiApiKey');
+            if (savedKey) {
+                const input = document.getElementById('geminiApiKeyInput');
+                if (input) input.value = savedKey;
+            }
+        })();
     </script>
 </body>
 
