@@ -5164,7 +5164,7 @@ Trả về JSON (chỉ JSON, không text khác):
         // ========== GOOGLE DRIVE SYNC ==========
         // Google OAuth Client ID - Replace with your own from Google Cloud Console
         const GOOGLE_CLIENT_ID = '676557816670-38kek48cab0ge88hmsvbo8lcpslp82fv.apps.googleusercontent.com';
-        const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
+        const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
         const DRIVE_FILE_NAME = 'media-search-pro-settings.json';
 
         // Sync data helpers
@@ -5310,7 +5310,7 @@ Trả về JSON (chỉ JSON, không text khác):
 
                 // First, search for existing file
                 const searchRes = await fetch(
-                    `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='${DRIVE_FILE_NAME}'`,
+                    `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FILE_NAME}'`,
                     { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
                 );
 
@@ -5332,9 +5332,7 @@ Trả về JSON (chỉ JSON, không text khác):
                     mimeType: 'application/json'
                 };
 
-                if (!fileId) {
-                    metadata.parents = ['appDataFolder'];
-                }
+                // New file will be created in root folder (visible in Drive)
 
                 const form = new FormData();
                 form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
@@ -5376,7 +5374,7 @@ Trả về JSON (chỉ JSON, không text khác):
             try {
                 // Search for file
                 const searchRes = await fetch(
-                    `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='${DRIVE_FILE_NAME}'`,
+                    `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FILE_NAME}'`,
                     { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
                 );
 
