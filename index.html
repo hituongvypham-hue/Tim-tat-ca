@@ -535,6 +535,78 @@
             color: #202124;
         }
 
+        /* Create Tab Styles */
+        .create-prompt-box textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.2s;
+        }
+
+        .create-prompt-box textarea:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        .ai-model-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ai-model-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ai-model-option:hover {
+            border-color: #1a73e8;
+            background: #f8f9fa;
+        }
+
+        .ai-model-option input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: #1a73e8;
+        }
+
+        .ai-model-option input[type="radio"]:checked+.ai-model-info {
+            color: #1a73e8;
+        }
+
+        .ai-model-info {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .ai-model-icon {
+            font-size: 20px;
+        }
+
+        .ai-model-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .ai-model-desc {
+            font-size: 12px;
+            color: #5f6368;
+            width: 100%;
+        }
+
         /* Actions */
         .actions {
             display: flex;
@@ -1693,6 +1765,7 @@
                 <button class="tab" data-tab="ebook" draggable="true">📚 Ebook</button>
                 <button class="tab" data-tab="apk" draggable="true">📱 APK</button>
                 <button class="tab" data-tab="ai" draggable="true">🤖 AI</button>
+                <button class="tab" data-tab="create" draggable="true">🎨 Create</button>
                 <button class="tab" data-tab="reverse" draggable="true">🔍 Reverse</button>
                 <button class="tab" data-tab="discover" draggable="true">🌐 Discover</button>
                 <button class="tab" data-tab="vision" draggable="true">👁️ Vision</button>
@@ -2179,12 +2252,12 @@
             </div>
 
             <div class="section">
-                <div class="section-title">🎨 Image AI - Toàn cầu</div>
+                <div class="section-title">🎨 Image AI</div>
                 <div class="section-desc">
-                    <strong>Midjourney:</strong> Nghệ thuật đẹp nhất - $10/tháng •
-                    <strong>DALL-E 3:</strong> Tích hợp ChatGPT - Plus $20/tháng •
-                    <strong>Ideogram:</strong> Render chữ chuẩn - FREE tier •
-                    <strong>Leonardo:</strong> Game art - FREE 150 credits/ngày
+                    <strong>Midjourney:</strong> Ảnh nghệ thuật đẹp nhất •
+                    <strong>DALL-E:</strong> Tích hợp ChatGPT •
+                    <strong>Ideogram:</strong> Render chữ chuẩn •
+                    <strong>Leonardo:</strong> Game art & concept
                 </div>
                 <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="midjourney"><span
@@ -2195,39 +2268,120 @@
                                 class="platform-icon">✏️</span>Ideogram</span></label>
                     <label class="platform"><input type="checkbox" data-p="leonardo"><span class="platform-label"><span
                                 class="platform-icon">🎭</span>Leonardo</span></label>
-                    <label class="platform"><input type="checkbox" data-p="flux"><span class="platform-label"><span
-                                class="platform-icon">⚡</span>Flux AI</span></label>
-                    <label class="platform"><input type="checkbox" data-p="firefly"><span class="platform-label"><span
-                                class="platform-icon">🔥</span>Adobe Firefly</span></label>
-                    <label class="platform"><input type="checkbox" data-p="stablediffusion"><span
-                            class="platform-label"><span class="platform-icon">🌀</span>Stable Diffusion</span></label>
-                    <label class="platform"><input type="checkbox" data-p="playground"><span
-                            class="platform-label"><span class="platform-icon">🎮</span>Playground</span></label>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🇨🇳 Image AI - Trung Quốc</div>
-                <div class="section-desc">
-                    <strong>可灵 Keling:</strong> Hiểu văn hóa TQ - FREE •
-                    <strong>即梦 Jimeng:</strong> Dễ dùng - FREE •
-                    <strong>通义万相:</strong> Alibaba - FREE tier
-                </div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="keling"><span class="platform-label"><span
-                                class="platform-icon">🎥</span>可灵 Keling</span></label>
-                    <label class="platform"><input type="checkbox" data-p="jimeng"><span class="platform-label"><span
-                                class="platform-icon">💭</span>即梦 Jimeng</span></label>
-                    <label class="platform"><input type="checkbox" data-p="tongyi"><span class="platform-label"><span
-                                class="platform-icon">☁️</span>通义万相</span></label>
-                    <label class="platform"><input type="checkbox" data-p="liblib"><span class="platform-label"><span
-                                class="platform-icon">📚</span>LibLib AI</span></label>
                 </div>
             </div>
 
             <div class="actions">
                 <button class="btn-search" id="aiSearchBtn">Open<span class="count" id="aiCount">0</span></button>
                 <button class="btn-select" onclick="toggleAll('ai')">Toggle</button>
+            </div>
+        </div>
+
+        <!-- CREATE TAB -->
+        <div class="tab-content" id="create-tab">
+            <div class="section">
+                <div class="section-title">✨ Tạo ảnh AI</div>
+                <div class="create-prompt-box">
+                    <textarea id="createPrompt"
+                        placeholder="Mô tả ảnh bạn muốn tạo...&#10;Ví dụ: A cute cat wearing a wizard hat, digital art style, vibrant colors"
+                        rows="4"></textarea>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🌍 Global</div>
+                <div class="ai-model-list">
+                    <label class="ai-model-option">
+                        <input type="radio" name="aiModel" value="chatgpt-dalle" checked>
+                        <span class="ai-model-info">
+                            <span class="ai-model-icon">🎨</span>
+                            <span class="ai-model-name">DALL-E 3 (ChatGPT)</span>
+                            <span class="ai-model-desc">Tích hợp ChatGPT, hiểu prompt phức tạp</span>
+                        </span>
+                    </label>
+                    <label class="ai-model-option">
+                        <input type="radio" name="aiModel" value="midjourney">
+                        <span class="ai-model-info">
+                            <span class="ai-model-icon">🖼️</span>
+                            <span class="ai-model-name">Midjourney</span>
+                            <span class="ai-model-desc">Ảnh nghệ thuật đẹp nhất</span>
+                        </span>
+                    </label>
+                    <label class="ai-model-option">
+                        <input type="radio" name="aiModel" value="leonardo">
+                        <span class="ai-model-info">
+                            <span class="ai-model-icon">🎭</span>
+                            <span class="ai-model-name">Leonardo AI</span>
+                            <span class="ai-model-desc">Game art, 3D, free tier hào phóng</span>
+                        </span>
+                    </label>
+                    <label class="ai-model-option">
+                        <input type="radio" name="aiModel" value="ideogram">
+                        <span class="ai-model-info">
+                            <span class="ai-model-icon">✏️</span>
+                            <span class="ai-model-name">Ideogram</span>
+                            <span class="ai-model-desc">Render chữ/text cực chuẩn</span>
+                        </span>
+                    </label>
+                    <label class="ai-model-option">
+                        <input type="radio" name="aiModel" value="playground">
+                        <span class="ai-model-info">
+                            <span class="ai-model-icon">🎪</span>
+                            <span class="ai-model-name">Playground AI</span>
+                            <span class="ai-model-desc">Miễn phí, dễ dùng cho newbie</span>
+                        </span>
+                    </label>
+                    <label class="ai-model-option">
+                        <input type="radio" name="aiModel" value="firefly">
+                        <span class="ai-model-info">
+                            <span class="ai-model-icon">🔥</span>
+                            <span class="ai-model-name">Adobe Firefly</span>
+                            <span class="ai-model-desc">An toàn bản quyền, tích hợp Photoshop</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇨🇳 Trung Quốc</div>
+                <div class="ai-model-list">
+                    <label class="ai-model-option">
+                        <input type="radio" name="aiModel" value="keling">
+                        <span class="ai-model-info">
+                            <span class="ai-model-icon">🌟</span>
+                            <span class="ai-model-name">可灵 Keling AI</span>
+                            <span class="ai-model-desc">Hiểu văn hóa Trung, giao diện TQ</span>
+                        </span>
+                    </label>
+                    <label class="ai-model-option">
+                        <input type="radio" name="aiModel" value="jimeng">
+                        <span class="ai-model-info">
+                            <span class="ai-model-icon">💭</span>
+                            <span class="ai-model-name">即梦 Jimeng AI</span>
+                            <span class="ai-model-desc">Miễn phí nhiều tính năng</span>
+                        </span>
+                    </label>
+                    <label class="ai-model-option">
+                        <input type="radio" name="aiModel" value="doubao-image">
+                        <span class="ai-model-info">
+                            <span class="ai-model-icon">🎁</span>
+                            <span class="ai-model-name">豆包 Doubao</span>
+                            <span class="ai-model-desc">ByteDance, tích hợp TikTok</span>
+                        </span>
+                    </label>
+                    <label class="ai-model-option">
+                        <input type="radio" name="aiModel" value="tongyi">
+                        <span class="ai-model-info">
+                            <span class="ai-model-icon">☁️</span>
+                            <span class="ai-model-name">通义万相</span>
+                            <span class="ai-model-desc">Alibaba AI, ecosystem mạnh</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn-search" id="createImageBtn" onclick="generateAIImage()">🚀 Tạo ảnh</button>
             </div>
         </div>
 
@@ -2813,14 +2967,6 @@
             dalle: 'https://openai.com/dall-e-3',
             ideogram: 'https://ideogram.ai',
             leonardo: 'https://leonardo.ai',
-            flux: 'https://flux.ai',
-            firefly: 'https://firefly.adobe.com',
-            stablediffusion: 'https://stability.ai',
-            playground: 'https://playground.com',
-            keling: 'https://klingai.com',
-            jimeng: 'https://jimeng.jianying.com',
-            tongyi: 'https://tongyi.aliyun.com/wanxiang',
-            liblib: 'https://www.liblib.art',
 
             // Discover - Mega Directories
             fmhy: 'https://fmhy.net',
@@ -5588,6 +5734,42 @@ Trả về JSON (chỉ JSON, không text khác):
         }
         updateClock();
         setInterval(updateClock, 60000);
+
+        // 6. AI Image Generation function
+        function generateAIImage() {
+            const prompt = document.getElementById('createPrompt').value.trim();
+            const model = document.querySelector('input[name="aiModel"]:checked').value;
+
+            if (!prompt) {
+                alert('Vui lòng nhập mô tả ảnh!');
+                return;
+            }
+
+            const encodedPrompt = encodeURIComponent(prompt);
+
+            const aiUrls = {
+                'chatgpt-dalle': `https://chat.openai.com/?q=Create an image: ${encodedPrompt}`,
+                'midjourney': 'https://www.midjourney.com/app/',
+                'leonardo': `https://app.leonardo.ai/ai-generations`,
+                'ideogram': `https://ideogram.ai/t/explore?q=${encodedPrompt}`,
+                'playground': 'https://playground.com/create',
+                'firefly': 'https://firefly.adobe.com/generate/images',
+                'keling': 'https://klingai.com/',
+                'jimeng': 'https://jimeng.jianying.com/',
+                'doubao-image': 'https://www.doubao.com/',
+                'tongyi': 'https://tongyi.aliyun.com/wanxiang/'
+            };
+
+            const url = aiUrls[model];
+
+            // Copy prompt to clipboard
+            navigator.clipboard.writeText(prompt).then(() => {
+                showToast('✅ Đã copy prompt! Dán vào công cụ AI.');
+            }).catch(() => { });
+
+            // Open the AI tool
+            window.open(url, '_blank');
+        }
     </script>
 </body>
 
