@@ -2069,6 +2069,7 @@
         <div class="tabs-wrapper" id="tabsWrapper">
             <div class="tabs" id="tabsContainer">
                 <button class="tab active" data-tab="video" draggable="true">📹 Video</button>
+                <button class="tab" data-tab="movie" draggable="true">🎬 Movie</button>
                 <button class="tab" data-tab="image" draggable="true">🖼️ Image</button>
                 <button class="tab" data-tab="ebook" draggable="true">📚 Ebook</button>
                 <button class="tab" data-tab="apk" draggable="true">📱 APK</button>
@@ -2209,6 +2210,105 @@
                 <button class="btn-search" id="videoSearchBtn">Search<span class="count"
                         id="videoCount">10</span></button>
                 <button class="btn-select" onclick="toggleAll('video')">Toggle</button>
+            </div>
+        </div>
+
+        <!-- MOVIE TAB -->
+        <div class="tab-content" id="movie-tab">
+            <div class="search-wrapper">
+                <input type="text" id="movieInput" class="search-input" placeholder="Tên phim, diễn viên, đạo diễn...">
+            </div>
+
+            <div class="section">
+                <div class="section-title">🔍 Tìm nguồn xem <span class="badge">Aggregator</span></div>
+                <div class="section-desc">Tìm phim đang chiếu ở Netflix, Prime, Disney+, HBO...</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="justwatch" checked><span
+                            class="platform-label"><span class="platform-icon">📺</span>JustWatch</span></label>
+                    <label class="platform"><input type="checkbox" data-p="reelgood"><span class="platform-label"><span
+                                class="platform-icon">🎬</span>Reelgood</span></label>
+                    <label class="platform"><input type="checkbox" data-p="movieofthenight"><span
+                            class="platform-label"><span class="platform-icon">🌙</span>Movie of Night</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📚 Database & Reviews <span class="badge ai">Rating</span></div>
+                <div class="section-desc">Thông tin, điểm số, reviews từ critic và audience</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="imdb" checked><span
+                            class="platform-label"><span class="platform-icon">⭐</span>IMDb</span></label>
+                    <label class="platform"><input type="checkbox" data-p="letterboxd"><span
+                            class="platform-label"><span class="platform-icon">🎞️</span>Letterboxd</span></label>
+                    <label class="platform"><input type="checkbox" data-p="rottentomatoes"><span
+                            class="platform-label"><span class="platform-icon">🍅</span>Rotten Tomatoes</span></label>
+                    <label class="platform"><input type="checkbox" data-p="tmdb"><span class="platform-label"><span
+                                class="platform-icon">🎥</span>TMDb</span></label>
+                    <label class="platform"><input type="checkbox" data-p="trakt"><span class="platform-label"><span
+                                class="platform-icon">📊</span>Trakt</span></label>
+                    <label class="platform"><input type="checkbox" data-p="metacritic"><span
+                            class="platform-label"><span class="platform-icon">🎯</span>Metacritic</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📺 Streaming miễn phí <span class="badge">Free</span></div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="tubi"><span class="platform-label"><span
+                                class="platform-icon">🟠</span>Tubi</span></label>
+                    <label class="platform"><input type="checkbox" data-p="plextv"><span class="platform-label"><span
+                                class="platform-icon">🟡</span>Plex</span></label>
+                    <label class="platform"><input type="checkbox" data-p="kanopy"><span class="platform-label"><span
+                                class="platform-icon">🎭</span>Kanopy</span></label>
+                    <label class="platform"><input type="checkbox" data-p="crackle"><span class="platform-label"><span
+                                class="platform-icon">🔴</span>Crackle</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇨🇳 Trung Quốc</div>
+                <div class="section-desc">茶杯狐: Tổng hợp phim lớn nhất • 爱壹帆: Không quảng cáo</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="cupfox" checked><span
+                            class="platform-label"><span class="platform-icon">🦊</span>茶杯狐 Cupfox</span></label>
+                    <label class="platform"><input type="checkbox" data-p="iyf"><span class="platform-label"><span
+                                class="platform-icon">🎬</span>爱壹帆 iYF</span></label>
+                    <label class="platform"><input type="checkbox" data-p="libvio"><span class="platform-label"><span
+                                class="platform-icon">📺</span>Libvio</span></label>
+                    <label class="platform"><input type="checkbox" data-p="douban"><span class="platform-label"><span
+                                class="platform-icon">🌱</span>豆瓣 Douban</span></label>
+                    <label class="platform"><input type="checkbox" data-p="iqiyi"><span class="platform-label"><span
+                                class="platform-icon">🟢</span>爱奇艺</span></label>
+                    <label class="platform"><input type="checkbox" data-p="youku"><span class="platform-label"><span
+                                class="platform-icon">🔵</span>优酷</span></label>
+                    <label class="platform"><input type="checkbox" data-p="tencentv"><span class="platform-label"><span
+                                class="platform-icon">🟠</span>腾讯视频</span></label>
+                    <label class="platform"><input type="checkbox" data-p="bilibili"><span class="platform-label"><span
+                                class="platform-icon">📺</span>哔哩哔哩</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇷🇺 Nga</div>
+                <div class="section-desc">Kinopoisk: IMDb của Nga • Ivi, Okko: Streaming lớn nhất</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="kinopoisk"><span class="platform-label"><span
+                                class="platform-icon">🎬</span>Кинопоиск</span></label>
+                    <label class="platform"><input type="checkbox" data-p="ivi"><span class="platform-label"><span
+                                class="platform-icon">📺</span>Ivi</span></label>
+                    <label class="platform"><input type="checkbox" data-p="okko"><span class="platform-label"><span
+                                class="platform-icon">🟣</span>Okko</span></label>
+                    <label class="platform"><input type="checkbox" data-p="start"><span class="platform-label"><span
+                                class="platform-icon">▶️</span>START</span></label>
+                    <label class="platform"><input type="checkbox" data-p="russianfilmhub"><span
+                            class="platform-label"><span class="platform-icon">🎥</span>Russian Film Hub</span></label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn-search" id="movieSearchBtn">Search<span class="count"
+                        id="movieCount">0</span></button>
+                <button class="btn-select" onclick="toggleAll('movie')">Toggle</button>
             </div>
         </div>
 
@@ -3197,6 +3297,45 @@
             // Academic
             bookboon: q => `https://bookboon.com/en/search?q=${encodeURIComponent(q)}`,
             googlebooks: q => `https://www.google.com/search?tbm=bks&q=${encodeURIComponent(q)}`
+        };
+
+        // MOVIE SEARCH URLS
+        const MOVIE_URLS = {
+            // Aggregator - Tìm nguồn xem
+            justwatch: q => `https://www.justwatch.com/us/search?q=${encodeURIComponent(q)}`,
+            reelgood: q => `https://reelgood.com/search?q=${encodeURIComponent(q)}`,
+            movieofthenight: q => `https://www.movieofthenight.com/search?q=${encodeURIComponent(q)}`,
+
+            // Database & Reviews
+            imdb: q => `https://www.imdb.com/find/?q=${encodeURIComponent(q)}`,
+            letterboxd: q => `https://letterboxd.com/search/${encodeURIComponent(q)}/`,
+            rottentomatoes: q => `https://www.rottentomatoes.com/search?search=${encodeURIComponent(q)}`,
+            tmdb: q => `https://www.themoviedb.org/search?query=${encodeURIComponent(q)}`,
+            trakt: q => `https://trakt.tv/search?query=${encodeURIComponent(q)}`,
+            metacritic: q => `https://www.metacritic.com/search/${encodeURIComponent(q)}/`,
+
+            // Free Streaming
+            tubi: q => `https://tubitv.com/search/${encodeURIComponent(q)}`,
+            plextv: q => `https://watch.plex.tv/search?q=${encodeURIComponent(q)}`,
+            kanopy: q => `https://www.kanopy.com/en/search?query=${encodeURIComponent(q)}`,
+            crackle: q => `https://www.crackle.com/search?q=${encodeURIComponent(q)}`,
+
+            // China
+            cupfox: q => `https://cupfox.app/search?key=${encodeURIComponent(q)}`,
+            iyf: q => `https://www.iyf.tv/search?q=${encodeURIComponent(q)}`,
+            libvio: q => `https://www.libvio.cc/search/${encodeURIComponent(q)}.html`,
+            douban: q => `https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`,
+            iqiyi: q => `https://so.iqiyi.com/so/q_${encodeURIComponent(q)}`,
+            youku: q => `https://so.youku.com/search_video/q_${encodeURIComponent(q)}`,
+            tencentv: q => `https://v.qq.com/x/search/?q=${encodeURIComponent(q)}`,
+            bilibili: q => `https://search.bilibili.com/all?keyword=${encodeURIComponent(q)}`,
+
+            // Russia
+            kinopoisk: q => `https://www.kinopoisk.ru/s/type/all/find/${encodeURIComponent(q)}/`,
+            ivi: q => `https://www.ivi.ru/search/?q=${encodeURIComponent(q)}`,
+            okko: q => `https://okko.tv/search/${encodeURIComponent(q)}`,
+            start: q => `https://start.ru/search?text=${encodeURIComponent(q)}`,
+            russianfilmhub: q => `https://russianfilmhub.com/?s=${encodeURIComponent(q)}`
         };
 
         // APK MOD SEARCH URLS
@@ -4610,6 +4749,7 @@ Trả về JSON (chỉ JSON, không text khác):
         // Platform count
         function updateCount() {
             document.getElementById('videoCount').textContent = document.querySelectorAll('#video-tab .platform input:checked').length;
+            document.getElementById('movieCount').textContent = document.querySelectorAll('#movie-tab .platform input:checked').length;
             document.getElementById('imageCount').textContent = document.querySelectorAll('#image-tab .platform input:checked').length;
             document.getElementById('ebookCount').textContent = document.querySelectorAll('#ebook-tab .platform input:checked').length;
             document.getElementById('apkCount').textContent = document.querySelectorAll('#apk-tab .platform input:checked').length;
@@ -4635,6 +4775,10 @@ Trả về JSON (chỉ JSON, không text khác):
             if (currentTab === 'video') {
                 input = document.getElementById('videoInput');
                 urls = VIDEO_URLS;
+                query = input ? input.value.trim() : '';
+            } else if (currentTab === 'movie') {
+                input = document.getElementById('movieInput');
+                urls = MOVIE_URLS;
                 query = input ? input.value.trim() : '';
             } else if (currentTab === 'image') {
                 input = document.getElementById('imageInput');
@@ -4676,6 +4820,7 @@ Trả về JSON (chỉ JSON, không text khác):
         }
 
         document.getElementById('videoSearchBtn').addEventListener('click', search);
+        document.getElementById('movieSearchBtn').addEventListener('click', search);
         document.getElementById('imageSearchBtn').addEventListener('click', search);
         document.getElementById('ebookSearchBtn').addEventListener('click', search);
         document.getElementById('apkSearchBtn').addEventListener('click', search);
@@ -4684,6 +4829,7 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('discoverSearchBtn').addEventListener('click', search);
         document.getElementById('visionSearchBtn').addEventListener('click', search);
         document.getElementById('videoInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
+        document.getElementById('movieInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('imageInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('ebookInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('apkInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
@@ -5096,6 +5242,34 @@ Trả về JSON (chỉ JSON, không text khác):
             epubbooks: 'epubbooks.com',
             bookboon: 'bookboon.com',
             googlebooks: 'books.google.com',
+            // Movie - Aggregator
+            justwatch: 'justwatch.com',
+            reelgood: 'reelgood.com',
+            movieofthenight: 'movieofthenight.com',
+            // Movie - Database
+            imdb: 'imdb.com',
+            letterboxd: 'letterboxd.com',
+            rottentomatoes: 'rottentomatoes.com',
+            tmdb: 'themoviedb.org',
+            trakt: 'trakt.tv',
+            metacritic: 'metacritic.com',
+            // Movie - Free Streaming
+            tubi: 'tubitv.com',
+            plextv: 'plex.tv',
+            kanopy: 'kanopy.com',
+            crackle: 'crackle.com',
+            // Movie - China
+            cupfox: 'cupfox.app',
+            iyf: 'iyf.tv',
+            libvio: 'libvio.cc',
+            douban: 'douban.com',
+            tencentv: 'v.qq.com',
+            // Movie - Russia
+            kinopoisk: 'kinopoisk.ru',
+            ivi: 'ivi.ru',
+            okko: 'okko.tv',
+            start: 'start.ru',
+            russianfilmhub: 'russianfilmhub.com',
             // APK
             mobilism: 'mobilism.org',
             platinmods: 'platinmods.com',
@@ -5373,6 +5547,7 @@ Trả về JSON (chỉ JSON, không text khác):
 
         // Rebind search buttons with new search function
         document.getElementById('videoSearchBtn').removeEventListener('click', originalSearch);
+        document.getElementById('movieSearchBtn').removeEventListener('click', originalSearch);
         document.getElementById('imageSearchBtn').removeEventListener('click', originalSearch);
         document.getElementById('ebookSearchBtn').removeEventListener('click', originalSearch);
         document.getElementById('apkSearchBtn').removeEventListener('click', originalSearch);
@@ -5382,6 +5557,7 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('visionSearchBtn').removeEventListener('click', originalSearch);
 
         document.getElementById('videoSearchBtn').addEventListener('click', search);
+        document.getElementById('movieSearchBtn').addEventListener('click', search);
         document.getElementById('imageSearchBtn').addEventListener('click', search);
         document.getElementById('ebookSearchBtn').addEventListener('click', search);
         document.getElementById('apkSearchBtn').addEventListener('click', search);
@@ -5673,9 +5849,10 @@ Trả về JSON (chỉ JSON, không text khác):
             if (site.searchUrl) {
                 // Add to appropriate URL object based on tab
                 const urlObj = tabId === 'video-tab' ? VIDEO_URLS :
-                    tabId === 'image-tab' ? IMAGE_URLS :
-                        tabId === 'ebook-tab' ? EBOOK_URLS :
-                            tabId === 'apk-tab' ? APK_URLS : null;
+                    tabId === 'movie-tab' ? MOVIE_URLS :
+                        tabId === 'image-tab' ? IMAGE_URLS :
+                            tabId === 'ebook-tab' ? EBOOK_URLS :
+                                tabId === 'apk-tab' ? APK_URLS : null;
                 if (urlObj) {
                     urlObj[site.key] = q => site.searchUrl.replace('{query}', encodeURIComponent(q));
                 }
