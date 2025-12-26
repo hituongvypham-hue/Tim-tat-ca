@@ -2501,6 +2501,18 @@
                             <option value="macro shot">Macro</option>
                         </select>
                     </div>
+                    <div class="pb-row">
+                        <label class="pb-label">7. Tỷ lệ khung hình</label>
+                        <select id="pbAspectRatio" class="pb-select" onchange="updateFinalPrompt()">
+                            <option value="">-- Chọn tỷ lệ --</option>
+                            <option value="1:1 square format">1:1 (Vuông)</option>
+                            <option value="9:16 vertical portrait format">9:16 (Dọc - Story/Reels)</option>
+                            <option value="16:9 horizontal landscape format">16:9 (Ngang - Video)</option>
+                            <option value="3:4 portrait format">3:4 (Dọc - Instagram)</option>
+                            <option value="4:3 landscape format">4:3 (Ngang - Ảnh cổ điển)</option>
+                            <option value="3:2 classic photo format">3:2 (DSLR - Film)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -5918,6 +5930,7 @@ Trả về JSON (chỉ JSON, không text khác):
             const style = document.getElementById('pbStyle').value;
             const lighting = document.getElementById('pbLighting').value;
             const composition = document.getElementById('pbComposition').value;
+            const aspectRatio = document.getElementById('pbAspectRatio').value;
 
             let parts = [];
             if (subject) parts.push(subject);
@@ -5926,6 +5939,7 @@ Trả về JSON (chỉ JSON, không text khác):
             if (style) parts.push(style);
             if (lighting) parts.push(lighting);
             if (composition) parts.push(composition);
+            if (aspectRatio) parts.push(aspectRatio);
 
             document.getElementById('finalPrompt').value = parts.join(', ');
         }
