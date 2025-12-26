@@ -607,6 +607,122 @@
             width: 100%;
         }
 
+        /* Prompt Builder Styles */
+        .prompt-builder {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .pb-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .pb-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #202124;
+        }
+
+        .pb-input,
+        .pb-select {
+            padding: 10px 12px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .pb-input:focus,
+        .pb-select:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        .final-prompt-box {
+            position: relative;
+        }
+
+        .final-prompt {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px;
+            padding-right: 70px;
+            border: 2px solid #1a73e8;
+            border-radius: 8px;
+            font-size: 13px;
+            background: #e8f0fe;
+            resize: vertical;
+        }
+
+        .copy-prompt-btn {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            padding: 6px 12px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-prompt-btn:hover {
+            background: #1557b0;
+        }
+
+        .ai-checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .ai-checkbox {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ai-checkbox:hover {
+            border-color: #1a73e8;
+            background: #f8f9fa;
+        }
+
+        .ai-checkbox input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .ai-checkbox input[type="checkbox"]:checked+span {
+            color: #1a73e8;
+            font-weight: 600;
+        }
+
+        .ai-checkbox input[type="checkbox"]:checked~small {
+            color: #1a73e8;
+        }
+
+        .ai-checkbox:has(input:checked) {
+            border-color: #1a73e8;
+            background: #e8f0fe;
+        }
+
+        .ai-checkbox span {
+            font-size: 13px;
+        }
+
+        .ai-checkbox small {
+            font-size: 11px;
+            color: #5f6368;
+        }
+
         /* Actions */
         .actions {
             display: flex;
@@ -2277,111 +2393,119 @@
             </div>
         </div>
 
-        <!-- CREATE TAB -->
+        <!-- CREATE TAB - Prompt Builder -->
         <div class="tab-content" id="create-tab">
             <div class="section">
-                <div class="section-title">✨ Tạo ảnh AI</div>
-                <div class="create-prompt-box">
-                    <textarea id="createPrompt"
-                        placeholder="Mô tả ảnh bạn muốn tạo...&#10;Ví dụ: A cute cat wearing a wizard hat, digital art style, vibrant colors"
-                        rows="4"></textarea>
+                <div class="section-title">🎨 Prompt Builder</div>
+                <div class="prompt-builder">
+                    <div class="pb-row">
+                        <label class="pb-label">1. Chủ thể *</label>
+                        <input type="text" id="pbSubject" class="pb-input"
+                            placeholder="Ví dụ: A young woman with red hair" oninput="updateFinalPrompt()">
+                    </div>
+                    <div class="pb-row">
+                        <label class="pb-label">2. Chi tiết</label>
+                        <input type="text" id="pbDetails" class="pb-input"
+                            placeholder="Ví dụ: wearing vintage dress, smiling, green eyes"
+                            oninput="updateFinalPrompt()">
+                    </div>
+                    <div class="pb-row">
+                        <label class="pb-label">3. Bối cảnh</label>
+                        <input type="text" id="pbSetting" class="pb-input"
+                            placeholder="Ví dụ: in a mystical forest with glowing mushrooms"
+                            oninput="updateFinalPrompt()">
+                    </div>
+                    <div class="pb-row">
+                        <label class="pb-label">4. Style</label>
+                        <select id="pbStyle" class="pb-select" onchange="updateFinalPrompt()">
+                            <option value="">-- Chọn style --</option>
+                            <option value="digital art">Digital Art</option>
+                            <option value="oil painting">Oil Painting</option>
+                            <option value="watercolor">Watercolor</option>
+                            <option value="photorealistic, 4K, ultra detailed">Photorealistic</option>
+                            <option value="anime style">Anime</option>
+                            <option value="cyberpunk style">Cyberpunk</option>
+                            <option value="fantasy art">Fantasy</option>
+                            <option value="minimalist">Minimalist</option>
+                            <option value="3D render">3D Render</option>
+                            <option value="Studio Ghibli style">Studio Ghibli</option>
+                        </select>
+                    </div>
+                    <div class="pb-row">
+                        <label class="pb-label">5. Ánh sáng</label>
+                        <select id="pbLighting" class="pb-select" onchange="updateFinalPrompt()">
+                            <option value="">-- Chọn ánh sáng --</option>
+                            <option value="natural lighting">Natural</option>
+                            <option value="golden hour lighting">Golden Hour</option>
+                            <option value="dramatic lighting">Dramatic</option>
+                            <option value="soft diffused lighting">Soft</option>
+                            <option value="neon lights">Neon</option>
+                            <option value="backlit, rim lighting">Backlit</option>
+                            <option value="studio lighting">Studio</option>
+                            <option value="cinematic lighting">Cinematic</option>
+                        </select>
+                    </div>
+                    <div class="pb-row">
+                        <label class="pb-label">6. Góc máy</label>
+                        <select id="pbComposition" class="pb-select" onchange="updateFinalPrompt()">
+                            <option value="">-- Chọn góc máy --</option>
+                            <option value="close-up portrait">Close-up</option>
+                            <option value="wide shot">Wide Shot</option>
+                            <option value="portrait, centered">Portrait</option>
+                            <option value="bird's eye view">Bird's Eye</option>
+                            <option value="low angle shot">Low Angle</option>
+                            <option value="symmetrical composition">Symmetrical</option>
+                            <option value="rule of thirds">Rule of Thirds</option>
+                            <option value="macro shot">Macro</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
             <div class="section">
-                <div class="section-title">🌍 Global</div>
-                <div class="ai-model-list">
-                    <label class="ai-model-option">
-                        <input type="radio" name="aiModel" value="chatgpt-dalle" checked>
-                        <span class="ai-model-info">
-                            <span class="ai-model-icon">🎨</span>
-                            <span class="ai-model-name">DALL-E 3 (ChatGPT)</span>
-                            <span class="ai-model-desc">Tích hợp ChatGPT, hiểu prompt phức tạp</span>
-                        </span>
-                    </label>
-                    <label class="ai-model-option">
-                        <input type="radio" name="aiModel" value="midjourney">
-                        <span class="ai-model-info">
-                            <span class="ai-model-icon">🖼️</span>
-                            <span class="ai-model-name">Midjourney</span>
-                            <span class="ai-model-desc">Ảnh nghệ thuật đẹp nhất</span>
-                        </span>
-                    </label>
-                    <label class="ai-model-option">
-                        <input type="radio" name="aiModel" value="leonardo">
-                        <span class="ai-model-info">
-                            <span class="ai-model-icon">🎭</span>
-                            <span class="ai-model-name">Leonardo AI</span>
-                            <span class="ai-model-desc">Game art, 3D, free tier hào phóng</span>
-                        </span>
-                    </label>
-                    <label class="ai-model-option">
-                        <input type="radio" name="aiModel" value="ideogram">
-                        <span class="ai-model-info">
-                            <span class="ai-model-icon">✏️</span>
-                            <span class="ai-model-name">Ideogram</span>
-                            <span class="ai-model-desc">Render chữ/text cực chuẩn</span>
-                        </span>
-                    </label>
-                    <label class="ai-model-option">
-                        <input type="radio" name="aiModel" value="playground">
-                        <span class="ai-model-info">
-                            <span class="ai-model-icon">🎪</span>
-                            <span class="ai-model-name">Playground AI</span>
-                            <span class="ai-model-desc">Miễn phí, dễ dùng cho newbie</span>
-                        </span>
-                    </label>
-                    <label class="ai-model-option">
-                        <input type="radio" name="aiModel" value="firefly">
-                        <span class="ai-model-info">
-                            <span class="ai-model-icon">🔥</span>
-                            <span class="ai-model-name">Adobe Firefly</span>
-                            <span class="ai-model-desc">An toàn bản quyền, tích hợp Photoshop</span>
-                        </span>
-                    </label>
+                <div class="section-title">📝 Prompt cuối cùng</div>
+                <div class="final-prompt-box">
+                    <textarea id="finalPrompt" class="final-prompt" readonly
+                        placeholder="Prompt sẽ tự động tạo khi bạn điền thông tin..."></textarea>
+                    <button class="copy-prompt-btn" onclick="copyFinalPrompt()">📋 Copy</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🌍 Chọn AI (có thể chọn nhiều)</div>
+                <div class="ai-checkbox-grid">
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="chatgpt-dalle"
+                            checked><span>🎨 DALL-E 3</span><small>Hiểu prompt phức tạp</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="midjourney"><span>🖼️
+                            Midjourney</span><small>Nghệ thuật đẹp nhất</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="leonardo"><span>🎭
+                            Leonardo AI</span><small>Game art, 3D</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="ideogram"><span>✏️
+                            Ideogram</span><small>Text chuẩn</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="playground"><span>🎪
+                            Playground</span><small>Miễn phí</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="firefly"><span>🔥
+                            Firefly</span><small>Adobe, bản quyền</small></label>
                 </div>
             </div>
 
             <div class="section">
                 <div class="section-title">🇨🇳 Trung Quốc</div>
-                <div class="ai-model-list">
-                    <label class="ai-model-option">
-                        <input type="radio" name="aiModel" value="keling">
-                        <span class="ai-model-info">
-                            <span class="ai-model-icon">🌟</span>
-                            <span class="ai-model-name">可灵 Keling AI</span>
-                            <span class="ai-model-desc">Hiểu văn hóa Trung, giao diện TQ</span>
-                        </span>
-                    </label>
-                    <label class="ai-model-option">
-                        <input type="radio" name="aiModel" value="jimeng">
-                        <span class="ai-model-info">
-                            <span class="ai-model-icon">💭</span>
-                            <span class="ai-model-name">即梦 Jimeng AI</span>
-                            <span class="ai-model-desc">Miễn phí nhiều tính năng</span>
-                        </span>
-                    </label>
-                    <label class="ai-model-option">
-                        <input type="radio" name="aiModel" value="doubao-image">
-                        <span class="ai-model-info">
-                            <span class="ai-model-icon">🎁</span>
-                            <span class="ai-model-name">豆包 Doubao</span>
-                            <span class="ai-model-desc">ByteDance, tích hợp TikTok</span>
-                        </span>
-                    </label>
-                    <label class="ai-model-option">
-                        <input type="radio" name="aiModel" value="tongyi">
-                        <span class="ai-model-info">
-                            <span class="ai-model-icon">☁️</span>
-                            <span class="ai-model-name">通义万相</span>
-                            <span class="ai-model-desc">Alibaba AI, ecosystem mạnh</span>
-                        </span>
-                    </label>
+                <div class="ai-checkbox-grid">
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="keling"><span>🌟
+                            Keling AI</span><small>Văn hóa TQ</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="jimeng"><span>💭
+                            Jimeng AI</span><small>Miễn phí</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="doubao-image"><span>🎁
+                            Doubao</span><small>ByteDance</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="tongyi"><span>☁️
+                            Tongyi</span><small>Alibaba</small></label>
                 </div>
             </div>
 
             <div class="actions">
-                <button class="btn-search" id="createImageBtn" onclick="generateAIImage()">🚀 Tạo ảnh</button>
+                <button class="btn-search" id="createImageBtn" onclick="generateAIImage()">🚀 Tạo ảnh<span class="count"
+                        id="createCount">1</span></button>
             </div>
         </div>
 
@@ -5735,13 +5859,56 @@ Trả về JSON (chỉ JSON, không text khác):
         updateClock();
         setInterval(updateClock, 60000);
 
-        // 6. AI Image Generation function
+        // 6. Prompt Builder functions
+        function updateFinalPrompt() {
+            const subject = document.getElementById('pbSubject').value.trim();
+            const details = document.getElementById('pbDetails').value.trim();
+            const setting = document.getElementById('pbSetting').value.trim();
+            const style = document.getElementById('pbStyle').value;
+            const lighting = document.getElementById('pbLighting').value;
+            const composition = document.getElementById('pbComposition').value;
+
+            let parts = [];
+            if (subject) parts.push(subject);
+            if (details) parts.push(details);
+            if (setting) parts.push(setting);
+            if (style) parts.push(style);
+            if (lighting) parts.push(lighting);
+            if (composition) parts.push(composition);
+
+            document.getElementById('finalPrompt').value = parts.join(', ');
+        }
+
+        function copyFinalPrompt() {
+            const prompt = document.getElementById('finalPrompt').value;
+            if (!prompt) {
+                showToast('⚠️ Prompt trống!');
+                return;
+            }
+            navigator.clipboard.writeText(prompt).then(() => {
+                showToast('✅ Đã copy prompt!');
+            });
+        }
+
+        // Update create count when checkboxes change
+        document.addEventListener('change', function (e) {
+            if (e.target.name === 'aiModelCreate') {
+                const count = document.querySelectorAll('input[name="aiModelCreate"]:checked').length;
+                document.getElementById('createCount').textContent = count;
+            }
+        });
+
         function generateAIImage() {
-            const prompt = document.getElementById('createPrompt').value.trim();
-            const model = document.querySelector('input[name="aiModel"]:checked').value;
+            const prompt = document.getElementById('finalPrompt').value.trim();
+            const selectedModels = document.querySelectorAll('input[name="aiModelCreate"]:checked');
 
             if (!prompt) {
-                alert('Vui lòng nhập mô tả ảnh!');
+                alert('Vui lòng điền thông tin để tạo prompt!');
+                return;
+            }
+
+            if (selectedModels.length === 0) {
+                alert('Vui lòng chọn ít nhất 1 AI model!');
                 return;
             }
 
@@ -5750,7 +5917,7 @@ Trả về JSON (chỉ JSON, không text khác):
             const aiUrls = {
                 'chatgpt-dalle': `https://chat.openai.com/?q=Create an image: ${encodedPrompt}`,
                 'midjourney': 'https://www.midjourney.com/app/',
-                'leonardo': `https://app.leonardo.ai/ai-generations`,
+                'leonardo': 'https://app.leonardo.ai/ai-generations',
                 'ideogram': `https://ideogram.ai/t/explore?q=${encodedPrompt}`,
                 'playground': 'https://playground.com/create',
                 'firefly': 'https://firefly.adobe.com/generate/images',
@@ -5760,15 +5927,18 @@ Trả về JSON (chỉ JSON, không text khác):
                 'tongyi': 'https://tongyi.aliyun.com/wanxiang/'
             };
 
-            const url = aiUrls[model];
-
             // Copy prompt to clipboard
             navigator.clipboard.writeText(prompt).then(() => {
-                showToast('✅ Đã copy prompt! Dán vào công cụ AI.');
+                showToast(`✅ Đã copy prompt! Mở ${selectedModels.length} tool...`);
             }).catch(() => { });
 
-            // Open the AI tool
-            window.open(url, '_blank');
+            // Open all selected AI tools
+            selectedModels.forEach((checkbox, index) => {
+                const url = aiUrls[checkbox.value];
+                setTimeout(() => {
+                    window.open(url, '_blank');
+                }, index * 300); // Slight delay between opens
+            });
         }
     </script>
 </body>
