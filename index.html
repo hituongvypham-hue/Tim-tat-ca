@@ -5167,6 +5167,43 @@ Trả về JSON (chỉ JSON, không text khác):
         const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
         const DRIVE_FILE_NAME = 'media-search-pro-settings.json';
 
+        // Sync data helpers
+        function getSyncData() {
+            return {
+                customSites,
+                platformOrder: JSON.parse(localStorage.getItem('platformOrder') || '{}'),
+                favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
+                history: JSON.parse(localStorage.getItem('searchHistory') || '[]'),
+                settings: {
+                    apiKey: localStorage.getItem('geminiApiKey') || '',
+                    enableAI: localStorage.getItem('enableAI') !== 'false',
+                    lang: currentLang
+                },
+                lastSync: new Date().toISOString()
+            };
+        }
+
+        function applySyncData(data) {
+            if (data.customSites) {
+                customSites = data.customSites;
+                localStorage.setItem('customSites', JSON.stringify(customSites));
+            }
+            if (data.platformOrder) {
+                localStorage.setItem('platformOrder', JSON.stringify(data.platformOrder));
+            }
+            if (data.favorites) {
+                localStorage.setItem('favorites', JSON.stringify(data.favorites));
+            }
+            if (data.history) {
+                localStorage.setItem('searchHistory', JSON.stringify(data.history));
+            }
+            if (data.settings) {
+                if (data.settings.apiKey) localStorage.setItem('geminiApiKey', data.settings.apiKey);
+                if (data.settings.enableAI !== undefined) localStorage.setItem('enableAI', data.settings.enableAI ? 'true' : 'false');
+                if (data.settings.lang) localStorage.setItem('lang', data.settings.lang);
+            }
+        }
+
         let googleAccessToken = null;
         let googleUser = null;
         let tokenClient = null;
