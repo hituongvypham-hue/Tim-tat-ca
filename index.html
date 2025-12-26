@@ -521,22 +521,20 @@
             object-fit: contain;
         }
 
-        /* Platform Description - always visible caption */
-        .platform {
-            position: relative;
+        /* Section Description */
+        .section-desc {
+            color: #5f6368;
+            font-size: 12px;
+            line-height: 1.5;
+            margin: -8px 0 12px 0;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #1a73e8;
         }
 
-        .platform-desc {
-            display: block;
-            color: #5f6368;
-            font-size: 10px;
-            line-height: 1.3;
-            margin-top: 2px;
-            padding: 0 4px;
-            max-width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .section-desc strong {
+            color: #202124;
         }
 
         /* Actions */
@@ -2097,6 +2095,11 @@
         <div class="tab-content" id="ai-tab">
             <div class="section">
                 <div class="section-title">🌍 Global - Big 3 <span class="badge hot">TOP</span></div>
+                <div class="section-desc">
+                    <strong>ChatGPT:</strong> Đa năng, viết sáng tạo •
+                    <strong>Claude:</strong> Viết dài, phân tích tài liệu •
+                    <strong>Gemini:</strong> Tích hợp Google, dữ liệu mới nhất
+                </div>
                 <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="chatgpt"><span class="platform-label"><span
                                 class="platform-icon">💬</span>ChatGPT</span></label>
@@ -2109,6 +2112,12 @@
 
             <div class="section">
                 <div class="section-title">🔥 Global - More</div>
+                <div class="section-desc">
+                    <strong>Perplexity:</strong> Search AI với nguồn trích dẫn •
+                    <strong>Copilot:</strong> Tích hợp Microsoft •
+                    <strong>Grok:</strong> X/Twitter real-time •
+                    <strong>Poe:</strong> Nhiều AI trong 1 app
+                </div>
                 <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="perplexity"><span
                             class="platform-label"><span class="platform-icon">🔍</span>Perplexity</span></label>
@@ -2125,6 +2134,12 @@
 
             <div class="section">
                 <div class="section-title">💻 Coding AI</div>
+                <div class="section-desc">
+                    <strong>Cursor:</strong> IDE AI tốt nhất cho dev •
+                    <strong>Replit:</strong> Online IDE •
+                    <strong>Codeium:</strong> Gợi ý code miễn phí •
+                    <strong>Phind:</strong> Search cho lập trình viên
+                </div>
                 <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="cursor"><span class="platform-label"><span
                                 class="platform-icon">⌨️</span>Cursor</span></label>
@@ -2139,6 +2154,11 @@
 
             <div class="section">
                 <div class="section-title">🇨🇳 Trung Quốc</div>
+                <div class="section-desc">
+                    <strong>Kimi:</strong> Đọc tài liệu dài 200K •
+                    <strong>DeepSeek:</strong> Toán & code xuất sắc •
+                    Ernie, Qianwen, Doubao: AI nội địa TQ
+                </div>
                 <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="ernie"><span class="platform-label"><span
                                 class="platform-icon">🐼</span>文心一言</span></label>
@@ -2157,6 +2177,12 @@
 
             <div class="section">
                 <div class="section-title">🎨 Image AI</div>
+                <div class="section-desc">
+                    <strong>Midjourney:</strong> Ảnh nghệ thuật đẹp nhất •
+                    <strong>DALL-E:</strong> Tích hợp ChatGPT •
+                    <strong>Ideogram:</strong> Render chữ chuẩn •
+                    <strong>Leonardo:</strong> Game art & concept
+                </div>
                 <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="midjourney"><span
                             class="platform-label"><span class="platform-icon">🎨</span>Midjourney</span></label>
@@ -5524,72 +5550,6 @@ Trả về JSON (chỉ JSON, không text khác):
         loadPlatformOrder();
         // 4. Finally init drag-drop for all platforms
         initPlatformDragDrop();
-
-        // 5. Add platform tooltips/descriptions
-        const PLATFORM_DESCRIPTIONS = {
-            // AI - Big 3
-            chatgpt: '🏆 Đa năng nhất, tốt cho viết & sáng tạo, hỗ trợ nhiều ngôn ngữ',
-            claude: '📝 Xuất sắc khi viết dài, phân tích tài liệu, coding 200K context',
-            gemini: '🔍 Tích hợp Google, tốt cho nghiên cứu & dữ liệu mới nhất',
-
-            // AI - More
-            perplexity: '🌐 Search AI - tìm kiếm internet với nguồn trích dẫn rõ ràng',
-            copilot: '💼 Microsoft AI - tích hợp Office, Edge, Windows',
-            grok: '🐦 AI của X/Twitter - truy cập real-time tweets & tin tức',
-            poe: '📱 All-in-one - dùng nhiều AI models trong 1 app',
-            you: '🔎 Search engine AI - tìm kiếm thông minh với AI',
-
-            // Coding AI
-            cursor: '⌨️ IDE AI - code editor với AI tích hợp, tốt nhất cho dev',
-            replit: '💾 Online IDE - viết & chạy code trực tiếp trên browser',
-            codeium: '🆓 Free copilot - gợi ý code miễn phí cho mọi IDE',
-            phind: '🔎 Dev search - tìm kiếm tối ưu cho lập trình viên',
-
-            // China AI
-            ernie: '🐼 Baidu AI - tốt nhất cho tiếng Trung, kiến thức Trung Quốc',
-            qianwen: '☁️ Alibaba AI - mạnh về data & ecommerce',
-            kimi: '📚 Moonshot AI - đọc tài liệu dài, 200K context',
-            doubao: '🎁 ByteDance AI - tích hợp TikTok/Douyin ecosystem',
-            deepseek: '🧮 Math & Code - xuất sắc về toán học và lập trình',
-            zhipu: '🎯 ChatGLM - AI đa năng của Trung Quốc',
-
-            // Image AI
-            midjourney: '🖼️ Ảnh nghệ thuật - chất lượng cao nhất, style đẹp',
-            dalle: '🎨 OpenAI Image - tích hợp ChatGPT, dễ sử dụng',
-            ideogram: '✏️ Text trong ảnh - render chữ/logo cực chuẩn',
-            leonardo: '🎮 Game art - tốt cho concept art & game assets',
-
-            // Video platforms
-            youtube: '📺 Video lớn nhất - mọi thể loại, tất cả ngôn ngữ',
-            tiktok: '🎵 Short video - trending, viral, giải trí',
-            instagram: '📸 Reels - lifestyle, fashion, food',
-            vimeo: '🎬 Video chuyên nghiệp - filmmaker, creative',
-            dailymotion: '🌍 Video châu Âu - content đa dạng',
-            twitch: '🎮 Livestream - gaming, esports',
-            rumble: '📢 Video tự do - ít kiểm duyệt',
-
-            // China Video
-            bilibili: '🎌 Anime & Gaming - cộng đồng otaku Trung Quốc',
-            douyin: '🇨🇳 TikTok Trung Quốc - trending nội địa TQ',
-            kuaishou: '📱 Short video - nông thôn & đời thường TQ',
-            xiaohongshu: '💄 Lifestyle - review, beauty, shopping',
-            weibo: '🐦 Twitter TQ - tin tức & celeb Trung Quốc',
-            youku: '📺 Video dài - phim, show TV Trung Quốc',
-            iqiyi: '🎬 Streaming TQ - phim Hàn, drama, variety',
-            tencentvideo: '🎭 Tencent - anime, game, esports content'
-        };
-
-        // Apply descriptions to platforms
-        document.querySelectorAll('.platform input[data-p]').forEach(input => {
-            const key = input.dataset.p;
-            if (PLATFORM_DESCRIPTIONS[key]) {
-                const platform = input.closest('.platform');
-                const desc = document.createElement('div');
-                desc.className = 'platform-desc';
-                desc.textContent = PLATFORM_DESCRIPTIONS[key];
-                platform.appendChild(desc);
-            }
-        });
     </script>
 </body>
 
