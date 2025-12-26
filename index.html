@@ -4847,6 +4847,9 @@ Trả về JSON (chỉ JSON, không text khác):
                 if (currentTab === 'video') {
                     const input = document.getElementById('videoInput');
                     query = input ? input.value.trim() : '';
+                } else if (currentTab === 'movie') {
+                    const input = document.getElementById('movieInput');
+                    query = input ? input.value.trim() : '';
                 } else if (currentTab === 'image') {
                     const input = document.getElementById('imageInput');
                     query = input ? input.value.trim() : '';
