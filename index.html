@@ -5662,6 +5662,11 @@ Trả về JSON (chỉ JSON, không text khác):
                     platform.setAttribute('draggable', 'true');
 
                     platform.addEventListener('dragstart', e => {
+                        // Cancel drag if clicking on the checkbox input itself
+                        if (e.target.tagName === 'INPUT') {
+                            e.preventDefault();
+                            return;
+                        }
                         draggedPlatform = platform;
                         platform.classList.add('dragging');
                         e.dataTransfer.effectAllowed = 'move';
@@ -5698,6 +5703,18 @@ Trả về JSON (chỉ JSON, không text khác):
                                 platform.after(draggedPlatform);
                             } else {
                                 platform.before(draggedPlatform);
+                            }
+                        }
+                    });
+
+                    // Add click handler to toggle checkbox even with draggable
+                    platform.addEventListener('click', e => {
+                        // Only toggle if not dragging and not clicking the checkbox directly
+                        if (!draggedPlatform && e.target.tagName !== 'INPUT') {
+                            const checkbox = platform.querySelector('input[type="checkbox"]');
+                            if (checkbox) {
+                                checkbox.checked = !checkbox.checked;
+                                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
                             }
                         }
                     });
