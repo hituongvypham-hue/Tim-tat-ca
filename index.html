@@ -680,10 +680,159 @@
             background: #e8eaed;
         }
 
-        .api-key-section .section-title small {
-            font-weight: 400;
+        /* API Status Badge */
+        .api-status-section {
+            padding: 0 !important;
+        }
+
+        .api-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .api-status-badge.connected {
+            background: #e6f4ea;
+            color: #1e8e3e;
+            border: 1px solid #34a853;
+        }
+
+        .api-status-badge.disconnected {
+            background: #fce8e6;
+            color: #c5221f;
+            border: 1px solid #ea4335;
+        }
+
+        .api-status-badge:hover {
+            transform: scale(1.05);
+        }
+
+        /* API Modal */
+        .api-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .api-modal {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            animation: modalSlide 0.2s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .api-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .api-modal-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
             color: #5f6368;
-            font-size: 11px;
+        }
+
+        .api-modal-body {
+            padding: 20px;
+        }
+
+        .api-modal-body p {
+            margin: 0 0 12px;
+            color: #5f6368;
+        }
+
+        .api-modal-body ol {
+            margin: 0 0 16px;
+            padding-left: 20px;
+            color: #5f6368;
+        }
+
+        .api-modal-body a {
+            color: #1a73e8;
+        }
+
+        .api-modal-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .api-modal-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .api-modal-footer {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            padding: 16px 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .modal-btn.cancel {
+            background: #f1f3f4;
+            color: #5f6368;
+        }
+
+        .modal-btn.danger {
+            background: #fce8e6;
+            color: #c5221f;
+        }
+
+        .modal-btn.primary {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .modal-btn:hover {
+            opacity: 0.9;
         }
 
         .pb-input:focus,
@@ -2446,13 +2595,10 @@
 
         <!-- CREATE TAB - Prompt Builder -->
         <div class="tab-content" id="create-tab">
-            <div class="section api-key-section">
-                <div class="section-title">🔑 Gemini API Key <small>(tùy chọn, để dùng AI thông minh)</small></div>
-                <div class="pb-input-group">
-                    <input type="password" id="geminiApiKeyInput" class="pb-input"
-                        placeholder="Dán API key từ aistudio.google.com/app/apikey"
-                        onchange="saveGeminiApiKey(this.value)">
-                    <button type="button" class="toggle-key-btn" onclick="toggleApiKeyVisibility()">👁️</button>
+            <div class="section api-status-section">
+                <div id="apiStatusBadge" class="api-status-badge disconnected" onclick="showApiKeyModal()">
+                    <span class="status-icon">❌</span>
+                    <span class="status-text">Chưa kết nối AI</span>
                 </div>
             </div>
             <div class="section">
@@ -6241,6 +6387,18 @@ Return JSON only, no explanation:
             }
         }
 
+        function toggleModalKeyVisibility() {
+            const input = document.getElementById('modalApiKeyInput');
+            const btn = input.parentElement.querySelector('.toggle-key-btn');
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁️';
+            }
+        }
+
         // Load saved API key on page load
         (function loadSavedApiKey() {
             const savedKey = localStorage.getItem('geminiApiKey');
@@ -6249,7 +6407,95 @@ Return JSON only, no explanation:
                 if (input) input.value = savedKey;
             }
         })();
+
+        // 9. API Key Modal Management
+        function showApiKeyModal() {
+            document.getElementById('apiKeyModal').style.display = 'flex';
+            const savedKey = localStorage.getItem('geminiApiKey');
+            if (savedKey) {
+                document.getElementById('modalApiKeyInput').value = savedKey;
+            }
+        }
+
+        function hideApiKeyModal() {
+            document.getElementById('apiKeyModal').style.display = 'none';
+        }
+
+        function saveApiKeyFromModal() {
+            const key = document.getElementById('modalApiKeyInput').value.trim();
+            if (key) {
+                localStorage.setItem('geminiApiKey', key);
+                updateApiStatusBadge(true);
+                hideApiKeyModal();
+                showToast('✅ API key đã lưu!');
+            } else {
+                showToast('⚠️ Vui lòng nhập API key!');
+            }
+        }
+
+        function removeApiKey() {
+            localStorage.removeItem('geminiApiKey');
+            document.getElementById('modalApiKeyInput').value = '';
+            updateApiStatusBadge(false);
+            hideApiKeyModal();
+            showToast('🗑️ API key đã xóa!');
+        }
+
+        function updateApiStatusBadge(connected) {
+            const badge = document.getElementById('apiStatusBadge');
+            if (connected) {
+                badge.className = 'api-status-badge connected';
+                badge.innerHTML = '<span class="status-icon">✅</span><span class="status-text">AI Connected</span>';
+            } else {
+                badge.className = 'api-status-badge disconnected';
+                badge.innerHTML = '<span class="status-icon">❌</span><span class="status-text">Chưa kết nối AI</span>';
+            }
+        }
+
+        // Check API key on load and show modal if not set
+        (function initApiKeyCheck() {
+            const savedKey = localStorage.getItem('geminiApiKey');
+            if (savedKey) {
+                updateApiStatusBadge(true);
+            } else {
+                // Show modal on first visit to Create tab
+                setTimeout(() => {
+                    if (document.getElementById('create-tab').classList.contains('active')) {
+                        showApiKeyModal();
+                    }
+                }, 500);
+            }
+        })();
     </script>
+
+    <!-- API Key Modal -->
+    <div id="apiKeyModal" class="api-modal-overlay" onclick="if(event.target===this)hideApiKeyModal()">
+        <div class="api-modal">
+            <div class="api-modal-header">
+                <h3>🔑 Cài đặt Gemini API Key</h3>
+                <button class="modal-close-btn" onclick="hideApiKeyModal()">✕</button>
+            </div>
+            <div class="api-modal-body">
+                <p>Để sử dụng tính năng <strong>🤖 AI thông minh</strong>, bạn cần API key miễn phí từ Google.</p>
+                <ol>
+                    <li>Truy cập <a href="https://aistudio.google.com/app/apikey"
+                            target="_blank">aistudio.google.com/app/apikey</a></li>
+                    <li>Đăng nhập và tạo API key</li>
+                    <li>Dán key vào ô bên dưới</li>
+                </ol>
+                <div class="api-modal-input-group">
+                    <input type="password" id="modalApiKeyInput" class="api-modal-input"
+                        placeholder="Dán API key tại đây...">
+                    <button type="button" class="toggle-key-btn" onclick="toggleModalKeyVisibility()">👁️</button>
+                </div>
+            </div>
+            <div class="api-modal-footer">
+                <button class="modal-btn cancel" onclick="hideApiKeyModal()">Bỏ qua</button>
+                <button class="modal-btn danger" onclick="removeApiKey()">🗑️ Xóa key</button>
+                <button class="modal-btn primary" onclick="saveApiKeyFromModal()">💾 Lưu</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
