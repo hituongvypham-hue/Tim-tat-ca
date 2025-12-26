@@ -521,6 +521,43 @@
             object-fit: contain;
         }
 
+        /* Platform Tooltip */
+        .platform[title] {
+            position: relative;
+        }
+
+        .platform[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            margin-bottom: 8px;
+            max-width: 250px;
+            white-space: normal;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+        }
+
+        .platform[title]:hover::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% - 2px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.85);
+            z-index: 1001;
+        }
+
         /* Actions */
         .actions {
             display: flex;
@@ -5506,6 +5543,68 @@ Trả về JSON (chỉ JSON, không text khác):
         loadPlatformOrder();
         // 4. Finally init drag-drop for all platforms
         initPlatformDragDrop();
+
+        // 5. Add platform tooltips/descriptions
+        const PLATFORM_DESCRIPTIONS = {
+            // AI - Big 3
+            chatgpt: '🏆 Đa năng nhất, tốt cho viết & sáng tạo, hỗ trợ nhiều ngôn ngữ',
+            claude: '📝 Xuất sắc khi viết dài, phân tích tài liệu, coding 200K context',
+            gemini: '🔍 Tích hợp Google, tốt cho nghiên cứu & dữ liệu mới nhất',
+
+            // AI - More
+            perplexity: '🌐 Search AI - tìm kiếm internet với nguồn trích dẫn rõ ràng',
+            copilot: '💼 Microsoft AI - tích hợp Office, Edge, Windows',
+            grok: '🐦 AI của X/Twitter - truy cập real-time tweets & tin tức',
+            poe: '📱 All-in-one - dùng nhiều AI models trong 1 app',
+            you: '🔎 Search engine AI - tìm kiếm thông minh với AI',
+
+            // Coding AI
+            cursor: '⌨️ IDE AI - code editor với AI tích hợp, tốt nhất cho dev',
+            replit: '💾 Online IDE - viết & chạy code trực tiếp trên browser',
+            codeium: '🆓 Free copilot - gợi ý code miễn phí cho mọi IDE',
+            phind: '🔎 Dev search - tìm kiếm tối ưu cho lập trình viên',
+
+            // China AI
+            ernie: '🐼 Baidu AI - tốt nhất cho tiếng Trung, kiến thức Trung Quốc',
+            qianwen: '☁️ Alibaba AI - mạnh về data & ecommerce',
+            kimi: '📚 Moonshot AI - đọc tài liệu dài, 200K context',
+            doubao: '🎁 ByteDance AI - tích hợp TikTok/Douyin ecosystem',
+            deepseek: '🧮 Math & Code - xuất sắc về toán học và lập trình',
+            zhipu: '🎯 ChatGLM - AI đa năng của Trung Quốc',
+
+            // Image AI
+            midjourney: '🖼️ Ảnh nghệ thuật - chất lượng cao nhất, style đẹp',
+            dalle: '🎨 OpenAI Image - tích hợp ChatGPT, dễ sử dụng',
+            ideogram: '✏️ Text trong ảnh - render chữ/logo cực chuẩn',
+            leonardo: '🎮 Game art - tốt cho concept art & game assets',
+
+            // Video platforms
+            youtube: '📺 Video lớn nhất - mọi thể loại, tất cả ngôn ngữ',
+            tiktok: '🎵 Short video - trending, viral, giải trí',
+            instagram: '📸 Reels - lifestyle, fashion, food',
+            vimeo: '🎬 Video chuyên nghiệp - filmmaker, creative',
+            dailymotion: '🌍 Video châu Âu - content đa dạng',
+            twitch: '🎮 Livestream - gaming, esports',
+            rumble: '📢 Video tự do - ít kiểm duyệt',
+
+            // China Video
+            bilibili: '🎌 Anime & Gaming - cộng đồng otaku Trung Quốc',
+            douyin: '🇨🇳 TikTok Trung Quốc - trending nội địa TQ',
+            kuaishou: '📱 Short video - nông thôn & đời thường TQ',
+            xiaohongshu: '💄 Lifestyle - review, beauty, shopping',
+            weibo: '🐦 Twitter TQ - tin tức & celeb Trung Quốc',
+            youku: '📺 Video dài - phim, show TV Trung Quốc',
+            iqiyi: '🎬 Streaming TQ - phim Hàn, drama, variety',
+            tencentvideo: '🎭 Tencent - anime, game, esports content'
+        };
+
+        // Apply tooltips to platforms
+        document.querySelectorAll('.platform input[data-p]').forEach(input => {
+            const key = input.dataset.p;
+            if (PLATFORM_DESCRIPTIONS[key]) {
+                input.closest('.platform').title = PLATFORM_DESCRIPTIONS[key];
+            }
+        });
     </script>
 </body>
 
