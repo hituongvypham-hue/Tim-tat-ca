@@ -521,41 +521,32 @@
             object-fit: contain;
         }
 
-        /* Platform Tooltip */
-        .platform[title] {
+        /* Platform Description - show under platform on hover */
+        .platform {
             position: relative;
         }
 
-        .platform[title]:hover::after {
-            content: attr(title);
+        .platform-desc {
+            display: none;
             position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.85);
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1a73e8;
             color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            white-space: nowrap;
-            z-index: 1000;
-            margin-bottom: 8px;
-            max-width: 250px;
+            padding: 6px 10px;
+            border-radius: 0 0 8px 8px;
+            font-size: 11px;
+            line-height: 1.4;
+            z-index: 100;
+            margin-top: -3px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 200px;
             white-space: normal;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            pointer-events: none;
         }
 
-        .platform[title]:hover::before {
-            content: '';
-            position: absolute;
-            bottom: calc(100% - 2px);
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: rgba(0, 0, 0, 0.85);
-            z-index: 1001;
+        .platform:hover .platform-desc {
+            display: block;
         }
 
         /* Actions */
@@ -5598,11 +5589,15 @@ Trả về JSON (chỉ JSON, không text khác):
             tencentvideo: '🎭 Tencent - anime, game, esports content'
         };
 
-        // Apply tooltips to platforms
+        // Apply descriptions to platforms
         document.querySelectorAll('.platform input[data-p]').forEach(input => {
             const key = input.dataset.p;
             if (PLATFORM_DESCRIPTIONS[key]) {
-                input.closest('.platform').title = PLATFORM_DESCRIPTIONS[key];
+                const platform = input.closest('.platform');
+                const desc = document.createElement('div');
+                desc.className = 'platform-desc';
+                desc.textContent = PLATFORM_DESCRIPTIONS[key];
+                platform.appendChild(desc);
             }
         });
     </script>
