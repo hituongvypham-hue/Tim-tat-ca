@@ -535,107 +535,6 @@
             color: #202124;
         }
 
-        /* AI Card Layout */
-        .ai-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .ai-card {
-            display: flex;
-            align-items: flex-start;
-            padding: 16px;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            background: #fff;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .ai-card:hover {
-            border-color: #1a73e8;
-            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.15);
-        }
-
-        .ai-card.selected {
-            border-color: #1a73e8;
-            background: #e8f0fe;
-        }
-
-        .ai-card-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-right: 16px;
-            flex-shrink: 0;
-            background: #f8f9fa;
-        }
-
-        .ai-card-icon img {
-            width: 32px;
-            height: 32px;
-        }
-
-        .ai-card-content {
-            flex: 1;
-        }
-
-        .ai-card-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #202124;
-            margin-bottom: 4px;
-        }
-
-        .ai-card-desc {
-            font-size: 13px;
-            color: #5f6368;
-            line-height: 1.4;
-            margin-bottom: 8px;
-        }
-
-        .ai-card-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .ai-card-tag {
-            font-size: 11px;
-            color: #1a73e8;
-            background: #e8f0fe;
-            padding: 2px 8px;
-            border-radius: 12px;
-        }
-
-        .ai-card input[type="checkbox"] {
-            display: none;
-        }
-
-        .ai-card-check {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #1a73e8;
-            color: white;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-
-        .ai-card.selected .ai-card-check {
-            display: flex;
-        }
-
         /* Actions */
         .actions {
             display: flex;
@@ -2195,119 +2094,106 @@
 
         <!-- AI TAB -->
         <div class="tab-content" id="ai-tab">
-            <div class="ai-cards">
-                <!-- ChatGPT -->
-                <label class="ai-card" onclick="this.classList.toggle('selected')">
-                    <input type="checkbox" data-p="chatgpt">
-                    <div class="ai-card-icon">💬</div>
-                    <div class="ai-card-content">
-                        <div class="ai-card-title">ChatGPT</div>
-                        <div class="ai-card-desc">Nghiên cứu, sáng tạo và tự động hóa với AI hàng đầu</div>
-                        <div class="ai-card-tags">
-                            <span class="ai-card-tag">#ai chatbots</span>
-                            <span class="ai-card-tag">#research</span>
-                            <span class="ai-card-tag">#writing</span>
-                        </div>
-                    </div>
-                </label>
+            <div class="section">
+                <div class="section-title">🌍 Global - Big 3 <span class="badge hot">TOP</span></div>
+                <div class="section-desc">
+                    <strong>ChatGPT:</strong> Đa năng, viết sáng tạo •
+                    <strong>Claude:</strong> Viết dài, phân tích tài liệu •
+                    <strong>Gemini:</strong> Tích hợp Google, dữ liệu mới nhất
+                </div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="chatgpt"><span class="platform-label"><span
+                                class="platform-icon">💬</span>ChatGPT</span></label>
+                    <label class="platform"><input type="checkbox" data-p="claude"><span class="platform-label"><span
+                                class="platform-icon">🧠</span>Claude</span></label>
+                    <label class="platform"><input type="checkbox" data-p="gemini"><span class="platform-label"><span
+                                class="platform-icon">✨</span>Gemini</span></label>
+                </div>
+            </div>
 
-                <!-- Claude -->
-                <label class="ai-card" onclick="this.classList.toggle('selected')">
-                    <input type="checkbox" data-p="claude">
-                    <div class="ai-card-icon">🧠</div>
-                    <div class="ai-card-content">
-                        <div class="ai-card-title">Claude</div>
-                        <div class="ai-card-desc">Phân tích tài liệu, viết dài, debug code nhanh</div>
-                        <div class="ai-card-tags">
-                            <span class="ai-card-tag">#code assistant</span>
-                            <span class="ai-card-tag">#200K context</span>
-                        </div>
-                    </div>
-                </label>
+            <div class="section">
+                <div class="section-title">🔥 Global - More</div>
+                <div class="section-desc">
+                    <strong>Perplexity:</strong> Search AI với nguồn trích dẫn •
+                    <strong>Copilot:</strong> Tích hợp Microsoft •
+                    <strong>Grok:</strong> X/Twitter real-time •
+                    <strong>Poe:</strong> Nhiều AI trong 1 app
+                </div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="perplexity"><span
+                            class="platform-label"><span class="platform-icon">🔍</span>Perplexity</span></label>
+                    <label class="platform"><input type="checkbox" data-p="copilot"><span class="platform-label"><span
+                                class="platform-icon">🪟</span>Copilot</span></label>
+                    <label class="platform"><input type="checkbox" data-p="grok"><span class="platform-label"><span
+                                class="platform-icon">🚀</span>Grok (X)</span></label>
+                    <label class="platform"><input type="checkbox" data-p="poe"><span class="platform-label"><span
+                                class="platform-icon">📱</span>Poe</span></label>
+                    <label class="platform"><input type="checkbox" data-p="you"><span class="platform-label"><span
+                                class="platform-icon">🌐</span>You.com</span></label>
+                </div>
+            </div>
 
-                <!-- Gemini -->
-                <label class="ai-card" onclick="this.classList.toggle('selected')">
-                    <input type="checkbox" data-p="gemini">
-                    <div class="ai-card-icon">✨</div>
-                    <div class="ai-card-content">
-                        <div class="ai-card-title">Google Gemini</div>
-                        <div class="ai-card-desc">Đa phương thức: text, image, audio và video</div>
-                        <div class="ai-card-tags">
-                            <span class="ai-card-tag">#multimodal</span>
-                            <span class="ai-card-tag">#google</span>
-                        </div>
-                    </div>
-                </label>
+            <div class="section">
+                <div class="section-title">💻 Coding AI</div>
+                <div class="section-desc">
+                    <strong>Cursor:</strong> IDE AI tốt nhất cho dev •
+                    <strong>Replit:</strong> Online IDE •
+                    <strong>Codeium:</strong> Gợi ý code miễn phí •
+                    <strong>Phind:</strong> Search cho lập trình viên
+                </div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="cursor"><span class="platform-label"><span
+                                class="platform-icon">⌨️</span>Cursor</span></label>
+                    <label class="platform"><input type="checkbox" data-p="replit"><span class="platform-label"><span
+                                class="platform-icon">💾</span>Replit AI</span></label>
+                    <label class="platform"><input type="checkbox" data-p="codeium"><span class="platform-label"><span
+                                class="platform-icon">🔧</span>Codeium</span></label>
+                    <label class="platform"><input type="checkbox" data-p="phind"><span class="platform-label"><span
+                                class="platform-icon">🔎</span>Phind</span></label>
+                </div>
+            </div>
 
-                <!-- Perplexity -->
-                <label class="ai-card" onclick="this.classList.toggle('selected')">
-                    <input type="checkbox" data-p="perplexity">
-                    <div class="ai-card-icon">🔍</div>
-                    <div class="ai-card-content">
-                        <div class="ai-card-title">Perplexity</div>
-                        <div class="ai-card-desc">Tìm và tóm tắt thông tin web với nguồn trích dẫn</div>
-                        <div class="ai-card-tags">
-                            <span class="ai-card-tag">#search</span>
-                            <span class="ai-card-tag">#citations</span>
-                        </div>
-                    </div>
-                </label>
+            <div class="section">
+                <div class="section-title">🇨🇳 Trung Quốc</div>
+                <div class="section-desc">
+                    <strong>Kimi:</strong> Đọc tài liệu dài 200K •
+                    <strong>DeepSeek:</strong> Toán & code xuất sắc •
+                    Ernie, Qianwen, Doubao: AI nội địa TQ
+                </div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="ernie"><span class="platform-label"><span
+                                class="platform-icon">🐼</span>文心一言</span></label>
+                    <label class="platform"><input type="checkbox" data-p="qianwen"><span class="platform-label"><span
+                                class="platform-icon">☁️</span>通义千问</span></label>
+                    <label class="platform"><input type="checkbox" data-p="kimi"><span class="platform-label"><span
+                                class="platform-icon">🌙</span>Kimi</span></label>
+                    <label class="platform"><input type="checkbox" data-p="doubao"><span class="platform-label"><span
+                                class="platform-icon">🎁</span>豆包</span></label>
+                    <label class="platform"><input type="checkbox" data-p="deepseek"><span class="platform-label"><span
+                                class="platform-icon">🔬</span>DeepSeek</span></label>
+                    <label class="platform"><input type="checkbox" data-p="zhipu"><span class="platform-label"><span
+                                class="platform-icon">🎯</span>智谱清言</span></label>
+                </div>
+            </div>
 
-                <!-- DeepSeek -->
-                <label class="ai-card" onclick="this.classList.toggle('selected')">
-                    <input type="checkbox" data-p="deepseek">
-                    <div class="ai-card-icon">🔬</div>
-                    <div class="ai-card-content">
-                        <div class="ai-card-title">DeepSeek</div>
-                        <div class="ai-card-desc">Xuất sắc về toán học và lập trình</div>
-                        <div class="ai-card-tags">
-                            <span class="ai-card-tag">#math</span>
-                            <span class="ai-card-tag">#coding</span>
-                        </div>
-                    </div>
-                </label>
-
-                <!-- Midjourney -->
-                <label class="ai-card" onclick="this.classList.toggle('selected')">
-                    <input type="checkbox" data-p="midjourney">
-                    <div class="ai-card-icon">🎨</div>
-                    <div class="ai-card-content">
-                        <div class="ai-card-title">Midjourney</div>
-                        <div class="ai-card-desc">Tạo ảnh nghệ thuật số chất lượng cao</div>
-                        <div class="ai-card-tags">
-                            <span class="ai-card-tag">#text to image</span>
-                            <span class="ai-card-tag">#art</span>
-                        </div>
-                    </div>
-                </label>
-
-                <!-- Copilot -->
-                <label class="ai-card" onclick="this.classList.toggle('selected')">
-                    <input type="checkbox" data-p="copilot">
-                    <div class="ai-card-icon">🪟</div>
-                    <div class="ai-card-content">
-                        <div class="ai-card-title">Microsoft Copilot</div>
-                        <div class="ai-card-desc">Tích hợp Office, Edge, Windows</div>
-                        <div class="ai-card-tags">
-                            <span class="ai-card-tag">#microsoft</span>
-                            <span class="ai-card-tag">#productivity</span>
-                        </div>
-                    </div>
-                </label>
-
-                <!-- Cursor -->
-                <label class="ai-card" onclick="this.classList.toggle('selected')">
-                    <input type="checkbox" data-p="cursor">
-                    <div class="ai-card-icon">⌨️</div>
-                    <div class="ai-card-content">
-                        <div class="ai-card-title">Cursor</div>
-                        <div class="ai-card-desc">IDE AI tốt nhất cho developer</div>
-                        <div class="ai-card-tags">
-                            <span class="ai-card-tag">#coding</span>
-                            <span class="ai-card-tag">#IDE</span>
-                        </div>
-                    </div>
-                </label>
+            <div class="section">
+                <div class="section-title">🎨 Image AI</div>
+                <div class="section-desc">
+                    <strong>Midjourney:</strong> Ảnh nghệ thuật đẹp nhất •
+                    <strong>DALL-E:</strong> Tích hợp ChatGPT •
+                    <strong>Ideogram:</strong> Render chữ chuẩn •
+                    <strong>Leonardo:</strong> Game art & concept
+                </div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="midjourney"><span
+                            class="platform-label"><span class="platform-icon">🎨</span>Midjourney</span></label>
+                    <label class="platform"><input type="checkbox" data-p="dalle"><span class="platform-label"><span
+                                class="platform-icon">🖼️</span>DALL-E 3</span></label>
+                    <label class="platform"><input type="checkbox" data-p="ideogram"><span class="platform-label"><span
+                                class="platform-icon">✏️</span>Ideogram</span></label>
+                    <label class="platform"><input type="checkbox" data-p="leonardo"><span class="platform-label"><span
+                                class="platform-icon">🎭</span>Leonardo</span></label>
+                </div>
             </div>
 
             <div class="actions">
