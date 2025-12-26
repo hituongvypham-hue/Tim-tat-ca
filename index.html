@@ -1619,8 +1619,10 @@
     <div class="container">
         <!-- Settings Toggle -->
         <div class="settings-bar">
-            <span class="app-title" id="appTitle">🎬 Media Search Pro</span>
+            <span class="app-title" id="appTitle"><img src="logo.png" alt="Logo"
+                    style="height: 24px; vertical-align: middle; margin-right: 6px;">Media Search Pro</span>
             <div class="header-actions">
+                <span id="headerClock" style="font-size: 12px; color: #5f6368; margin-right: 12px;"></span>
                 <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
             </div>
         </div>
@@ -5550,6 +5552,16 @@ Trả về JSON (chỉ JSON, không text khác):
         loadPlatformOrder();
         // 4. Finally init drag-drop for all platforms
         initPlatformDragDrop();
+
+        // 5. Update header clock
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+            const date = now.toLocaleDateString('vi-VN', { weekday: 'short', day: 'numeric', month: 'numeric' });
+            document.getElementById('headerClock').textContent = `${date} • ${time}`;
+        }
+        updateClock();
+        setInterval(updateClock, 60000);
     </script>
 </body>
 
