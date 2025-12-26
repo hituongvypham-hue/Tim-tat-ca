@@ -5420,10 +5420,14 @@ Trả về JSON (chỉ JSON, không text khác):
         // Init Google Auth when page loads
         window.addEventListener('load', initGoogleAuth);
 
-        // Initialize all features
-        loadPlatformOrder();
-        loadCustomSites();
+        // Initialize all features - ORDER MATTERS!
+        // 1. First add custom buttons so containers are ready
         addCustomButtonsToAllTabs();
+        // 2. Then load custom sites into DOM
+        loadCustomSites();
+        // 3. THEN apply saved platform order (after all platforms are in DOM)
+        loadPlatformOrder();
+        // 4. Finally init drag-drop for all platforms
         initPlatformDragDrop();
     </script>
 </body>
