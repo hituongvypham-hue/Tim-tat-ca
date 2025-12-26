@@ -6319,46 +6319,32 @@ Trả về JSON (chỉ JSON, không text khác):
             if (suggestion.aspectRatio) setSelectByValue('pbAspectRatio', suggestion.aspectRatio);
             updateFinalPrompt();
 
-            // Show direction info
-            if (suggestion.direction) {
-                showToast(`🎨 Hướng: ${suggestion.direction}`);
+            // Show mood info
+            if (suggestion.mood) {
+                showToast(`🎭 Mood: ${suggestion.mood}`);
             }
         }
 
         async function callGeminiForSuggestion(subject, apiKey) {
-            // Random creative directions for variety
-            const directions = [
-                "cinematic movie poster style",
-                "fine art museum painting",
-                "dramatic editorial photography",
-                "dreamy ethereal fantasy",
-                "gritty realistic documentary",
-                "vintage retro aesthetic",
-                "futuristic sci-fi concept",
-                "dark moody atmospheric",
-                "bright cheerful commercial",
-                "artistic abstract interpretation"
-            ];
-            const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+            const prompt = `Bạn là một đạo diễn hình ảnh chuyên nghiệp. Hãy phân tích chủ thể và tư duy theo MOOD để tạo ra 1 bức ảnh chất lượng.
 
-            const prompt = `You are a creative director for image generation. 
-Subject: "${subject}"
-Creative direction: ${randomDirection}
+CHỦ THỂ: "${subject}"
 
-Imagine ONE complete, cohesive vision for this image. Think deeply about:
-- What story does this image tell?
-- What emotions should it evoke?
-- What makes this composition compelling?
+BƯỚC 1 - PHÂN TÍCH: Chủ thể này gợi lên cảm xúc gì? Câu chuyện nào phù hợp? Mood nào sẽ làm nổi bật được chủ thể?
 
-Return ONLY valid JSON, no explanation:
+BƯỚC 2 - TƯ DUY MOOD: Chọn 1 mood phù hợp nhất với chủ thể (ví dụ: cinematic, dreamy, dark moody, vintage, epic, intimate, mysterious, joyful...)
+
+BƯỚC 3 - GỢI Ý HOÀN CHỈNH: Dựa trên mood đã chọn, đưa ra các gợi ý ĐỒNG BỘ để tạo ra 1 bức ảnh chất lượng và có hồn.
+
+Trả về JSON duy nhất, không giải thích:
 {
-  "direction": "${randomDirection}",
-  "details": "specific visual details: clothing, expression, texture, material, colors (be vivid and specific, 20-40 words)",
-  "setting": "complete environment description with mood and atmosphere (15-30 words)",
-  "style": "pick ONE style that fits this vision from: photorealistic 8K UHD DSLR Canon EOS R5 85mm f/1.4 shallow depth of field natural bokeh skin texture | digital art | oil painting | anime style | cyberpunk style | fantasy art | Studio Ghibli style | watercolor",
-  "lighting": "pick ONE from: natural lighting | golden hour lighting | dramatic lighting | soft diffused lighting | neon lights | cinematic lighting | studio lighting | backlit rim lighting",
-  "composition": "pick ONE from: close-up portrait | wide shot | portrait centered | bird's eye view | low angle shot | rule of thirds | macro shot",
-  "aspectRatio": "pick ONE from: 1:1 square format | 9:16 vertical portrait format | 16:9 horizontal landscape format | 3:4 portrait format"
+  "mood": "mood đã chọn và lý do ngắn gọn (10-20 từ)",
+  "details": "chi tiết cụ thể phù hợp với mood: quần áo, biểu cảm, texture, màu sắc (20-40 từ)",
+  "setting": "bối cảnh và atmosphere đồng bộ với mood (15-30 từ)",
+  "style": "chọn 1 từ: photorealistic 8K UHD DSLR Canon EOS R5 85mm f/1.4 shallow depth of field | digital art | oil painting | anime style | cyberpunk style | fantasy art | Studio Ghibli style | watercolor",
+  "lighting": "chọn 1 từ: natural lighting | golden hour lighting | dramatic lighting | soft diffused lighting | neon lights | cinematic lighting | studio lighting | backlit rim lighting",
+  "composition": "chọn 1 từ: close-up portrait | wide shot | portrait centered | bird's eye view | low angle shot | rule of thirds | macro shot",
+  "aspectRatio": "chọn 1 từ: 1:1 square format | 9:16 vertical portrait format | 16:9 horizontal landscape format | 3:4 portrait format"
 }`;
 
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
@@ -6366,7 +6352,7 @@ Return ONLY valid JSON, no explanation:
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 1.0 }
+                    generationConfig: { temperature: 0.9 }
                 })
             });
 
