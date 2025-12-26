@@ -2011,25 +2011,17 @@
                     style="height: 24px; vertical-align: middle; margin-right: 6px;">Media Search Pro</span>
             <div class="header-actions">
                 <span id="headerClock" style="font-size: 12px; color: #5f6368; margin-right: 12px;"></span>
+                <div id="apiStatusBadge" class="api-status-badge disconnected" onclick="showApiKeyModal()"
+                    style="margin-right: 8px;">
+                    <span class="status-icon">❌</span>
+                    <span class="status-text">AI</span>
+                </div>
                 <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
             </div>
         </div>
 
         <!-- Settings Panel -->
         <div class="settings-panel" id="settingsPanel" style="display: none;">
-            <div class="setting-item">
-                <label id="lblApiKey">🤖 Gemini API Key</label>
-                <input type="password" id="geminiApiKey" class="api-key-input"
-                    placeholder="Paste API key từ aistudio.google.com">
-                <a href="https://aistudio.google.com/apikey" target="_blank" class="api-link" id="lblGetKey">Lấy key
-                    miễn phí →</a>
-            </div>
-            <div class="setting-item">
-                <label>
-                    <input type="checkbox" id="enableAI" checked>
-                    <span id="lblEnableAI">Bật AI gợi ý thông minh</span>
-                </label>
-            </div>
             <button class="save-settings-btn" onclick="saveSettings()" id="btnSaveSettings">💾 Lưu cài đặt</button>
             <div class="export-import-btns">
                 <button class="btn-export" onclick="exportSettings()" id="btnExport">📤 Export</button>
@@ -6445,10 +6437,10 @@ Return JSON only, no explanation:
             const badge = document.getElementById('apiStatusBadge');
             if (connected) {
                 badge.className = 'api-status-badge connected';
-                badge.innerHTML = '<span class="status-icon">✅</span><span class="status-text">AI Connected</span>';
+                badge.innerHTML = '<span class="status-icon">✅</span><span class="status-text">AI</span>';
             } else {
                 badge.className = 'api-status-badge disconnected';
-                badge.innerHTML = '<span class="status-icon">❌</span><span class="status-text">Chưa kết nối AI</span>';
+                badge.innerHTML = '<span class="status-icon">❌</span><span class="status-text">AI</span>';
             }
         }
 
