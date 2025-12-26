@@ -2478,14 +2478,19 @@
                             checked><span>🎨 DALL-E 3</span><small>Hiểu prompt phức tạp</small></label>
                     <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="midjourney"><span>🖼️
                             Midjourney</span><small>Nghệ thuật đẹp nhất</small></label>
-                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="leonardo"><span>🎭
-                            Leonardo AI</span><small>Game art, 3D</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="flux"><span>⚡
+                            Flux AI</span><small>Photorealistic, open</small></label>
                     <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="ideogram"><span>✏️
                             Ideogram</span><small>Text chuẩn</small></label>
-                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="playground"><span>🎪
-                            Playground</span><small>Miễn phí</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="leonardo"><span>🎭
+                            Leonardo AI</span><small>Game art, 3D</small></label>
                     <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="firefly"><span>🔥
                             Firefly</span><small>Adobe, bản quyền</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="gemini-image"><span>✨
+                            Gemini</span><small>Google, multimodal</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate"
+                            value="stable-diffusion"><span>🌀
+                            Stable Diffusion</span><small>Open-source, local</small></label>
                 </div>
             </div>
 
@@ -2500,6 +2505,8 @@
                             Doubao</span><small>ByteDance</small></label>
                     <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="tongyi"><span>☁️
                             Tongyi</span><small>Alibaba</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="ernie-vilg"><span>🐼
+                            ERNIE-ViLG</span><small>Baidu, miễn phí</small></label>
                 </div>
             </div>
 
@@ -5917,14 +5924,17 @@ Trả về JSON (chỉ JSON, không text khác):
             const aiUrls = {
                 'chatgpt-dalle': `https://chat.openai.com/?q=Create an image: ${encodedPrompt}`,
                 'midjourney': 'https://www.midjourney.com/app/',
-                'leonardo': 'https://app.leonardo.ai/ai-generations',
+                'flux': 'https://flux1.ai/',
                 'ideogram': `https://ideogram.ai/t/explore?q=${encodedPrompt}`,
-                'playground': 'https://playground.com/create',
+                'leonardo': 'https://app.leonardo.ai/ai-generations',
                 'firefly': 'https://firefly.adobe.com/generate/images',
+                'gemini-image': 'https://gemini.google.com/',
+                'stable-diffusion': 'https://stability.ai/stable-image',
                 'keling': 'https://klingai.com/',
                 'jimeng': 'https://jimeng.jianying.com/',
                 'doubao-image': 'https://www.doubao.com/',
-                'tongyi': 'https://tongyi.aliyun.com/wanxiang/'
+                'tongyi': 'https://tongyi.aliyun.com/wanxiang/',
+                'ernie-vilg': 'https://yiyan.baidu.com/'
             };
 
             // Copy prompt to clipboard
