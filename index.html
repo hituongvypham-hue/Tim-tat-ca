@@ -4970,6 +4970,11 @@ Trả về JSON (chỉ JSON, không text khác):
             } catch (e) {
                 console.error('Error loading platform order:', e);
             }
+
+            // Keep add-custom buttons at the end
+            document.querySelectorAll('.add-custom-btn').forEach(btn => {
+                btn.parentElement.appendChild(btn);
+            });
         }
 
         // ========== CUSTOM SITES ==========
