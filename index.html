@@ -4939,6 +4939,9 @@ Trả về JSON (chỉ JSON, không text khác):
                 });
             });
             localStorage.setItem('platformOrder', JSON.stringify(order));
+
+            // Auto sync to Drive (debounced)
+            autoSyncToDrive();
         }
 
         function loadPlatformOrder() {
@@ -4994,24 +4997,35 @@ Trả về JSON (chỉ JSON, không text khác):
             const name = document.getElementById('customSiteName').value.trim();
             const url = document.getElementById('customSiteUrl').value.trim();
             const searchUrl = document.getElementById('customSiteSearch').value.trim();
-            const icon = document.querySelector('#iconPicker .icon-option.selected')?.dataset.icon || '🌐';
 
             if (!name || !url) return;
+
+            // Auto-fetch favicon from URL domain
+            let faviconUrl = '';
+            try {
+                const domain = new URL(url).hostname;
+                faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+            } catch (e) {
+                faviconUrl = '';
+            }
 
             // Generate unique key
             const key = 'custom_' + Date.now();
 
-            // Save to customSites
+            // Save to customSites (with favicon URL instead of emoji)
             if (!customSites[tabId]) customSites[tabId] = [];
-            customSites[tabId].push({ key, name, url, searchUrl, icon });
+            customSites[tabId].push({ key, name, url, searchUrl, faviconUrl });
             localStorage.setItem('customSites', JSON.stringify(customSites));
 
             // Add to DOM
-            addCustomSiteToDOM(tabId, { key, name, url, searchUrl, icon });
+            addCustomSiteToDOM(tabId, { key, name, url, searchUrl, faviconUrl });
 
             closeAddSiteModal();
             toast('Đã thêm ' + name);
             updateCount();
+
+            // Auto sync to Drive
+            autoSyncToDrive();
         }
 
         function addCustomSiteToDOM(tabId, site) {
@@ -5028,10 +5042,16 @@ Trả về JSON (chỉ JSON, không text khác):
             const platform = document.createElement('label');
             platform.className = 'platform custom';
             platform.draggable = true;
+
+            // Use favicon URL if available, otherwise fallback to icon emoji or default
+            const iconHtml = site.faviconUrl
+                ? `<img class="platform-icon" src="${site.faviconUrl}" onerror="this.outerHTML='🌐'">`
+                : `<span class="platform-icon">${site.icon || '🌐'}</span>`;
+
             platform.innerHTML = `
                 <input type="checkbox" data-p="${site.key}">
                 <span class="platform-label">
-                    <span class="platform-icon">${site.icon}</span>${site.name}
+                    ${iconHtml}${site.name}
                 </span>
                 <button class="delete-custom" onclick="deleteCustomSite('${tabId}', '${site.key}', event)">×</button>
             `;
@@ -5119,6 +5139,9 @@ Trả về JSON (chỉ JSON, không text khác):
 
             toast('Đã xóa');
             updateCount();
+
+            // Auto sync to Drive
+            autoSyncToDrive();
         }
 
         function loadCustomSites() {
@@ -5162,6 +5185,55 @@ Trả về JSON (chỉ JSON, không text khác):
         const GOOGLE_CLIENT_ID = '676557816670-38kek48cab0ge88hmsvbo8lcpslp82fv.apps.googleusercontent.com';
         const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
         const DRIVE_FILE_NAME = 'media-search-pro-settings.json';
+
+        // Auto sync with debounce (3 seconds)
+        let autoSyncTimeout = null;
+        function autoSyncToDrive() {
+            // Only sync if user is signed in
+            if (!googleAccessToken) return;
+
+            // Debounce: wait 3 seconds after last change before syncing
+            if (autoSyncTimeout) clearTimeout(autoSyncTimeout);
+            autoSyncTimeout = setTimeout(async () => {
+                try {
+                    const data = getSyncData();
+
+                    // Search for existing file
+                    const searchRes = await fetch(
+                        `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FILE_NAME}'`,
+                        { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
+                    );
+
+                    if (!searchRes.ok) return; // Silently fail
+
+                    const searchResult = await searchRes.json();
+                    let fileId = searchResult.files && searchResult.files[0] ? searchResult.files[0].id : null;
+
+                    const metadata = {
+                        name: DRIVE_FILE_NAME,
+                        mimeType: 'application/json'
+                    };
+
+                    const form = new FormData();
+                    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+                    form.append('file', new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+
+                    const uploadUrl = fileId
+                        ? `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`
+                        : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+
+                    await fetch(uploadUrl, {
+                        method: fileId ? 'PATCH' : 'POST',
+                        headers: { 'Authorization': 'Bearer ' + googleAccessToken },
+                        body: form
+                    });
+
+                    console.log('Auto-synced to Drive');
+                } catch (e) {
+                    console.error('Auto-sync error:', e);
+                }
+            }, 3000);
+        }
 
         // Sync data helpers
         function getSyncData() {
