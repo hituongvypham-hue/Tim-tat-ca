@@ -8516,6 +8516,7 @@ Trả về JSON duy nhất, không giải thích:
             }
 
             localStorage.setItem('myTools', JSON.stringify(myTools));
+            autoSyncToDrive();
             nameInput.value = '';
             urlInput.value = '';
             iconInput.value = '';
@@ -8546,6 +8547,7 @@ Trả về JSON duy nhất, không giải thích:
             if (confirm('Xóa công cụ "' + myTools[index].name + '"?')) {
                 myTools.splice(index, 1);
                 localStorage.setItem('myTools', JSON.stringify(myTools));
+                autoSyncToDrive();
                 renderMyTools();
                 toast('🗑️ Đã xóa');
             }
@@ -8661,6 +8663,7 @@ Trả về JSON duy nhất, không giải thích:
             }
 
             localStorage.setItem('promptLibrary', JSON.stringify(prompts));
+            autoSyncToDrive();
             clearPromptForm();
             renderPrompts();
         }
@@ -8700,6 +8703,7 @@ Trả về JSON duy nhất, không giải thích:
                 localStorage.setItem('promptLibrary', JSON.stringify(prompts));
                 renderPrompts();
                 toast('🗑️ Đã xóa prompt');
+                autoSyncToDrive();
             }
         }
 
