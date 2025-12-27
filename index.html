@@ -5428,6 +5428,7 @@ Trả về JSON (chỉ JSON, không text khác):
             localStorage.setItem('enableAI', enableAI);
 
             toast('Đã lưu cài đặt!');
+            autoSyncToDrive();
             toggleSettings();
         }
 
@@ -6248,6 +6249,7 @@ Trả về JSON (chỉ JSON, không text khác):
             history.unshift(q);
             if (history.length > 10) history.pop();
             localStorage.setItem('searchHistory', JSON.stringify(history));
+            autoSyncToDrive();
             renderHistory();
         }
 
@@ -6525,6 +6527,7 @@ Trả về JSON (chỉ JSON, không text khác):
                 order.push(tab.dataset.tab);
             });
             localStorage.setItem('tabOrder', JSON.stringify(order));
+            autoSyncToDrive();
         }
 
         function loadTabOrder() {
@@ -6877,6 +6880,7 @@ Trả về JSON (chỉ JSON, không text khác):
         function setLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('lang', lang);
+            autoSyncToDrive();
             document.querySelectorAll('.lang-toggle-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === lang);
             });
@@ -7144,6 +7148,7 @@ Trả về JSON (chỉ JSON, không text khác):
                 const defaultHomepages = JSON.parse(localStorage.getItem('defaultHomepages') || '{}');
                 defaultHomepages[currentTab] = firstPlatform.dataset.p;
                 localStorage.setItem('defaultHomepages', JSON.stringify(defaultHomepages));
+                autoSyncToDrive();
             }
         }
 
@@ -8014,6 +8019,7 @@ Trả về JSON duy nhất, không giải thích:
                 localStorage.removeItem('geminiApiKey');
                 showToast('🗑️ API key đã xóa!');
             }
+            autoSyncToDrive();
         }
 
         function toggleApiKeyVisibility() {
@@ -8066,6 +8072,7 @@ Trả về JSON duy nhất, không giải thích:
             const key = document.getElementById('modalApiKeyInput').value.trim();
             if (key) {
                 localStorage.setItem('geminiApiKey', key);
+                autoSyncToDrive();
                 updateApiStatusBadge(true);
                 hideApiKeyModal();
                 showToast('✅ API key đã lưu!');
@@ -8160,6 +8167,7 @@ Trả về JSON duy nhất, không giải thích:
 
             delete customHomepages[selectedPlatformKey];
             localStorage.setItem('customHomepages', JSON.stringify(customHomepages));
+            autoSyncToDrive();
             showToast('🔄 Đã đặt lại mặc định cho ' + selectedPlatformKey);
         }
 
@@ -8176,6 +8184,7 @@ Trả về JSON duy nhất, không giải thích:
 
             customHomepages[selectedPlatformKey] = url;
             localStorage.setItem('customHomepages', JSON.stringify(customHomepages));
+            autoSyncToDrive();
 
             // Also update HOMEPAGE_URLS for current session
             HOMEPAGE_URLS[selectedPlatformKey] = url;
