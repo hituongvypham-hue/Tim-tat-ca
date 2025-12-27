@@ -1933,6 +1933,41 @@
             background: #e8f0fe;
         }
 
+        /* Platform Context Menu */
+        .platform-context-menu {
+            position: fixed;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            min-width: 180px;
+            padding: 0.5rem 0;
+            display: none;
+        }
+
+        .platform-context-menu.show {
+            display: block;
+        }
+
+        .context-menu-item {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.15s;
+        }
+
+        .context-menu-item:hover {
+            background: #f0f0f0;
+        }
+
+        body.dark .context-menu-item:hover {
+            background: #333;
+        }
+
         /* ========== CLOUD SYNC ========== */
         .sync-section {
             margin-top: 1rem;
@@ -2223,10 +2258,10 @@
                 <div class="section-title">🌐 Xem phim miễn phí <span class="badge">Global Hot</span></div>
                 <div class="section-desc">Các trang được recommend nhiều nhất trên Reddit 2024</div>
                 <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="hydrahd" checked><span
-                            class="platform-label"><span class="platform-icon">💧</span>HydraHD</span></label>
-                    <label class="platform"><input type="checkbox" data-p="cineby" checked><span
-                            class="platform-label"><span class="platform-icon">🎬</span>Cineby</span></label>
+                    <label class="platform"><input type="checkbox" data-p="hydrahd"><span class="platform-label"><span
+                                class="platform-icon">💧</span>HydraHD</span></label>
+                    <label class="platform"><input type="checkbox" data-p="cineby"><span class="platform-label"><span
+                                class="platform-icon">🎬</span>Cineby</span></label>
                     <label class="platform"><input type="checkbox" data-p="fmovies"><span class="platform-label"><span
                                 class="platform-icon">🎞️</span>FMovies</span></label>
                     <label class="platform"><input type="checkbox" data-p="m4uhd"><span class="platform-label"><span
@@ -2265,8 +2300,8 @@
                 <div class="section-title">📚 Database & Reviews <span class="badge">Rating</span></div>
                 <div class="section-desc">Tra cứu điểm số, thông tin phim</div>
                 <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="imdb" checked><span
-                            class="platform-label"><span class="platform-icon">⭐</span>IMDb</span></label>
+                    <label class="platform"><input type="checkbox" data-p="imdb"><span class="platform-label"><span
+                                class="platform-icon">⭐</span>IMDb</span></label>
                     <label class="platform"><input type="checkbox" data-p="letterboxd"><span
                             class="platform-label"><span class="platform-icon">🎞️</span>Letterboxd</span></label>
                     <label class="platform"><input type="checkbox" data-p="rottentomatoes"><span
@@ -2282,10 +2317,10 @@
                 <div class="section-title">🇨🇳 Trung Quốc <span class="badge">Hot 2024</span></div>
                 <div class="section-desc">茶杯狐/Libvio: Tổng hợp lớn nhất • 多瑙/独播库: Ổn định</div>
                 <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="cupfox" checked><span
-                            class="platform-label"><span class="platform-icon">🦊</span>茶杯狐 Cupfox</span></label>
-                    <label class="platform"><input type="checkbox" data-p="libvio" checked><span
-                            class="platform-label"><span class="platform-icon">📺</span>Libvio</span></label>
+                    <label class="platform"><input type="checkbox" data-p="cupfox"><span class="platform-label"><span
+                                class="platform-icon">🦊</span>茶杯狐 Cupfox</span></label>
+                    <label class="platform"><input type="checkbox" data-p="libvio"><span class="platform-label"><span
+                                class="platform-icon">📺</span>Libvio</span></label>
                     <label class="platform"><input type="checkbox" data-p="iyf"><span class="platform-label"><span
                                 class="platform-icon">🎬</span>爱壹帆 iYF</span></label>
                     <label class="platform"><input type="checkbox" data-p="duonao"><span class="platform-label"><span
@@ -2307,8 +2342,8 @@
                 <div class="section-title">🇷🇺 Nga <span class="badge">Premium</span></div>
                 <div class="section-desc">Kinopoisk: IMDb của Nga • HDRezka: Lậu lớn nhất</div>
                 <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="hdrezka" checked><span
-                            class="platform-label"><span class="platform-icon">🎬</span>HDRezka</span></label>
+                    <label class="platform"><input type="checkbox" data-p="hdrezka"><span class="platform-label"><span
+                                class="platform-icon">🎬</span>HDRezka</span></label>
                     <label class="platform"><input type="checkbox" data-p="kinopoisk"><span class="platform-label"><span
                                 class="platform-icon">🎥</span>Кинопоиск</span></label>
                     <label class="platform"><input type="checkbox" data-p="ivi"><span class="platform-label"><span
@@ -3233,6 +3268,39 @@
                     <button type="submit" class="modal-btn confirm">Thêm</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Platform Context Menu -->
+    <div class="platform-context-menu" id="platformContextMenu">
+        <div class="context-menu-item" onclick="editPlatformHomepage()">
+            <span>🏠</span> Chỉnh sửa Homepage
+        </div>
+        <div class="context-menu-item" onclick="openPlatformHomepage()">
+            <span>🔗</span> Mở trang chủ
+        </div>
+        <div class="context-menu-item" onclick="resetPlatformHomepage()">
+            <span>🔄</span> Đặt lại mặc định
+        </div>
+    </div>
+
+    <!-- Edit Homepage Modal -->
+    <div class="modal-overlay" id="editHomepageModal">
+        <div class="modal-box">
+            <div class="modal-icon">🏠</div>
+            <div class="modal-title">Chỉnh sửa Homepage</div>
+            <div class="form-group">
+                <label>Tên platform: <strong id="editPlatformName"></strong></label>
+            </div>
+            <div class="form-group">
+                <label>Homepage URL *</label>
+                <input type="url" id="editHomepageUrl" placeholder="https://example.com" required>
+                <div class="hint">URL sẽ mở khi click vào platform mà không có từ khoá tìm kiếm</div>
+            </div>
+            <div class="modal-btns">
+                <button type="button" class="modal-btn cancel" onclick="closeEditHomepageModal()">Hủy</button>
+                <button type="button" class="modal-btn confirm" onclick="saveHomepageUrl()">Lưu</button>
+            </div>
         </div>
     </div>
 
@@ -6733,6 +6801,87 @@ Trả về JSON duy nhất, không giải thích:
                 }, 500);
             }
         })();
+
+        // ========== PLATFORM CONTEXT MENU & HOMEPAGE EDITING ==========
+        let selectedPlatformKey = null;
+        const customHomepages = JSON.parse(localStorage.getItem('customHomepages') || '{}');
+
+        // Right-click on platform to show context menu
+        document.addEventListener('contextmenu', e => {
+            const platform = e.target.closest('.platform');
+            if (platform) {
+                e.preventDefault();
+                const checkbox = platform.querySelector('input[data-p]');
+                if (checkbox) {
+                    selectedPlatformKey = checkbox.dataset.p;
+                    const menu = document.getElementById('platformContextMenu');
+                    menu.style.left = e.pageX + 'px';
+                    menu.style.top = e.pageY + 'px';
+                    menu.classList.add('show');
+                }
+            }
+        });
+
+        // Hide context menu on click elsewhere
+        document.addEventListener('click', e => {
+            const menu = document.getElementById('platformContextMenu');
+            if (!menu.contains(e.target)) {
+                menu.classList.remove('show');
+            }
+        });
+
+        function editPlatformHomepage() {
+            document.getElementById('platformContextMenu').classList.remove('show');
+            if (!selectedPlatformKey) return;
+
+            const currentUrl = customHomepages[selectedPlatformKey] || HOMEPAGE_URLS[selectedPlatformKey] || '';
+            document.getElementById('editPlatformName').textContent = selectedPlatformKey;
+            document.getElementById('editHomepageUrl').value = currentUrl;
+            document.getElementById('editHomepageModal').classList.add('show');
+        }
+
+        function openPlatformHomepage() {
+            document.getElementById('platformContextMenu').classList.remove('show');
+            if (!selectedPlatformKey) return;
+
+            const url = customHomepages[selectedPlatformKey] || HOMEPAGE_URLS[selectedPlatformKey];
+            if (url) window.open(url, '_blank');
+        }
+
+        function resetPlatformHomepage() {
+            document.getElementById('platformContextMenu').classList.remove('show');
+            if (!selectedPlatformKey) return;
+
+            delete customHomepages[selectedPlatformKey];
+            localStorage.setItem('customHomepages', JSON.stringify(customHomepages));
+            showToast('🔄 Đã đặt lại mặc định cho ' + selectedPlatformKey);
+        }
+
+        function closeEditHomepageModal() {
+            document.getElementById('editHomepageModal').classList.remove('show');
+        }
+
+        function saveHomepageUrl() {
+            const url = document.getElementById('editHomepageUrl').value.trim();
+            if (!url) {
+                showToast('⚠️ Vui lòng nhập URL!');
+                return;
+            }
+
+            customHomepages[selectedPlatformKey] = url;
+            localStorage.setItem('customHomepages', JSON.stringify(customHomepages));
+
+            // Also update HOMEPAGE_URLS for current session
+            HOMEPAGE_URLS[selectedPlatformKey] = url;
+
+            closeEditHomepageModal();
+            showToast('✅ Đã lưu homepage cho ' + selectedPlatformKey);
+        }
+
+        // Load custom homepages on startup
+        Object.keys(customHomepages).forEach(key => {
+            HOMEPAGE_URLS[key] = customHomepages[key];
+        });
     </script>
 
     <!-- API Key Modal -->
