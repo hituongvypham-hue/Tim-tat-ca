@@ -2560,11 +2560,60 @@
         <!-- APK MOD TAB -->
         <div class="tab-content" id="apk-tab">
             <div class="search-wrapper">
-                <input type="text" id="apkInput" class="search-input" placeholder="Tên app, game...">
+                <input type="text" id="apkInput" class="search-input" placeholder="Tên app, game, phần mềm PC...">
             </div>
 
             <div class="section">
-                <div class="section-title">🔥 Forum Uy Tín <span class="badge hot">HOT</span></div>
+                <div class="section-title">💻 PC Software - Torrent <span class="badge hot">HOT</span></div>
+                <div class="section-desc">Torrent tracker lớn nhất: RuTracker 15.5M users, 1337x, FitGirl Repacks</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="rutracker"><span class="platform-label"><span
+                                class="platform-icon">🔴</span>RuTracker</span></label>
+                    <label class="platform"><input type="checkbox" data-p="1337x"><span class="platform-label"><span
+                                class="platform-icon">🔥</span>1337x</span></label>
+                    <label class="platform"><input type="checkbox" data-p="fitgirl"><span class="platform-label"><span
+                                class="platform-icon">🎮</span>FitGirl Repacks</span></label>
+                    <label class="platform"><input type="checkbox" data-p="dodi"><span class="platform-label"><span
+                                class="platform-icon">🕹️</span>DODI Repacks</span></label>
+                    <label class="platform"><input type="checkbox" data-p="steamrip"><span class="platform-label"><span
+                                class="platform-icon">💨</span>SteamRip</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇷🇺 Nga - PC Software</div>
+                <div class="section-desc">RSLoad, NNM-Club: Phần mềm Windows đầy đủ</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="rsload"><span class="platform-label"><span
+                                class="platform-icon">📥</span>RSLoad</span></label>
+                    <label class="platform"><input type="checkbox" data-p="nnmclub"><span class="platform-label"><span
+                                class="platform-icon">🎯</span>NNM-Club</span></label>
+                    <label class="platform"><input type="checkbox" data-p="rutor"><span class="platform-label"><span
+                                class="platform-icon">🌀</span>Rutor</span></label>
+                    <label class="platform"><input type="checkbox" data-p="softportal"><span
+                            class="platform-label"><span class="platform-icon">📦</span>SoftPortal</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇨🇳 Trung Quốc - PC Software <span class="badge">破解</span></div>
+                <div class="section-desc">吾爱破解 52pojie: Forum lớn nhất • 果核剥壳: Chất lượng cao</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="52pojie"><span class="platform-label"><span
+                                class="platform-icon">💜</span>吾爱破解 52pojie</span></label>
+                    <label class="platform"><input type="checkbox" data-p="ghboke"><span class="platform-label"><span
+                                class="platform-icon">🥜</span>果核剥壳</span></label>
+                    <label class="platform"><input type="checkbox" data-p="423down"><span class="platform-label"><span
+                                class="platform-icon">📥</span>423Down</span></label>
+                    <label class="platform"><input type="checkbox" data-p="iplaysoft"><span class="platform-label"><span
+                                class="platform-icon">🎨</span>异次元软件</span></label>
+                    <label class="platform"><input type="checkbox" data-p="carrotchou"><span
+                            class="platform-label"><span class="platform-icon">🥕</span>胡萝卜周</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🔥 APK Forum Uy Tín</div>
                 <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="mobilism"><span class="platform-label"><span
                                 class="platform-icon">📋</span>Mobilism</span></label>
@@ -2574,7 +2623,7 @@
             </div>
 
             <div class="section">
-                <div class="section-title">🌍 Global Sites</div>
+                <div class="section-title">🌍 APK Global Sites</div>
                 <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="modyolo"><span class="platform-label"><span
                                 class="platform-icon">📦</span>Modyolo</span></label>
@@ -2590,7 +2639,7 @@
             </div>
 
             <div class="section">
-                <div class="section-title">🇷🇺 Nga / Đông Âu</div>
+                <div class="section-title">🇷🇺 APK Nga / Đông Âu</div>
                 <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="androeed"><span class="platform-label"><span
                                 class="platform-icon">🇷🇺</span>Androeed</span></label>
@@ -2600,7 +2649,7 @@
             </div>
 
             <div class="section">
-                <div class="section-title">🇨🇳 Trung Quốc</div>
+                <div class="section-title">🇨🇳 APK Trung Quốc</div>
                 <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="huluxia"><span class="platform-label"><span
                                 class="platform-icon">🫛</span>葫芦侠</span></label>
@@ -3436,6 +3485,26 @@
 
         // APK MOD SEARCH URLS
         const APK_URLS = {
+            // PC Software - Torrent
+            rutracker: q => `https://rutracker.org/forum/tracker.php?nm=${encodeURIComponent(q)}`,
+            '1337x': q => `https://1337x.to/search/${encodeURIComponent(q)}/1/`,
+            fitgirl: q => `https://fitgirl-repacks.site/?s=${encodeURIComponent(q)}`,
+            dodi: q => `https://dodi-repacks.site/?s=${encodeURIComponent(q)}`,
+            steamrip: q => `https://steamrip.com/?s=${encodeURIComponent(q)}`,
+
+            // Russia - PC Software
+            rsload: q => `https://rsload.net/search/?q=${encodeURIComponent(q)}`,
+            nnmclub: q => `https://nnmclub.to/forum/tracker.php?nm=${encodeURIComponent(q)}`,
+            rutor: q => `https://rutor.info/search/0/0/000/0/${encodeURIComponent(q)}`,
+            softportal: q => `https://www.softportal.com/search/?text=${encodeURIComponent(q)}`,
+
+            // China - PC Software
+            '52pojie': q => `https://www.52pojie.cn/search.php?searchsubmit=yes&srchtxt=${encodeURIComponent(q)}`,
+            ghboke: q => `https://www.ghxi.com/?s=${encodeURIComponent(q)}`,
+            '423down': q => `https://www.423down.com/?s=${encodeURIComponent(q)}`,
+            iplaysoft: q => `https://www.iplaysoft.com/?s=${encodeURIComponent(q)}`,
+            carrotchou: q => `https://www.carrotchou.blog/?s=${encodeURIComponent(q)}`,
+
             // Forum Uy Tín
             mobilism: q => `https://forum.mobilism.org/search.php?keywords=${encodeURIComponent(q)}&sr=topics&sf=titleonly`,
             platinmods: q => `https://platinmods.com/search/?q=${encodeURIComponent(q)}`,
@@ -3567,6 +3636,24 @@
             lordfilm: 'https://lordfilm.gg',
             kinogo: 'https://kinogo.cc',
             start: 'https://start.ru',
+
+            // PC Software - Torrent
+            rutracker: 'https://rutracker.org',
+            '1337x': 'https://1337x.to',
+            fitgirl: 'https://fitgirl-repacks.site',
+            dodi: 'https://dodi-repacks.site',
+            steamrip: 'https://steamrip.com',
+            // PC Software - Russia
+            rsload: 'https://rsload.net',
+            nnmclub: 'https://nnmclub.to',
+            rutor: 'https://rutor.info',
+            softportal: 'https://www.softportal.com',
+            // PC Software - China
+            '52pojie': 'https://www.52pojie.cn',
+            ghboke: 'https://www.ghxi.com',
+            '423down': 'https://www.423down.com',
+            iplaysoft: 'https://www.iplaysoft.com',
+            carrotchou: 'https://www.carrotchou.blog',
 
             // APK
             mobilism: 'https://forum.mobilism.org',
@@ -5422,6 +5509,23 @@ Trả về JSON (chỉ JSON, không text khác):
             lordfilm: 'lordfilm.gg',
             kinogo: 'kinogo.cc',
             start: 'start.ru',
+            // PC Software - Torrent
+            rutracker: 'rutracker.org',
+            '1337x': '1337x.to',
+            fitgirl: 'fitgirl-repacks.site',
+            dodi: 'dodi-repacks.site',
+            steamrip: 'steamrip.com',
+            // PC Software - Russia
+            rsload: 'rsload.net',
+            nnmclub: 'nnmclub.to',
+            rutor: 'rutor.info',
+            softportal: 'softportal.com',
+            // PC Software - China
+            '52pojie': '52pojie.cn',
+            ghboke: 'ghxi.com',
+            '423down': '423down.com',
+            iplaysoft: 'iplaysoft.com',
+            carrotchou: 'carrotchou.blog',
             // APK
             mobilism: 'mobilism.org',
             platinmods: 'platinmods.com',
