@@ -7436,7 +7436,8 @@ Trả về JSON (chỉ JSON, không text khác):
         // ========== GOOGLE DRIVE SYNC ==========
         // Google OAuth Client ID - Replace with your own from Google Cloud Console
         const GOOGLE_CLIENT_ID = '676557816670-38kek48cab0ge88hmsvbo8lcpslp82fv.apps.googleusercontent.com';
-        const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
+        // Using full drive scope to allow cross-browser sync (drive.file only works within same session)
+        const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
         const DRIVE_FILE_NAME = 'media-search-pro-settings.json';
 
         // Auto sync with debounce (3 seconds)
