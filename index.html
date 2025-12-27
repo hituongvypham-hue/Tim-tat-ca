@@ -2110,6 +2110,7 @@
                 <button class="tab" data-tab="apk" draggable="true">📱 APK</button>
                 <button class="tab" data-tab="software" draggable="true">💻 Software</button>
                 <button class="tab" data-tab="ai" draggable="true">🤖 AI</button>
+                <button class="tab" data-tab="wiki" draggable="true">📚 Wiki</button>
                 <button class="tab" data-tab="create" draggable="true">🎨 Create</button>
                 <button class="tab" data-tab="reverse" draggable="true">🔍 Reverse</button>
                 <button class="tab" data-tab="discover" draggable="true">🌐 Discover</button>
@@ -2831,6 +2832,73 @@
             <div class="actions">
                 <button class="btn-search" id="aiSearchBtn">Open<span class="count" id="aiCount">0</span></button>
                 <button class="btn-select" onclick="toggleAll('ai')">Toggle</button>
+            </div>
+        </div>
+
+        <!-- WIKI TAB -->
+        <div class="tab-content" id="wiki-tab">
+            <div class="search-wrapper">
+                <input type="text" id="wikiInput" class="search-input"
+                    placeholder="Tìm kiến thức, thuật ngữ, khái niệm...">
+            </div>
+
+            <div class="section">
+                <div class="section-title">🌍 Global <span class="badge hot">TOP</span></div>
+                <div class="section-desc">Wikipedia: 62M+ bài lớn nhất TG • Britannica: Uy tín nhất từ 1768</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="wikipedia"><span class="platform-label"><span
+                                class="platform-icon">🌐</span>Wikipedia</span></label>
+                    <label class="platform"><input type="checkbox" data-p="britannica"><span
+                            class="platform-label"><span class="platform-icon">📘</span>Britannica</span></label>
+                    <label class="platform"><input type="checkbox" data-p="scholarpedia"><span
+                            class="platform-label"><span class="platform-icon">🎓</span>Scholarpedia</span></label>
+                    <label class="platform"><input type="checkbox" data-p="encyclopedia"><span
+                            class="platform-label"><span class="platform-icon">📖</span>Encyclopedia.com</span></label>
+                    <label class="platform"><input type="checkbox" data-p="stanfordphil"><span
+                            class="platform-label"><span class="platform-icon">🏛️</span>Stanford
+                            Philosophy</span></label>
+                    <label class="platform"><input type="checkbox" data-p="handwiki"><span class="platform-label"><span
+                                class="platform-icon">✋</span>HandWiki</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇨🇳 Trung Quốc <span class="badge">28.6M bài</span></div>
+                <div class="section-desc">百度百科: Lớn nhất TQ 28.6M bài • 知乎: 220M users Q&A chuyên sâu</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="baidubaike"><span
+                            class="platform-label"><span class="platform-icon">📙</span>百度百科</span></label>
+                    <label class="platform"><input type="checkbox" data-p="zhihu"><span class="platform-label"><span
+                                class="platform-icon">🔵</span>知乎</span></label>
+                    <label class="platform"><input type="checkbox" data-p="sogoubaike"><span
+                            class="platform-label"><span class="platform-icon">🟠</span>搜狗百科</span></label>
+                    <label class="platform"><input type="checkbox" data-p="360baike"><span class="platform-label"><span
+                                class="platform-icon">🟢</span>360百科</span></label>
+                    <label class="platform"><input type="checkbox" data-p="kuaidong"><span class="platform-label"><span
+                                class="platform-icon">📱</span>快懂百科</span></label>
+                    <label class="platform"><input type="checkbox" data-p="zgbk"><span class="platform-label"><span
+                                class="platform-icon">🏛️</span>中国大百科</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇷🇺 Nga <span class="badge">NEW 2024</span></div>
+                <div class="section-desc">Рувики: 2M+ bài, YandexGPT AI • Кругосвет: Bộ GD Nga khuyên dùng</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="ruwiki"><span class="platform-label"><span
+                                class="platform-icon">📕</span>Рувики</span></label>
+                    <label class="platform"><input type="checkbox" data-p="ruwikipedia"><span
+                            class="platform-label"><span class="platform-icon">🌐</span>Русская Wikipedia</span></label>
+                    <label class="platform"><input type="checkbox" data-p="krugosvet"><span class="platform-label"><span
+                                class="platform-icon">🌍</span>Кругосвет</span></label>
+                    <label class="platform"><input type="checkbox" data-p="akademik"><span class="platform-label"><span
+                                class="platform-icon">📚</span>Академик</span></label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn-search" id="wikiSearchBtn">Search<span class="count" id="wikiCount">0</span></button>
+                <button class="btn-select" onclick="toggleAll('wiki')">Toggle</button>
             </div>
         </div>
 
@@ -3663,6 +3731,31 @@
             getintopc: q => `https://getintopc.com/?s=${encodeURIComponent(q)}`,
             filecr: q => `https://filecr.com/?s=${encodeURIComponent(q)}`,
             nsaneforums: q => `https://nsaneforums.com/search/?q=${encodeURIComponent(q)}`
+        };
+
+        // WIKI/ENCYCLOPEDIA SEARCH URLS
+        const WIKI_URLS = {
+            // Global
+            wikipedia: q => `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(q)}`,
+            britannica: q => `https://www.britannica.com/search?query=${encodeURIComponent(q)}`,
+            scholarpedia: q => `http://www.scholarpedia.org/article/Special:Search?search=${encodeURIComponent(q)}`,
+            encyclopedia: q => `https://www.encyclopedia.com/gsearch?q=${encodeURIComponent(q)}`,
+            stanfordphil: q => `https://plato.stanford.edu/search/searcher.py?query=${encodeURIComponent(q)}`,
+            handwiki: q => `https://handwiki.org/wiki/index.php?search=${encodeURIComponent(q)}`,
+
+            // China
+            baidubaike: q => `https://baike.baidu.com/search?word=${encodeURIComponent(q)}`,
+            zhihu: q => `https://www.zhihu.com/search?type=content&q=${encodeURIComponent(q)}`,
+            sogoubaike: q => `https://baike.sogou.com/Search.e?sp=${encodeURIComponent(q)}`,
+            '360baike': q => `https://baike.so.com/search/?q=${encodeURIComponent(q)}`,
+            kuaidong: q => `https://www.baike.com/search?keyword=${encodeURIComponent(q)}`,
+            zgbk: q => `https://www.zgbk.com/ecph/words?SiteID=1&Name=${encodeURIComponent(q)}`,
+
+            // Russia
+            ruwiki: q => `https://ruwiki.ru/w/index.php?search=${encodeURIComponent(q)}`,
+            ruwikipedia: q => `https://ru.wikipedia.org/wiki/Служебная:Поиск?search=${encodeURIComponent(q)}`,
+            krugosvet: q => `https://www.krugosvet.ru/search/node/${encodeURIComponent(q)}`,
+            akademik: q => `https://dic.academic.ru/searchall.php?SWord=${encodeURIComponent(q)}`
         };
 
         // HOMEPAGE URLs - for when no search query
@@ -5141,6 +5234,7 @@ Trả về JSON (chỉ JSON, không text khác):
             document.getElementById('apkCount').textContent = document.querySelectorAll('#apk-tab .platform input:checked').length;
             document.getElementById('softwareCount').textContent = document.querySelectorAll('#software-tab .platform input:checked').length;
             document.getElementById('aiCount').textContent = document.querySelectorAll('#ai-tab .platform input:checked').length;
+            document.getElementById('wikiCount').textContent = document.querySelectorAll('#wiki-tab .platform input:checked').length;
             document.getElementById('reverseCount').textContent = document.querySelectorAll('#reverse-tab .platform input:checked').length;
             document.getElementById('discoverCount').textContent = document.querySelectorAll('#discover-tab .platform input:checked').length;
             document.getElementById('visionCount').textContent = document.querySelectorAll('#vision-tab .platform input:checked').length;
@@ -5182,6 +5276,10 @@ Trả về JSON (chỉ JSON, không text khác):
             } else if (currentTab === 'software') {
                 input = document.getElementById('softwareInput');
                 urls = SOFTWARE_URLS;
+                query = input ? input.value.trim() : '';
+            } else if (currentTab === 'wiki') {
+                input = document.getElementById('wikiInput');
+                urls = WIKI_URLS;
                 query = input ? input.value.trim() : '';
             } else {
                 // Reverse tab - no input needed
@@ -5229,6 +5327,7 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('apkSearchBtn').addEventListener('click', search);
         document.getElementById('softwareSearchBtn').addEventListener('click', search);
         document.getElementById('aiSearchBtn').addEventListener('click', search);
+        document.getElementById('wikiSearchBtn').addEventListener('click', search);
         document.getElementById('reverseSearchBtn').addEventListener('click', search);
         document.getElementById('discoverSearchBtn').addEventListener('click', search);
         document.getElementById('visionSearchBtn').addEventListener('click', search);
@@ -5238,6 +5337,7 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('ebookInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('apkInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('softwareInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
+        document.getElementById('wikiInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
         // Direct click on platform label to open homepage (only when no query)
         document.querySelectorAll('.platform-label').forEach(label => {
@@ -5266,6 +5366,9 @@ Trả về JSON (chỉ JSON, không text khác):
                     query = input ? input.value.trim() : '';
                 } else if (currentTab === 'software') {
                     const input = document.getElementById('softwareInput');
+                    query = input ? input.value.trim() : '';
+                } else if (currentTab === 'wiki') {
+                    const input = document.getElementById('wikiInput');
                     query = input ? input.value.trim() : '';
                 }
 
