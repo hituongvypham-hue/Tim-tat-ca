@@ -7616,6 +7616,55 @@ Trả về JSON (chỉ JSON, không text khác):
             document.getElementById('driveSignedIn').style.display = 'none';
         }
 
+        // Get all data to sync to Drive
+        function getSyncData() {
+            return {
+                version: 2,
+                timestamp: new Date().toISOString(),
+                // User preferences
+                geminiApiKey: localStorage.getItem('geminiApiKey') || '',
+                enableAI: localStorage.getItem('enableAI') || 'true',
+                lang: localStorage.getItem('lang') || 'vi',
+                // Tab and platform order
+                tabOrder: JSON.parse(localStorage.getItem('tabOrder') || '[]'),
+                platformOrder: JSON.parse(localStorage.getItem('platformOrder') || '{}'),
+                // Custom data
+                customSites: JSON.parse(localStorage.getItem('customSites') || '{}'),
+                customHomepages: JSON.parse(localStorage.getItem('customHomepages') || '{}'),
+                defaultHomepages: JSON.parse(localStorage.getItem('defaultHomepages') || '{}'),
+                // User content
+                searchHistory: JSON.parse(localStorage.getItem('searchHistory') || '[]'),
+                myTools: JSON.parse(localStorage.getItem('myTools') || '[]'),
+                promptLibrary: JSON.parse(localStorage.getItem('promptLibrary') || '[]'),
+                favorites: JSON.parse(localStorage.getItem('favorites') || '[]')
+            };
+        }
+
+        // Apply synced data from Drive
+        function applySyncData(data) {
+            if (!data) return;
+
+            // User preferences
+            if (data.geminiApiKey) localStorage.setItem('geminiApiKey', data.geminiApiKey);
+            if (data.enableAI !== undefined) localStorage.setItem('enableAI', data.enableAI);
+            if (data.lang) localStorage.setItem('lang', data.lang);
+
+            // Tab and platform order
+            if (data.tabOrder) localStorage.setItem('tabOrder', JSON.stringify(data.tabOrder));
+            if (data.platformOrder) localStorage.setItem('platformOrder', JSON.stringify(data.platformOrder));
+
+            // Custom data
+            if (data.customSites) localStorage.setItem('customSites', JSON.stringify(data.customSites));
+            if (data.customHomepages) localStorage.setItem('customHomepages', JSON.stringify(data.customHomepages));
+            if (data.defaultHomepages) localStorage.setItem('defaultHomepages', JSON.stringify(data.defaultHomepages));
+
+            // User content
+            if (data.searchHistory) localStorage.setItem('searchHistory', JSON.stringify(data.searchHistory));
+            if (data.myTools) localStorage.setItem('myTools', JSON.stringify(data.myTools));
+            if (data.promptLibrary) localStorage.setItem('promptLibrary', JSON.stringify(data.promptLibrary));
+            if (data.favorites) localStorage.setItem('favorites', JSON.stringify(data.favorites));
+        }
+
         async function syncToDrive() {
             if (!googleAccessToken) {
                 toast('Vui lòng đăng nhập Google');
