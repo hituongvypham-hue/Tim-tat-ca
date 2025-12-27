@@ -3431,6 +3431,35 @@
             bookboon: 'https://bookboon.com',
             googlebooks: 'https://books.google.com',
 
+            // Movie - Aggregators
+            justwatch: 'https://www.justwatch.com',
+            reelgood: 'https://reelgood.com',
+            movieofthenight: 'https://www.movieofthenight.com',
+            // Movie - Database
+            imdb: 'https://www.imdb.com',
+            letterboxd: 'https://letterboxd.com',
+            rottentomatoes: 'https://www.rottentomatoes.com',
+            tmdb: 'https://www.themoviedb.org',
+            trakt: 'https://trakt.tv',
+            metacritic: 'https://www.metacritic.com',
+            // Movie - Free Streaming
+            tubi: 'https://tubitv.com',
+            plextv: 'https://watch.plex.tv',
+            kanopy: 'https://www.kanopy.com',
+            crackle: 'https://www.crackle.com',
+            // Movie - China
+            cupfox: 'https://cupfox.app',
+            iyf: 'https://www.iyf.tv',
+            libvio: 'https://www.libvio.cc',
+            douban: 'https://movie.douban.com',
+            tencentv: 'https://v.qq.com',
+            // Movie - Russia
+            kinopoisk: 'https://www.kinopoisk.ru',
+            ivi: 'https://www.ivi.ru',
+            okko: 'https://okko.tv',
+            start: 'https://start.ru',
+            russianfilmhub: 'https://russianfilmhub.com',
+
             // APK
             mobilism: 'https://forum.mobilism.org',
             platinmods: 'https://platinmods.com',
@@ -5706,18 +5735,6 @@ Trả về JSON (chỉ JSON, không text khác):
                                 platform.after(draggedPlatform);
                             } else {
                                 platform.before(draggedPlatform);
-                            }
-                        }
-                    });
-
-                    // Add click handler to toggle checkbox even with draggable
-                    platform.addEventListener('click', e => {
-                        // Only toggle if not dragging and not clicking the checkbox directly
-                        if (!draggedPlatform && e.target.tagName !== 'INPUT') {
-                            const checkbox = platform.querySelector('input[type="checkbox"]');
-                            if (checkbox) {
-                                checkbox.checked = !checkbox.checked;
-                                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
                             }
                         }
                     });
