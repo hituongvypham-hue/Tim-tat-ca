@@ -5119,7 +5119,19 @@ Trả về JSON (chỉ JSON, không text khác):
             const selected = [];
             document.querySelectorAll(`#${currentTab}-tab .platform input:checked`).forEach(cb => selected.push(cb.dataset.p));
 
-            if (!selected.length) { toast('Chọn ít nhất 1 tool'); return; }
+            if (!selected.length) {
+                // No platform selected - open default homepage (first platform in tab)
+                if (!query) {
+                    const defaultHomepage = getTabDefaultHomepage();
+                    if (defaultHomepage) {
+                        toast('Mở trang chủ mặc định...');
+                        window.open(defaultHomepage, '_blank');
+                        return;
+                    }
+                }
+                toast('Chọn ít nhất 1 trang');
+                return;
+            }
 
             if (query) {
                 // Search with keyword
@@ -6071,10 +6083,48 @@ Trả về JSON (chỉ JSON, không text khác):
                             } else {
                                 platform.before(draggedPlatform);
                             }
+
+                            // Save first platform as default homepage for this tab
+                            saveFirstPlatformAsDefault();
                         }
                     });
                 });
             });
+        }
+
+        // Save first platform of each section as default homepage for the tab
+        function saveFirstPlatformAsDefault() {
+            const tabId = currentTab + '-tab';
+            const tab = document.getElementById(tabId);
+            if (!tab) return;
+
+            const firstPlatform = tab.querySelector('.section .platforms .platform input[data-p]');
+            if (firstPlatform) {
+                const defaultHomepages = JSON.parse(localStorage.getItem('defaultHomepages') || '{}');
+                defaultHomepages[currentTab] = firstPlatform.dataset.p;
+                localStorage.setItem('defaultHomepages', JSON.stringify(defaultHomepages));
+            }
+        }
+
+        // Get default homepage for current tab (first platform)
+        function getTabDefaultHomepage() {
+            const defaultHomepages = JSON.parse(localStorage.getItem('defaultHomepages') || '{}');
+            const defaultPlatformKey = defaultHomepages[currentTab];
+
+            if (defaultPlatformKey && HOMEPAGE_URLS[defaultPlatformKey]) {
+                return HOMEPAGE_URLS[defaultPlatformKey];
+            }
+
+            // Fallback: get first platform in the tab
+            const tabId = currentTab + '-tab';
+            const tab = document.getElementById(tabId);
+            if (tab) {
+                const firstPlatform = tab.querySelector('.section .platforms .platform input[data-p]');
+                if (firstPlatform) {
+                    return HOMEPAGE_URLS[firstPlatform.dataset.p];
+                }
+            }
+            return null;
         }
 
         function savePlatformOrder() {
