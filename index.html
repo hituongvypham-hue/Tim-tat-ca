@@ -7742,16 +7742,15 @@ Trả về JSON duy nhất, không giải thích:
             content.innerHTML = '';
 
             try {
-                // Fetch content and available languages
-                const [data, langs] = await Promise.all([
-                    fetchWikipediaContent(query, lang),
-                    fetchAvailableLanguages(query, lang)
-                ]);
-
-                loading.style.display = 'none';
-                availableWikiLangs = langs || [];
+                // First fetch content
+                const data = await fetchWikipediaContent(query, lang);
 
                 if (data) {
+                    // Now fetch languages using the ACTUAL page title
+                    const langs = await fetchAvailableLanguages(data.title, lang);
+                    availableWikiLangs = langs || [];
+
+                    loading.style.display = 'none';
                     const langInfo = WIKI_LANGUAGES[lang] || { name: lang, flag: '🌐' };
                     const langCount = availableWikiLangs.length;
 
@@ -7762,7 +7761,7 @@ Trả về JSON duy nhất, không giải thích:
                                 <div class="wiki-header-actions">
                                     <div class="wiki-lang-selector">
                                         <button class="wiki-lang-btn" onclick="toggleLangDropdown()">
-                                            ${langInfo.flag} ${langCount} ngôn ngữ ▾
+                                            ${langInfo.flag} ${langCount > 0 ? langCount + ' ngôn ngữ' : 'Ngôn ngữ'} ▾
                                         </button>
                                         <div class="wiki-lang-dropdown" id="wikiLangDropdown">
                                             <div class="wiki-lang-search">
@@ -7786,6 +7785,7 @@ Trả về JSON duy nhất, không giải thích:
                     // Populate language list
                     renderWikiLangList();
                 } else {
+                    loading.style.display = 'none';
                     content.innerHTML = `
                         <div class="wiki-no-results">
                             <div style="font-size:3rem;margin-bottom:1rem;">🔍</div>
