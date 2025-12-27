@@ -7750,11 +7750,15 @@ Trả về JSON (chỉ JSON, không text khác):
             statusEl.className = 'sync-status';
 
             try {
+                console.log('🔍 Searching for file:', DRIVE_FILE_NAME);
+
                 // Search for file
                 const searchRes = await fetch(
                     `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FILE_NAME}'`,
                     { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
                 );
+
+                console.log('🔍 Search response status:', searchRes.status);
 
                 if (!searchRes.ok) {
                     if (searchRes.status === 401) {
@@ -7762,18 +7766,23 @@ Trả về JSON (chỉ JSON, không text khác):
                         toast('Phiên đăng nhập hết hạn, vui lòng đăng nhập lại');
                         return;
                     }
-                    throw new Error('Search failed');
+                    const errorText = await searchRes.text();
+                    console.error('Search error:', errorText);
+                    throw new Error('Search failed: ' + searchRes.status);
                 }
 
                 const searchResult = await searchRes.json();
+                console.log('🔍 Search result:', searchResult);
 
                 if (!searchResult.files || searchResult.files.length === 0) {
                     statusEl.textContent = 'Không tìm thấy file backup trên Drive';
                     statusEl.className = 'sync-status error';
+                    console.log('❌ No files found on Drive');
                     return;
                 }
 
                 const fileId = searchResult.files[0].id;
+                console.log('📥 Downloading file with ID:', fileId);
 
                 // Download file content
                 const downloadRes = await fetch(
@@ -7781,10 +7790,21 @@ Trả về JSON (chỉ JSON, không text khác):
                     { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
                 );
 
-                if (!downloadRes.ok) throw new Error('Download failed');
+                console.log('📥 Download response status:', downloadRes.status);
+
+                if (!downloadRes.ok) {
+                    const errorText = await downloadRes.text();
+                    console.error('Download error:', errorText);
+                    throw new Error('Download failed: ' + downloadRes.status);
+                }
 
                 const data = await downloadRes.json();
+                console.log('📦 Downloaded data:', data);
+                console.log('📦 myTools in data:', data.myTools);
+                console.log('📦 promptLibrary in data:', data.promptLibrary);
+
                 applySyncData(data);
+                console.log('✅ Data applied to localStorage');
 
                 statusEl.textContent = '✓ Đã tải xuống! Đang reload...';
                 statusEl.className = 'sync-status success';
