@@ -7606,8 +7606,16 @@ Trả về JSON (chỉ JSON, không text khác):
             document.getElementById('driveNotSignedIn').style.display = 'none';
             document.getElementById('driveSignedIn').style.display = 'block';
             if (googleUser) {
-                document.getElementById('driveUserPhoto').src = googleUser.picture || '';
-                document.getElementById('driveUserName').textContent = googleUser.name || googleUser.email;
+                const photoEl = document.getElementById('driveUserPhoto');
+                const nameEl = document.getElementById('driveUserName');
+
+                if (googleUser.picture) {
+                    photoEl.src = googleUser.picture;
+                    photoEl.style.display = 'block';
+                }
+
+                // Show email (prioritize email, show name as fallback)
+                nameEl.textContent = googleUser.email || googleUser.name || 'Đã đăng nhập';
             }
         }
 
