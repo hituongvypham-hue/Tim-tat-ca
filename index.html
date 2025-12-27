@@ -2197,6 +2197,100 @@
                 height: 150px;
             }
         }
+
+        /* Wiki Article Full Display */
+        .wiki-article {
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .wiki-article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #1a73e8, #4285f4);
+            color: white;
+        }
+
+        .wiki-article-title {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .wiki-open-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .wiki-open-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .wiki-article-body {
+            padding: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .wiki-article-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+        }
+
+        .wiki-article-body a {
+            color: #1a73e8;
+        }
+
+        .wiki-article-body table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .wiki-article-body table,
+        .wiki-article-body th,
+        .wiki-article-body td {
+            border: 1px solid var(--border);
+        }
+
+        .wiki-article-body th,
+        .wiki-article-body td {
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        .wiki-article-body .infobox {
+            float: right;
+            width: 280px;
+            margin: 0 0 1rem 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        [data-theme="dark"] .wiki-article-body .infobox {
+            background: #2d2d2d;
+        }
+
+        .wiki-article-footer {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 
@@ -3001,9 +3095,19 @@
 
         <!-- WIKI TAB -->
         <div class="tab-content" id="wiki-tab">
-            <div class="search-wrapper">
-                <input type="text" id="wikiInput" class="search-input"
-                    placeholder="Tìm kiến thức, thuật ngữ, khái niệm...">
+            <div class="search-wrapper" style="display:flex;gap:0.5rem;align-items:center;">
+                <input type="text" id="wikiInput" class="search-input" style="flex:1;"
+                    placeholder="Tìm kiến thức, thuật ngữ, khái niệm..."
+                    onkeypress="if(event.key==='Enter')previewWikipedia()">
+                <button class="btn-preview" onclick="previewWikipedia()">📖 Preview</button>
+            </div>
+
+            <!-- Wikipedia Preview Result - Above Global -->
+            <div id="wikiPreviewResult" class="wiki-preview-container" style="display:none;">
+                <div class="wiki-preview-loading" id="wikiLoading" style="display:none;">
+                    <span class="loading"></span> Đang tải từ Wikipedia tiếng Việt...
+                </div>
+                <div id="wikiPreviewContent"></div>
             </div>
 
             <div class="section">
@@ -3062,16 +3166,7 @@
 
             <div class="actions">
                 <button class="btn-search" id="wikiSearchBtn">Search<span class="count" id="wikiCount">0</span></button>
-                <button class="btn-preview" id="wikiPreviewBtn" onclick="previewWikipedia()">📖 Preview</button>
                 <button class="btn-select" onclick="toggleAll('wiki')">Toggle</button>
-            </div>
-
-            <!-- Wikipedia Preview Result -->
-            <div id="wikiPreviewResult" class="wiki-preview-container" style="display:none;">
-                <div class="wiki-preview-loading" id="wikiLoading" style="display:none;">
-                    <span class="loading"></span> Đang tải từ Wikipedia...
-                </div>
-                <div id="wikiPreviewContent"></div>
             </div>
         </div>
 
@@ -7531,126 +7626,73 @@ Trả về JSON duy nhất, không giải thích:
             loading.style.display = 'flex';
             content.innerHTML = '';
 
-            // Fetch from multiple Wikipedia languages in parallel
-            const languages = [
-                { code: 'en', name: 'English', flag: '🇬🇧' },
-                { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳' },
-                { code: 'zh', name: '中文', flag: '🇨🇳' },
-                { code: 'ru', name: 'Русский', flag: '🇷🇺' }
-            ];
-
             try {
-                const results = await Promise.allSettled(
-                    languages.map(lang => fetchWikipediaSummary(query, lang.code))
-                );
-
+                const data = await fetchWikipediaContent(query);
                 loading.style.display = 'none';
 
-                let html = '<div class="wiki-multi-results">';
-                let hasResults = false;
-
-                results.forEach((result, index) => {
-                    if (result.status === 'fulfilled' && result.value) {
-                        hasResults = true;
-                        const data = result.value;
-                        const lang = languages[index];
-
-                        html += `
-                            <div class="wiki-card">
-                                ${data.thumbnail ?
-                                `<img src="${data.thumbnail.source}" class="wiki-thumbnail" alt="${data.title}">` :
-                                `<div class="wiki-thumbnail" style="display:flex;align-items:center;justify-content:center;font-size:2rem;">📚</div>`
-                            }
-                                <div class="wiki-content">
-                                    <div class="wiki-title">
-                                        <a href="${data.content_urls?.desktop?.page || '#'}" target="_blank">${data.title}</a>
-                                        <span class="wiki-lang-badge">${lang.flag} ${lang.name}</span>
-                                    </div>
-                                    <div class="wiki-extract">${data.extract || 'Không có mô tả.'}</div>
-                                    <div class="wiki-actions">
-                                        <button class="wiki-btn primary" onclick="window.open('${data.content_urls?.desktop?.page || '#'}', '_blank')">
-                                            📖 Đọc thêm
-                                        </button>
-                                        <button class="wiki-btn" onclick="copyToClipboard('${escapeQuotes(data.extract || '')}')">
-                                            📋 Copy
-                                        </button>
-                                        <button class="wiki-btn" onclick="speakText('${escapeQuotes(data.extract || '')}')">
-                                            🔊 Đọc
-                                        </button>
-                                    </div>
-                                </div>
+                if (data) {
+                    content.innerHTML = `
+                        <div class="wiki-article">
+                            <div class="wiki-article-header">
+                                <h2 class="wiki-article-title">${data.title}</h2>
+                                <a href="https://vi.wikipedia.org/wiki/${encodeURIComponent(data.title)}" target="_blank" class="wiki-open-link">🔗 Mở Wikipedia</a>
                             </div>
-                        `;
-                    }
-                });
-
-                html += '</div>';
-
-                if (!hasResults) {
-                    html = `
+                            <div class="wiki-article-body">${data.html}</div>
+                            <div class="wiki-article-footer">
+                                <button class="wiki-btn" onclick="copyToClipboard(document.querySelector('.wiki-article-body').innerText.substring(0,2000))">📋 Copy</button>
+                                <button class="wiki-btn" onclick="speakText(document.querySelector('.wiki-article-body').innerText.substring(0,1000))">🔊 Đọc</button>
+                                <button class="wiki-btn primary" onclick="window.open('https://vi.wikipedia.org/wiki/${encodeURIComponent(data.title)}', '_blank')">📖 Xem đầy đủ</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = `
                         <div class="wiki-no-results">
                             <div style="font-size:3rem;margin-bottom:1rem;">🔍</div>
-                            <p>Không tìm thấy kết quả cho "<strong>${escapeHtml(query)}</strong>"</p>
-                            <p style="font-size:0.8rem;margin-top:0.5rem;">Thử tìm kiếm với từ khóa khác hoặc sử dụng Search để mở các trang wiki</p>
+                            <p>Không tìm thấy "<strong>${escapeHtml(query)}</strong>" trên Wikipedia tiếng Việt</p>
+                            <button class="wiki-btn primary" style="margin-top:1rem;" onclick="window.open('https://vi.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(query)}', '_blank')">🔍 Tìm trên Wikipedia</button>
                         </div>
                     `;
                 }
-
-                content.innerHTML = html;
-
             } catch (error) {
                 loading.style.display = 'none';
-                content.innerHTML = `
-                    <div class="wiki-no-results">
-                        <div style="font-size:3rem;margin-bottom:1rem;">⚠️</div>
-                        <p>Lỗi kết nối Wikipedia. Vui lòng thử lại.</p>
-                    </div>
-                `;
+                content.innerHTML = `<div class="wiki-no-results"><p>⚠️ Lỗi kết nối Wikipedia</p></div>`;
             }
         }
 
-        async function fetchWikipediaSummary(query, langCode) {
-            const url = `https://${langCode}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`;
-            const response = await fetch(url);
+        async function fetchWikipediaContent(query) {
+            const parseUrl = `https://vi.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(query)}&format=json&origin=*&prop=text`;
+            let response = await fetch(parseUrl);
+            let data = await response.json();
 
-            if (!response.ok) {
-                // Try search if direct page not found
-                const searchUrl = `https://${langCode}.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=1&format=json&origin=*`;
+            if (data.error) {
+                const searchUrl = `https://vi.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=1&format=json&origin=*`;
                 const searchResponse = await fetch(searchUrl);
                 const searchData = await searchResponse.json();
-
                 if (searchData[1] && searchData[1].length > 0) {
-                    const firstResult = searchData[1][0];
-                    const summaryUrl = `https://${langCode}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(firstResult)}`;
-                    const summaryResponse = await fetch(summaryUrl);
-                    if (summaryResponse.ok) {
-                        return await summaryResponse.json();
-                    }
-                }
-                return null;
+                    const retryUrl = `https://vi.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(searchData[1][0])}&format=json&origin=*&prop=text`;
+                    response = await fetch(retryUrl);
+                    data = await response.json();
+                } else { return null; }
             }
+            if (!data.parse) return null;
 
-            return await response.json();
+            let html = data.parse.text['*'];
+            html = html.replace(/<span class="mw-editsection">[\s\S]*?<\/span>/g, '');
+            html = html.replace(/href="\/wiki\//g, 'href="https://vi.wikipedia.org/wiki/');
+            html = html.replace(/src="\/\//g, 'src="https://');
+            return { title: data.parse.title, html: html };
         }
 
-        function escapeQuotes(str) {
-            return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
-        }
-
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                toast('📋 Đã copy!');
-            });
-        }
-
+        function escapeQuotes(str) { return str.replace(/'/g, "\\'").replace(/"/g, '\\"'); }
+        function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => toast('📋 Đã copy!')); }
         function speakText(text) {
             if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 0.9;
-                speechSynthesis.speak(utterance);
+                speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'vi-VN'; u.rate = 0.9;
+                speechSynthesis.speak(u);
                 toast('🔊 Đang đọc...');
-            } else {
-                toast('Trình duyệt không hỗ trợ đọc text');
             }
         }
     </script>
