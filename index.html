@@ -2532,6 +2532,252 @@
             color: var(--text-light);
             font-size: 0.9rem;
         }
+
+        /* Prompt Manager Styles */
+        .prompt-add-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1.25rem;
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .prompt-input,
+        .prompt-textarea,
+        .prompt-select {
+            padding: 0.7rem 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: var(--bg);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .prompt-textarea {
+            resize: vertical;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.5;
+        }
+
+        .prompt-note {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .prompt-form-row {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .prompt-form-row>* {
+            flex: 1;
+        }
+
+        .prompt-select {
+            cursor: pointer;
+        }
+
+        .prompt-form-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-add-prompt {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-add-prompt:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-cancel-prompt {
+            padding: 0.7rem 1rem;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .prompt-filters {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .prompt-search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: var(--card);
+        }
+
+        .prompt-filter-select {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--card);
+            cursor: pointer;
+        }
+
+        .prompt-count {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            padding: 0.4rem 0.8rem;
+            background: var(--hover);
+            border-radius: 20px;
+        }
+
+        .prompt-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .prompt-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.2s;
+        }
+
+        .prompt-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .prompt-item-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .prompt-item-name {
+            font-weight: 600;
+            font-size: 1rem;
+            flex: 1;
+        }
+
+        .prompt-item-category {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 12px;
+        }
+
+        .prompt-item-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            background: var(--bg);
+            padding: 0.75rem;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 0.5rem;
+        }
+
+        .prompt-item-content .variable {
+            background: #fff3cd;
+            color: #856404;
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .prompt-item-content .variable {
+            background: #3d3d00;
+            color: #ffc107;
+        }
+
+        .prompt-item-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .prompt-tag {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--hover);
+            border-radius: 10px;
+            color: var(--text-light);
+        }
+
+        .prompt-item-note {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            padding: 0.5rem;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
+
+        .prompt-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .prompt-action-btn {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            background: var(--hover);
+            transition: all 0.2s;
+        }
+
+        .prompt-action-btn:hover {
+            background: var(--border);
+        }
+
+        .prompt-action-btn.copy {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .prompt-action-btn.copy:hover {
+            background: #c8e6c9;
+        }
+
+        .prompt-action-btn.delete:hover {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .prompt-empty {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 
@@ -2615,6 +2861,7 @@
                 <button class="tab" data-tab="discover" draggable="true">🌐 Discover</button>
                 <button class="tab" data-tab="vision" draggable="true">👁️ Vision</button>
                 <button class="tab" data-tab="mytool" draggable="true">🧰 My Tool</button>
+                <button class="tab" data-tab="prompt" draggable="true">📝 Prompt</button>
             </div>
         </div>
 
@@ -3969,6 +4216,65 @@
 
                 <div class="mytool-list" id="mytoolList">
                     <div class="mytool-empty">Chưa có công cụ nào. Thêm công cụ mới ở trên! 👆</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROMPT MANAGER TAB -->
+        <div class="tab-content" id="prompt-tab">
+            <div class="section">
+                <div class="section-title">📝 Prompt Manager</div>
+                <div class="section-desc">Lưu và quản lý prompt AI với category, tags và biến {{variable}}</div>
+
+                <div class="prompt-add-form" id="promptForm">
+                    <input type="text" id="promptName" class="prompt-input"
+                        placeholder="Tên prompt (VD: Viết blog post)">
+                    <textarea id="promptContent" class="prompt-textarea"
+                        placeholder="Nội dung prompt... Dùng {{biến}} để tạo template&#10;VD: Viết bài về {{topic}} với giọng văn {{tone}}"
+                        rows="4"></textarea>
+                    <div class="prompt-form-row">
+                        <select id="promptCategory" class="prompt-select">
+                            <option value="">-- Chọn Category --</option>
+                            <option value="Writing">✍️ Writing</option>
+                            <option value="Coding">💻 Coding</option>
+                            <option value="Marketing">📢 Marketing</option>
+                            <option value="Image">🎨 Image</option>
+                            <option value="Video">🎬 Video</option>
+                            <option value="Business">💼 Business</option>
+                            <option value="Education">📚 Education</option>
+                            <option value="Other">📋 Other</option>
+                        </select>
+                        <input type="text" id="promptTags" class="prompt-input"
+                            placeholder="Tags (phân cách bằng dấu phẩy)">
+                    </div>
+                    <textarea id="promptNote" class="prompt-textarea prompt-note"
+                        placeholder="Ghi chú / Ví dụ output (tùy chọn)" rows="2"></textarea>
+                    <div class="prompt-form-btns">
+                        <button class="btn-add-prompt" onclick="addPrompt()">➕ Lưu Prompt</button>
+                        <button class="btn-cancel-prompt" id="btnCancelPromptEdit" onclick="cancelEditPrompt()"
+                            style="display:none;">❌ Hủy</button>
+                    </div>
+                </div>
+
+                <div class="prompt-filters">
+                    <input type="text" id="promptSearch" class="prompt-search-input" placeholder="🔍 Tìm prompt..."
+                        oninput="filterPrompts()">
+                    <select id="promptCategoryFilter" class="prompt-filter-select" onchange="filterPrompts()">
+                        <option value="">Tất cả Category</option>
+                        <option value="Writing">✍️ Writing</option>
+                        <option value="Coding">💻 Coding</option>
+                        <option value="Marketing">📢 Marketing</option>
+                        <option value="Image">🎨 Image</option>
+                        <option value="Video">🎬 Video</option>
+                        <option value="Business">💼 Business</option>
+                        <option value="Education">📚 Education</option>
+                        <option value="Other">📋 Other</option>
+                    </select>
+                    <span class="prompt-count" id="promptCount">0 prompts</span>
+                </div>
+
+                <div class="prompt-list" id="promptList">
+                    <div class="prompt-empty">Chưa có prompt nào. Thêm prompt mới ở trên! 👆</div>
                 </div>
             </div>
         </div>
@@ -8257,7 +8563,156 @@ Trả về JSON duy nhất, không giải thích:
         // Render on page load
         document.addEventListener('DOMContentLoaded', () => {
             renderMyTools();
+            renderPrompts();
         });
+
+        // ========== PROMPT MANAGER ==========
+        let prompts = JSON.parse(localStorage.getItem('promptLibrary') || '[]');
+        let editingPromptIndex = -1;
+
+        function renderPrompts() {
+            const list = document.getElementById('promptList');
+            const countEl = document.getElementById('promptCount');
+            const searchVal = document.getElementById('promptSearch')?.value?.toLowerCase() || '';
+            const categoryFilter = document.getElementById('promptCategoryFilter')?.value || '';
+
+            const filtered = prompts.filter(p => {
+                const matchSearch = !searchVal ||
+                    p.name.toLowerCase().includes(searchVal) ||
+                    p.content.toLowerCase().includes(searchVal) ||
+                    (p.tags && p.tags.some(t => t.toLowerCase().includes(searchVal)));
+                const matchCategory = !categoryFilter || p.category === categoryFilter;
+                return matchSearch && matchCategory;
+            });
+
+            countEl.textContent = `${filtered.length} prompts`;
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="prompt-empty">Chưa có prompt nào. Thêm prompt mới ở trên! 👆</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map((p, i) => {
+                const realIndex = prompts.indexOf(p);
+                const contentHtml = escapeHtml(p.content).replace(/\{\{(\w+)\}\}/g, '<span class="variable">{{$1}}</span>');
+                const tagsHtml = p.tags && p.tags.length ?
+                    p.tags.map(t => `<span class="prompt-tag">#${t}</span>`).join('') : '';
+                const noteHtml = p.note ? `<div class="prompt-item-note">💡 ${escapeHtml(p.note)}</div>` : '';
+
+                return `
+                    <div class="prompt-item">
+                        <div class="prompt-item-header">
+                            <span class="prompt-item-name">${escapeHtml(p.name)}</span>
+                            ${p.category ? `<span class="prompt-item-category">${p.category}</span>` : ''}
+                        </div>
+                        <div class="prompt-item-content">${contentHtml}</div>
+                        ${tagsHtml ? `<div class="prompt-item-tags">${tagsHtml}</div>` : ''}
+                        ${noteHtml}
+                        <div class="prompt-item-actions">
+                            <button class="prompt-action-btn copy" onclick="copyPrompt(${realIndex})">📋 Copy</button>
+                            <button class="prompt-action-btn" onclick="editPrompt(${realIndex})">✏️ Sửa</button>
+                            <button class="prompt-action-btn delete" onclick="deletePrompt(${realIndex})">🗑️ Xóa</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addPrompt() {
+            const nameInput = document.getElementById('promptName');
+            const contentInput = document.getElementById('promptContent');
+            const categoryInput = document.getElementById('promptCategory');
+            const tagsInput = document.getElementById('promptTags');
+            const noteInput = document.getElementById('promptNote');
+
+            const name = nameInput.value.trim();
+            const content = contentInput.value.trim();
+            const category = categoryInput.value;
+            const tags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t);
+            const note = noteInput.value.trim();
+
+            if (!name || !content) {
+                toast('⚠️ Nhập tên và nội dung prompt');
+                return;
+            }
+
+            const promptData = {
+                id: Date.now().toString(),
+                name,
+                content,
+                category,
+                tags,
+                note,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            if (editingPromptIndex >= 0) {
+                promptData.id = prompts[editingPromptIndex].id;
+                promptData.createdAt = prompts[editingPromptIndex].createdAt;
+                prompts[editingPromptIndex] = promptData;
+                editingPromptIndex = -1;
+                document.getElementById('btnCancelPromptEdit').style.display = 'none';
+                document.querySelector('.btn-add-prompt').textContent = '➕ Lưu Prompt';
+                toast('✅ Đã cập nhật prompt');
+            } else {
+                prompts.unshift(promptData);
+                toast('✅ Đã lưu prompt');
+            }
+
+            localStorage.setItem('promptLibrary', JSON.stringify(prompts));
+            clearPromptForm();
+            renderPrompts();
+        }
+
+        function clearPromptForm() {
+            document.getElementById('promptName').value = '';
+            document.getElementById('promptContent').value = '';
+            document.getElementById('promptCategory').value = '';
+            document.getElementById('promptTags').value = '';
+            document.getElementById('promptNote').value = '';
+        }
+
+        function editPrompt(index) {
+            const p = prompts[index];
+            document.getElementById('promptName').value = p.name;
+            document.getElementById('promptContent').value = p.content;
+            document.getElementById('promptCategory').value = p.category || '';
+            document.getElementById('promptTags').value = p.tags ? p.tags.join(', ') : '';
+            document.getElementById('promptNote').value = p.note || '';
+            editingPromptIndex = index;
+            document.getElementById('btnCancelPromptEdit').style.display = 'inline-block';
+            document.querySelector('.btn-add-prompt').textContent = '💾 Lưu thay đổi';
+            document.getElementById('promptName').focus();
+            document.getElementById('promptForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelEditPrompt() {
+            editingPromptIndex = -1;
+            clearPromptForm();
+            document.getElementById('btnCancelPromptEdit').style.display = 'none';
+            document.querySelector('.btn-add-prompt').textContent = '➕ Lưu Prompt';
+        }
+
+        function deletePrompt(index) {
+            if (confirm('Xóa prompt "' + prompts[index].name + '"?')) {
+                prompts.splice(index, 1);
+                localStorage.setItem('promptLibrary', JSON.stringify(prompts));
+                renderPrompts();
+                toast('🗑️ Đã xóa prompt');
+            }
+        }
+
+        function copyPrompt(index) {
+            const p = prompts[index];
+            navigator.clipboard.writeText(p.content).then(() => {
+                toast('📋 Đã copy prompt!');
+            });
+        }
+
+        function filterPrompts() {
+            renderPrompts();
+        }
     </script>
 
     <!-- API Key Modal -->
