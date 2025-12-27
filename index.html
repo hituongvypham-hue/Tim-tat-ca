@@ -2291,6 +2291,92 @@
             border-top: 1px solid var(--border);
             flex-wrap: wrap;
         }
+
+        /* Wiki Language Selector */
+        .wiki-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .wiki-lang-selector {
+            position: relative;
+        }
+
+        .wiki-lang-btn {
+            padding: 0.4rem 0.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .wiki-lang-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .wiki-lang-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            min-width: 200px;
+            max-height: 350px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .wiki-lang-dropdown.show {
+            display: block;
+        }
+
+        .wiki-lang-search {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .wiki-lang-search input {
+            width: 100%;
+            padding: 0.4rem 0.6rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .wiki-lang-list {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .wiki-lang-item {
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text);
+            transition: background 0.2s;
+        }
+
+        .wiki-lang-item:hover {
+            background: var(--hover);
+        }
+
+        .wiki-lang-item.active {
+            background: #e8f0fe;
+            color: #1a73e8;
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .wiki-lang-item.active {
+            background: #1e3a5f;
+        }
     </style>
 </head>
 
@@ -7611,12 +7697,41 @@ Trả về JSON duy nhất, không giải thích:
         });
 
         // ========== WIKIPEDIA PREVIEW ==========
-        async function previewWikipedia() {
+        let currentWikiLang = 'vi';
+        let currentWikiQuery = '';
+        let availableWikiLangs = [];
+
+        const WIKI_LANGUAGES = {
+            vi: { name: 'Tiếng Việt', flag: '🇻🇳' },
+            en: { name: 'English', flag: '🇬🇧' },
+            zh: { name: '中文', flag: '🇨🇳' },
+            ru: { name: 'Русский', flag: '🇷🇺' },
+            ja: { name: '日本語', flag: '🇯🇵' },
+            ko: { name: '한국어', flag: '🇰🇷' },
+            fr: { name: 'Français', flag: '🇫🇷' },
+            de: { name: 'Deutsch', flag: '🇩🇪' },
+            es: { name: 'Español', flag: '🇪🇸' },
+            pt: { name: 'Português', flag: '🇵🇹' },
+            ar: { name: 'العربية', flag: '🇸🇦' },
+            th: { name: 'ไทย', flag: '🇹🇭' },
+            id: { name: 'Indonesia', flag: '🇮🇩' },
+            it: { name: 'Italiano', flag: '🇮🇹' },
+            pl: { name: 'Polski', flag: '🇵🇱' },
+            nl: { name: 'Nederlands', flag: '🇳🇱' },
+            uk: { name: 'Українська', flag: '🇺🇦' },
+            fa: { name: 'فارسی', flag: '🇮🇷' },
+            hi: { name: 'हिन्दी', flag: '🇮🇳' }
+        };
+
+        async function previewWikipedia(lang = 'vi') {
             const query = document.getElementById('wikiInput').value.trim();
             if (!query) {
                 toast('Nhập từ khóa để preview Wikipedia');
                 return;
             }
+
+            currentWikiLang = lang;
+            currentWikiQuery = query;
 
             const container = document.getElementById('wikiPreviewResult');
             const loading = document.getElementById('wikiLoading');
@@ -7627,30 +7742,55 @@ Trả về JSON duy nhất, không giải thích:
             content.innerHTML = '';
 
             try {
-                const data = await fetchWikipediaContent(query);
+                // Fetch content and available languages
+                const [data, langs] = await Promise.all([
+                    fetchWikipediaContent(query, lang),
+                    fetchAvailableLanguages(query, lang)
+                ]);
+
                 loading.style.display = 'none';
+                availableWikiLangs = langs || [];
 
                 if (data) {
+                    const langInfo = WIKI_LANGUAGES[lang] || { name: lang, flag: '🌐' };
+                    const langCount = availableWikiLangs.length;
+
                     content.innerHTML = `
                         <div class="wiki-article">
                             <div class="wiki-article-header">
                                 <h2 class="wiki-article-title">${data.title}</h2>
-                                <a href="https://vi.wikipedia.org/wiki/${encodeURIComponent(data.title)}" target="_blank" class="wiki-open-link">🔗 Mở Wikipedia</a>
+                                <div class="wiki-header-actions">
+                                    <div class="wiki-lang-selector">
+                                        <button class="wiki-lang-btn" onclick="toggleLangDropdown()">
+                                            ${langInfo.flag} ${langCount} ngôn ngữ ▾
+                                        </button>
+                                        <div class="wiki-lang-dropdown" id="wikiLangDropdown">
+                                            <div class="wiki-lang-search">
+                                                <input type="text" placeholder="Tìm ngôn ngữ..." oninput="filterWikiLangs(this.value)">
+                                            </div>
+                                            <div class="wiki-lang-list" id="wikiLangList"></div>
+                                        </div>
+                                    </div>
+                                    <a href="https://${lang}.wikipedia.org/wiki/${encodeURIComponent(data.title)}" target="_blank" class="wiki-open-link">🔗 Mở</a>
+                                </div>
                             </div>
                             <div class="wiki-article-body">${data.html}</div>
                             <div class="wiki-article-footer">
                                 <button class="wiki-btn" onclick="copyToClipboard(document.querySelector('.wiki-article-body').innerText.substring(0,2000))">📋 Copy</button>
                                 <button class="wiki-btn" onclick="speakText(document.querySelector('.wiki-article-body').innerText.substring(0,1000))">🔊 Đọc</button>
-                                <button class="wiki-btn primary" onclick="window.open('https://vi.wikipedia.org/wiki/${encodeURIComponent(data.title)}', '_blank')">📖 Xem đầy đủ</button>
+                                <button class="wiki-btn primary" onclick="window.open('https://${lang}.wikipedia.org/wiki/${encodeURIComponent(data.title)}', '_blank')">📖 Xem đầy đủ</button>
                             </div>
                         </div>
                     `;
+
+                    // Populate language list
+                    renderWikiLangList();
                 } else {
                     content.innerHTML = `
                         <div class="wiki-no-results">
                             <div style="font-size:3rem;margin-bottom:1rem;">🔍</div>
-                            <p>Không tìm thấy "<strong>${escapeHtml(query)}</strong>" trên Wikipedia tiếng Việt</p>
-                            <button class="wiki-btn primary" style="margin-top:1rem;" onclick="window.open('https://vi.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(query)}', '_blank')">🔍 Tìm trên Wikipedia</button>
+                            <p>Không tìm thấy "<strong>${escapeHtml(query)}</strong>"</p>
+                            <button class="wiki-btn primary" style="margin-top:1rem;" onclick="window.open('https://${lang}.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(query)}', '_blank')">🔍 Tìm trên Wikipedia</button>
                         </div>
                     `;
                 }
@@ -7660,17 +7800,117 @@ Trả về JSON duy nhất, không giải thích:
             }
         }
 
-        async function fetchWikipediaContent(query) {
-            const parseUrl = `https://vi.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(query)}&format=json&origin=*&prop=text`;
+        function toggleLangDropdown() {
+            const dropdown = document.getElementById('wikiLangDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function renderWikiLangList(filter = '') {
+            const list = document.getElementById('wikiLangList');
+            if (!list) return;
+
+            let html = '';
+            const filterLower = filter.toLowerCase();
+
+            // Current language first
+            const currentLangInfo = WIKI_LANGUAGES[currentWikiLang] || { name: currentWikiLang, flag: '🌐' };
+            html += `<div class="wiki-lang-item active">${currentLangInfo.flag} ${currentLangInfo.name}</div>`;
+
+            // Available languages
+            availableWikiLangs.forEach(lang => {
+                if (lang.code === currentWikiLang) return;
+                const info = WIKI_LANGUAGES[lang.code] || { name: lang.name, flag: '🌐' };
+                const name = info.name || lang.name;
+                if (filterLower && !name.toLowerCase().includes(filterLower) && !lang.code.includes(filterLower)) return;
+                html += `<div class="wiki-lang-item" onclick="switchWikiLang('${lang.code}', '${lang.title.replace(/'/g, "\\'")}')">${info.flag} ${name}</div>`;
+            });
+
+            list.innerHTML = html;
+        }
+
+        function filterWikiLangs(filter) {
+            renderWikiLangList(filter);
+        }
+
+        async function switchWikiLang(langCode, pageTitle) {
+            document.getElementById('wikiLangDropdown').classList.remove('show');
+
+            const loading = document.getElementById('wikiLoading');
+            const content = document.getElementById('wikiPreviewContent');
+
+            loading.style.display = 'flex';
+            content.innerHTML = '';
+
+            try {
+                const data = await fetchWikipediaContentByTitle(pageTitle, langCode);
+                loading.style.display = 'none';
+                currentWikiLang = langCode;
+
+                if (data) {
+                    const langInfo = WIKI_LANGUAGES[langCode] || { name: langCode, flag: '🌐' };
+                    const langCount = availableWikiLangs.length;
+
+                    content.innerHTML = `
+                        <div class="wiki-article">
+                            <div class="wiki-article-header">
+                                <h2 class="wiki-article-title">${data.title}</h2>
+                                <div class="wiki-header-actions">
+                                    <div class="wiki-lang-selector">
+                                        <button class="wiki-lang-btn" onclick="toggleLangDropdown()">
+                                            ${langInfo.flag} ${langCount} ngôn ngữ ▾
+                                        </button>
+                                        <div class="wiki-lang-dropdown" id="wikiLangDropdown">
+                                            <div class="wiki-lang-search">
+                                                <input type="text" placeholder="Tìm ngôn ngữ..." oninput="filterWikiLangs(this.value)">
+                                            </div>
+                                            <div class="wiki-lang-list" id="wikiLangList"></div>
+                                        </div>
+                                    </div>
+                                    <a href="https://${langCode}.wikipedia.org/wiki/${encodeURIComponent(data.title)}" target="_blank" class="wiki-open-link">🔗 Mở</a>
+                                </div>
+                            </div>
+                            <div class="wiki-article-body">${data.html}</div>
+                            <div class="wiki-article-footer">
+                                <button class="wiki-btn" onclick="copyToClipboard(document.querySelector('.wiki-article-body').innerText.substring(0,2000))">📋 Copy</button>
+                                <button class="wiki-btn" onclick="speakText(document.querySelector('.wiki-article-body').innerText.substring(0,1000))">🔊 Đọc</button>
+                                <button class="wiki-btn primary" onclick="window.open('https://${langCode}.wikipedia.org/wiki/${encodeURIComponent(data.title)}', '_blank')">📖 Xem đầy đủ</button>
+                            </div>
+                        </div>
+                    `;
+                    renderWikiLangList();
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                content.innerHTML = `<div class="wiki-no-results"><p>⚠️ Lỗi tải ngôn ngữ</p></div>`;
+            }
+        }
+
+        async function fetchAvailableLanguages(query, lang) {
+            try {
+                const url = `https://${lang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(query)}&prop=langlinks&lllimit=500&format=json&origin=*`;
+                const response = await fetch(url);
+                const data = await response.json();
+                const pages = data.query?.pages;
+                if (pages) {
+                    const pageId = Object.keys(pages)[0];
+                    const langlinks = pages[pageId]?.langlinks || [];
+                    return langlinks.map(l => ({ code: l.lang, name: l.langname || l.lang, title: l['*'] }));
+                }
+            } catch (e) { }
+            return [];
+        }
+
+        async function fetchWikipediaContent(query, lang = 'vi') {
+            const parseUrl = `https://${lang}.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(query)}&format=json&origin=*&prop=text`;
             let response = await fetch(parseUrl);
             let data = await response.json();
 
             if (data.error) {
-                const searchUrl = `https://vi.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=1&format=json&origin=*`;
+                const searchUrl = `https://${lang}.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=1&format=json&origin=*`;
                 const searchResponse = await fetch(searchUrl);
                 const searchData = await searchResponse.json();
                 if (searchData[1] && searchData[1].length > 0) {
-                    const retryUrl = `https://vi.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(searchData[1][0])}&format=json&origin=*&prop=text`;
+                    const retryUrl = `https://${lang}.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(searchData[1][0])}&format=json&origin=*&prop=text`;
                     response = await fetch(retryUrl);
                     data = await response.json();
                 } else { return null; }
@@ -7679,7 +7919,20 @@ Trả về JSON duy nhất, không giải thích:
 
             let html = data.parse.text['*'];
             html = html.replace(/<span class="mw-editsection">[\s\S]*?<\/span>/g, '');
-            html = html.replace(/href="\/wiki\//g, 'href="https://vi.wikipedia.org/wiki/');
+            html = html.replace(/href="\/wiki\//g, `href="https://${lang}.wikipedia.org/wiki/`);
+            html = html.replace(/src="\/\//g, 'src="https://');
+            return { title: data.parse.title, html: html };
+        }
+
+        async function fetchWikipediaContentByTitle(title, lang) {
+            const parseUrl = `https://${lang}.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(title)}&format=json&origin=*&prop=text`;
+            const response = await fetch(parseUrl);
+            const data = await response.json();
+            if (!data.parse) return null;
+
+            let html = data.parse.text['*'];
+            html = html.replace(/<span class="mw-editsection">[\s\S]*?<\/span>/g, '');
+            html = html.replace(/href="\/wiki\//g, `href="https://${lang}.wikipedia.org/wiki/`);
             html = html.replace(/src="\/\//g, 'src="https://');
             return { title: data.parse.title, html: html };
         }
@@ -7690,11 +7943,20 @@ Trả về JSON duy nhất, không giải thích:
             if ('speechSynthesis' in window) {
                 speechSynthesis.cancel();
                 const u = new SpeechSynthesisUtterance(text);
-                u.lang = 'vi-VN'; u.rate = 0.9;
+                u.lang = currentWikiLang === 'vi' ? 'vi-VN' : currentWikiLang;
+                u.rate = 0.9;
                 speechSynthesis.speak(u);
                 toast('🔊 Đang đọc...');
             }
         }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', e => {
+            const dropdown = document.getElementById('wikiLangDropdown');
+            if (dropdown && !e.target.closest('.wiki-lang-selector')) {
+                dropdown.classList.remove('show');
+            }
+        });
     </script>
 
     <!-- API Key Modal -->
