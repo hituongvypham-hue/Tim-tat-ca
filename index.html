@@ -2108,6 +2108,7 @@
                 <button class="tab" data-tab="image" draggable="true">🖼️ Image</button>
                 <button class="tab" data-tab="ebook" draggable="true">📚 Ebook</button>
                 <button class="tab" data-tab="apk" draggable="true">📱 APK</button>
+                <button class="tab" data-tab="software" draggable="true">💻 Software</button>
                 <button class="tab" data-tab="ai" draggable="true">🤖 AI</button>
                 <button class="tab" data-tab="create" draggable="true">🎨 Create</button>
                 <button class="tab" data-tab="reverse" draggable="true">🔍 Reverse</button>
@@ -2560,29 +2561,118 @@
         <!-- APK MOD TAB -->
         <div class="tab-content" id="apk-tab">
             <div class="search-wrapper">
-                <input type="text" id="apkInput" class="search-input" placeholder="Tên app, game, phần mềm PC...">
+                <input type="text" id="apkInput" class="search-input" placeholder="Tên app, game Android...">
             </div>
 
             <div class="section">
-                <div class="section-title">💻 PC Software - Torrent <span class="badge hot">HOT</span></div>
-                <div class="section-desc">Torrent tracker lớn nhất: RuTracker 15.5M users, 1337x, FitGirl Repacks</div>
+                <div class="section-title">🔥 Forum Uy Tín <span class="badge hot">HOT</span></div>
+                <div class="section-desc">Mobilism, Platinmods: Forum mod APK lớn nhất thế giới</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="mobilism"><span class="platform-label"><span
+                                class="platform-icon">📋</span>Mobilism</span></label>
+                    <label class="platform"><input type="checkbox" data-p="platinmods"><span
+                            class="platform-label"><span class="platform-icon">🎮</span>Platinmods</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🌍 Global Sites</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="modyolo"><span class="platform-label"><span
+                                class="platform-icon">📦</span>Modyolo</span></label>
+                    <label class="platform"><input type="checkbox" data-p="liteapks"><span class="platform-label"><span
+                                class="platform-icon">⚡</span>Liteapks</span></label>
+                    <label class="platform"><input type="checkbox" data-p="apkdone"><span class="platform-label"><span
+                                class="platform-icon">✅</span>APKdone</span></label>
+                    <label class="platform"><input type="checkbox" data-p="happymod"><span class="platform-label"><span
+                                class="platform-icon">😊</span>Happymod</span></label>
+                    <label class="platform"><input type="checkbox" data-p="an1"><span class="platform-label"><span
+                                class="platform-icon">1️⃣</span>An1.com</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇷🇺 Nga / Đông Âu</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="androeed"><span class="platform-label"><span
+                                class="platform-icon">🇷🇺</span>Androeed</span></label>
+                    <label class="platform"><input type="checkbox" data-p="5play"><span class="platform-label"><span
+                                class="platform-icon">5️⃣</span>5play.ru</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🇨🇳 Trung Quốc</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="huluxia"><span class="platform-label"><span
+                                class="platform-icon">🫛</span>葫芦侠</span></label>
+                    <label class="platform"><input type="checkbox" data-p="coolapk"><span class="platform-label"><span
+                                class="platform-icon">🍏</span>酷安</span></label>
+                    <label class="platform"><input type="checkbox" data-p="ddooo"><span class="platform-label"><span
+                                class="platform-icon">📱</span>多多软件</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📦 APK Official</div>
+                <div class="platforms">
+                    <label class="platform"><input type="checkbox" data-p="apkpure"><span class="platform-label"><span
+                                class="platform-icon">🟣</span>APKPure</span></label>
+                    <label class="platform"><input type="checkbox" data-p="apkmirror"><span class="platform-label"><span
+                                class="platform-icon">🪞</span>APKMirror</span></label>
+                    <label class="platform"><input type="checkbox" data-p="uptodown"><span class="platform-label"><span
+                                class="platform-icon">⬇️</span>Uptodown</span></label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn-search" id="apkSearchBtn">Search<span class="count" id="apkCount">0</span></button>
+                <button class="btn-select" onclick="toggleAll('apk')">Toggle</button>
+            </div>
+        </div>
+
+        <!-- SOFTWARE TAB -->
+        <div class="tab-content" id="software-tab">
+            <div class="search-wrapper">
+                <input type="text" id="softwareInput" class="search-input"
+                    placeholder="Tên phần mềm, game PC, Windows...">
+            </div>
+
+            <div class="section">
+                <div class="section-title">🔥 Torrent Hot <span class="badge hot">TOP</span></div>
+                <div class="section-desc">RuTracker: 15.5M users, lớn nhất thế giới • 1337x: Đa năng</div>
                 <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="rutracker"><span class="platform-label"><span
                                 class="platform-icon">🔴</span>RuTracker</span></label>
                     <label class="platform"><input type="checkbox" data-p="1337x"><span class="platform-label"><span
                                 class="platform-icon">🔥</span>1337x</span></label>
+                    <label class="platform"><input type="checkbox" data-p="piratebay"><span class="platform-label"><span
+                                class="platform-icon">🏴‍☠️</span>PirateBay</span></label>
+                    <label class="platform"><input type="checkbox" data-p="torrentgalaxy"><span
+                            class="platform-label"><span class="platform-icon">🌌</span>TorrentGalaxy</span></label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🎮 Game PC Repacks</div>
+                <div class="section-desc">FitGirl: Nén cao, tiết kiệm dung lượng • DODI: Cài nhanh</div>
+                <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="fitgirl"><span class="platform-label"><span
                                 class="platform-icon">🎮</span>FitGirl Repacks</span></label>
                     <label class="platform"><input type="checkbox" data-p="dodi"><span class="platform-label"><span
                                 class="platform-icon">🕹️</span>DODI Repacks</span></label>
                     <label class="platform"><input type="checkbox" data-p="steamrip"><span class="platform-label"><span
                                 class="platform-icon">💨</span>SteamRip</span></label>
+                    <label class="platform"><input type="checkbox" data-p="gog-games"><span class="platform-label"><span
+                                class="platform-icon">📦</span>GOG Games</span></label>
+                    <label class="platform"><input type="checkbox" data-p="ovagames"><span class="platform-label"><span
+                                class="platform-icon">🎯</span>OvaGames</span></label>
                 </div>
             </div>
 
             <div class="section">
-                <div class="section-title">🇷🇺 Nga - PC Software</div>
-                <div class="section-desc">RSLoad, NNM-Club: Phần mềm Windows đầy đủ</div>
+                <div class="section-title">🇷🇺 Nga - PC Software <span class="badge">Premium</span></div>
+                <div class="section-desc">RSLoad: Phần mềm Windows đầy đủ • NNM-Club: Torrent semi-private</div>
                 <div class="platforms">
                     <label class="platform"><input type="checkbox" data-p="rsload"><span class="platform-label"><span
                                 class="platform-icon">📥</span>RSLoad</span></label>
@@ -2609,72 +2699,28 @@
                                 class="platform-icon">🎨</span>异次元软件</span></label>
                     <label class="platform"><input type="checkbox" data-p="carrotchou"><span
                             class="platform-label"><span class="platform-icon">🥕</span>胡萝卜周</span></label>
+                    <label class="platform"><input type="checkbox" data-p="masuit"><span class="platform-label"><span
+                                class="platform-icon">🔧</span>懒得勤快</span></label>
                 </div>
             </div>
 
             <div class="section">
-                <div class="section-title">🔥 APK Forum Uy Tín</div>
+                <div class="section-title">📦 Direct Download</div>
+                <div class="section-desc">Không cần torrent client, tải trực tiếp</div>
                 <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="mobilism"><span class="platform-label"><span
-                                class="platform-icon">📋</span>Mobilism</span></label>
-                    <label class="platform"><input type="checkbox" data-p="platinmods"><span
-                            class="platform-label"><span class="platform-icon">🎮</span>Platinmods</span></label>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🌍 APK Global Sites</div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="modyolo"><span class="platform-label"><span
-                                class="platform-icon">📦</span>Modyolo</span></label>
-                    <label class="platform"><input type="checkbox" data-p="liteapks"><span class="platform-label"><span
-                                class="platform-icon">⚡</span>Liteapks</span></label>
-                    <label class="platform"><input type="checkbox" data-p="apkdone"><span class="platform-label"><span
-                                class="platform-icon">✅</span>APKdone</span></label>
-                    <label class="platform"><input type="checkbox" data-p="happymod"><span class="platform-label"><span
-                                class="platform-icon">😊</span>Happymod</span></label>
-                    <label class="platform"><input type="checkbox" data-p="an1"><span class="platform-label"><span
-                                class="platform-icon">1️⃣</span>An1.com</span></label>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🇷🇺 APK Nga / Đông Âu</div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="androeed"><span class="platform-label"><span
-                                class="platform-icon">🇷🇺</span>Androeed</span></label>
-                    <label class="platform"><input type="checkbox" data-p="5play"><span class="platform-label"><span
-                                class="platform-icon">5️⃣</span>5play.ru</span></label>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🇨🇳 APK Trung Quốc</div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="huluxia"><span class="platform-label"><span
-                                class="platform-icon">🫛</span>葫芦侠</span></label>
-                    <label class="platform"><input type="checkbox" data-p="coolapk"><span class="platform-label"><span
-                                class="platform-icon">🍏</span>酷安</span></label>
-                    <label class="platform"><input type="checkbox" data-p="ddooo"><span class="platform-label"><span
-                                class="platform-icon">📱</span>多多软件</span></label>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">📦 APK Official</div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="apkpure"><span class="platform-label"><span
-                                class="platform-icon">🟣</span>APKPure</span></label>
-                    <label class="platform"><input type="checkbox" data-p="apkmirror"><span class="platform-label"><span
-                                class="platform-icon">🪞</span>APKMirror</span></label>
-                    <label class="platform"><input type="checkbox" data-p="uptodown"><span class="platform-label"><span
-                                class="platform-icon">⬇️</span>Uptodown</span></label>
+                    <label class="platform"><input type="checkbox" data-p="getintopc"><span class="platform-label"><span
+                                class="platform-icon">💻</span>GetIntoPC</span></label>
+                    <label class="platform"><input type="checkbox" data-p="filecr"><span class="platform-label"><span
+                                class="platform-icon">📂</span>FileCR</span></label>
+                    <label class="platform"><input type="checkbox" data-p="nsaneforums"><span
+                            class="platform-label"><span class="platform-icon">🔥</span>Nsane Forums</span></label>
                 </div>
             </div>
 
             <div class="actions">
-                <button class="btn-search" id="apkSearchBtn">Search<span class="count" id="apkCount">0</span></button>
-                <button class="btn-select" onclick="toggleAll('apk')">Toggle</button>
+                <button class="btn-search" id="softwareSearchBtn">Search<span class="count"
+                        id="softwareCount">0</span></button>
+                <button class="btn-select" onclick="toggleAll('software')">Toggle</button>
             </div>
         </div>
 
@@ -3531,6 +3577,41 @@
             uptodown: q => `https://en.uptodown.com/android/search?q=${encodeURIComponent(q)}`
         };
 
+        // SOFTWARE SEARCH URLS
+        const SOFTWARE_URLS = {
+            // Torrent Hot
+            rutracker: q => `https://rutracker.org/forum/tracker.php?nm=${encodeURIComponent(q)}`,
+            '1337x': q => `https://1337x.to/search/${encodeURIComponent(q)}/1/`,
+            piratebay: q => `https://thepiratebay.org/search.php?q=${encodeURIComponent(q)}`,
+            torrentgalaxy: q => `https://torrentgalaxy.to/torrents.php?search=${encodeURIComponent(q)}`,
+
+            // Game PC Repacks
+            fitgirl: q => `https://fitgirl-repacks.site/?s=${encodeURIComponent(q)}`,
+            dodi: q => `https://dodi-repacks.site/?s=${encodeURIComponent(q)}`,
+            steamrip: q => `https://steamrip.com/?s=${encodeURIComponent(q)}`,
+            'gog-games': q => `https://gog-games.to/?s=${encodeURIComponent(q)}`,
+            ovagames: q => `https://www.ovagames.com/?s=${encodeURIComponent(q)}`,
+
+            // Russia - PC Software
+            rsload: q => `https://rsload.net/search/?q=${encodeURIComponent(q)}`,
+            nnmclub: q => `https://nnmclub.to/forum/tracker.php?nm=${encodeURIComponent(q)}`,
+            rutor: q => `https://rutor.info/search/0/0/000/0/${encodeURIComponent(q)}`,
+            softportal: q => `https://www.softportal.com/search/?text=${encodeURIComponent(q)}`,
+
+            // China - PC Software
+            '52pojie': q => `https://www.52pojie.cn/search.php?searchsubmit=yes&srchtxt=${encodeURIComponent(q)}`,
+            ghboke: q => `https://www.ghxi.com/?s=${encodeURIComponent(q)}`,
+            '423down': q => `https://www.423down.com/?s=${encodeURIComponent(q)}`,
+            iplaysoft: q => `https://www.iplaysoft.com/?s=${encodeURIComponent(q)}`,
+            carrotchou: q => `https://www.carrotchou.blog/?s=${encodeURIComponent(q)}`,
+            masuit: q => `https://masuit.com/?s=${encodeURIComponent(q)}`,
+
+            // Direct Download
+            getintopc: q => `https://getintopc.com/?s=${encodeURIComponent(q)}`,
+            filecr: q => `https://filecr.com/?s=${encodeURIComponent(q)}`,
+            nsaneforums: q => `https://nsaneforums.com/search/?q=${encodeURIComponent(q)}`
+        };
+
         // HOMEPAGE URLs - for when no search query
         const HOMEPAGE_URLS = {
             // Video
@@ -3654,6 +3735,15 @@
             '423down': 'https://www.423down.com',
             iplaysoft: 'https://www.iplaysoft.com',
             carrotchou: 'https://www.carrotchou.blog',
+            // Software - Additional
+            piratebay: 'https://thepiratebay.org',
+            torrentgalaxy: 'https://torrentgalaxy.to',
+            'gog-games': 'https://gog-games.to',
+            ovagames: 'https://www.ovagames.com',
+            masuit: 'https://masuit.com',
+            getintopc: 'https://getintopc.com',
+            filecr: 'https://filecr.com',
+            nsaneforums: 'https://nsaneforums.com',
 
             // APK
             mobilism: 'https://forum.mobilism.org',
@@ -4977,6 +5067,7 @@ Trả về JSON (chỉ JSON, không text khác):
             document.getElementById('imageCount').textContent = document.querySelectorAll('#image-tab .platform input:checked').length;
             document.getElementById('ebookCount').textContent = document.querySelectorAll('#ebook-tab .platform input:checked').length;
             document.getElementById('apkCount').textContent = document.querySelectorAll('#apk-tab .platform input:checked').length;
+            document.getElementById('softwareCount').textContent = document.querySelectorAll('#software-tab .platform input:checked').length;
             document.getElementById('aiCount').textContent = document.querySelectorAll('#ai-tab .platform input:checked').length;
             document.getElementById('reverseCount').textContent = document.querySelectorAll('#reverse-tab .platform input:checked').length;
             document.getElementById('discoverCount').textContent = document.querySelectorAll('#discover-tab .platform input:checked').length;
@@ -5016,6 +5107,10 @@ Trả về JSON (chỉ JSON, không text khác):
                 input = document.getElementById('apkInput');
                 urls = APK_URLS;
                 query = input ? input.value.trim() : '';
+            } else if (currentTab === 'software') {
+                input = document.getElementById('softwareInput');
+                urls = SOFTWARE_URLS;
+                query = input ? input.value.trim() : '';
             } else {
                 // Reverse tab - no input needed
                 urls = REVERSE_URLS;
@@ -5048,6 +5143,7 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('imageSearchBtn').addEventListener('click', search);
         document.getElementById('ebookSearchBtn').addEventListener('click', search);
         document.getElementById('apkSearchBtn').addEventListener('click', search);
+        document.getElementById('softwareSearchBtn').addEventListener('click', search);
         document.getElementById('aiSearchBtn').addEventListener('click', search);
         document.getElementById('reverseSearchBtn').addEventListener('click', search);
         document.getElementById('discoverSearchBtn').addEventListener('click', search);
@@ -5057,6 +5153,7 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('imageInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('ebookInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('apkInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
+        document.getElementById('softwareInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
         // Direct click on platform label to open homepage (only when no query)
         document.querySelectorAll('.platform-label').forEach(label => {
@@ -5082,6 +5179,9 @@ Trả về JSON (chỉ JSON, không text khác):
                     query = input ? input.value.trim() : '';
                 } else if (currentTab === 'apk') {
                     const input = document.getElementById('apkInput');
+                    query = input ? input.value.trim() : '';
+                } else if (currentTab === 'software') {
+                    const input = document.getElementById('softwareInput');
                     query = input ? input.value.trim() : '';
                 }
 
@@ -5526,6 +5626,15 @@ Trả về JSON (chỉ JSON, không text khác):
             '423down': '423down.com',
             iplaysoft: 'iplaysoft.com',
             carrotchou: 'carrotchou.blog',
+            // Software - Additional
+            piratebay: 'thepiratebay.org',
+            torrentgalaxy: 'torrentgalaxy.to',
+            'gog-games': 'gog-games.to',
+            ovagames: 'ovagames.com',
+            masuit: 'masuit.com',
+            getintopc: 'getintopc.com',
+            filecr: 'filecr.com',
+            nsaneforums: 'nsaneforums.com',
             // APK
             mobilism: 'mobilism.org',
             platinmods: 'platinmods.com',
@@ -5807,6 +5916,7 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('imageSearchBtn').removeEventListener('click', originalSearch);
         document.getElementById('ebookSearchBtn').removeEventListener('click', originalSearch);
         document.getElementById('apkSearchBtn').removeEventListener('click', originalSearch);
+        document.getElementById('softwareSearchBtn').removeEventListener('click', originalSearch);
         document.getElementById('aiSearchBtn').removeEventListener('click', originalSearch);
         document.getElementById('reverseSearchBtn').removeEventListener('click', originalSearch);
         document.getElementById('discoverSearchBtn').removeEventListener('click', originalSearch);
@@ -5817,6 +5927,7 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('imageSearchBtn').addEventListener('click', search);
         document.getElementById('ebookSearchBtn').addEventListener('click', search);
         document.getElementById('apkSearchBtn').addEventListener('click', search);
+        document.getElementById('softwareSearchBtn').addEventListener('click', search);
         document.getElementById('aiSearchBtn').addEventListener('click', search);
         document.getElementById('reverseSearchBtn').addEventListener('click', search);
         document.getElementById('discoverSearchBtn').addEventListener('click', search);
