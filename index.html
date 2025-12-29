@@ -29,6 +29,9 @@
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
+    <!-- Markdown Parser for Knowledge Base -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <style>
         :root {
             --google-blue: #1a73e8;
@@ -3009,16 +3012,128 @@
         }
 
         .knowledge-item-content {
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.85rem;
+            font-family: inherit;
+            font-size: 0.9rem;
             background: var(--bg);
-            padding: 1rem;
+            padding: 1.25rem;
             border-radius: 8px;
-            white-space: pre-wrap;
-            word-break: break-word;
-            max-height: 400px;
+            max-height: 500px;
             overflow-y: auto;
             margin-top: 0.75rem;
+            line-height: 1.6;
+        }
+
+        /* Markdown Content Styling */
+        .knowledge-item-content.markdown-body h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 0 0.75rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+            color: #10b981;
+        }
+
+        .knowledge-item-content.markdown-body h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1rem 0 0.5rem 0;
+            color: #059669;
+        }
+
+        .knowledge-item-content.markdown-body h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0.75rem 0 0.5rem 0;
+            color: #047857;
+        }
+
+        .knowledge-item-content.markdown-body p {
+            margin: 0.5rem 0;
+        }
+
+        .knowledge-item-content.markdown-body ul,
+        .knowledge-item-content.markdown-body ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .knowledge-item-content.markdown-body li {
+            margin: 0.25rem 0;
+        }
+
+        .knowledge-item-content.markdown-body code {
+            background: #f0fdf4;
+            color: #166534;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85em;
+        }
+
+        .knowledge-item-content.markdown-body pre {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 0.75rem 0;
+        }
+
+        .knowledge-item-content.markdown-body pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .knowledge-item-content.markdown-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.75rem 0;
+            font-size: 0.85rem;
+        }
+
+        .knowledge-item-content.markdown-body th,
+        .knowledge-item-content.markdown-body td {
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+        }
+
+        .knowledge-item-content.markdown-body th {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-weight: 600;
+        }
+
+        .knowledge-item-content.markdown-body tr:nth-child(even) {
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .knowledge-item-content.markdown-body blockquote {
+            border-left: 4px solid #10b981;
+            margin: 0.75rem 0;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.05);
+            color: var(--text-secondary);
+        }
+
+        .knowledge-item-content.markdown-body strong {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .knowledge-item-content.markdown-body hr {
+            border: none;
+            border-top: 2px solid var(--border);
+            margin: 1rem 0;
+        }
+
+        [data-theme="dark"] .knowledge-item-content.markdown-body code {
+            background: #064e3b;
+            color: #6ee7b7;
+        }
+
+        [data-theme="dark"] .knowledge-item-content.markdown-body pre {
+            background: #1e293b;
         }
 
         .knowledge-item-copy-full {
@@ -9242,7 +9357,7 @@ Trả về JSON duy nhất, không giải thích:
                             </div>
                         </div>
                         <div class="knowledge-item-body">
-                            <div class="knowledge-item-content">${escapeHtml(item.content)}</div>
+                            <div class="knowledge-item-content markdown-body">${renderMarkdown(item.content)}</div>
                             <button class="knowledge-item-copy-full" onclick="copyKnowledge('${item.id}')">📋 Copy toàn bộ nội dung</button>
                         </div>
                     </div>
@@ -9254,6 +9369,24 @@ Trả về JSON duy nhất, không giải thích:
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function renderMarkdown(text) {
+            // Use marked.js if available, otherwise fallback to basic formatting
+            if (typeof marked !== 'undefined') {
+                return marked.parse(text);
+            }
+            // Fallback: basic formatting
+            return text
+                .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+                .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+                .replace(/^\- (.+)$/gm, '<li>$1</li>')
+                .replace(/^\* (.+)$/gm, '<li>$1</li>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/`(.+?)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
         }
 
         function toggleKnowledgeItem(id) {
