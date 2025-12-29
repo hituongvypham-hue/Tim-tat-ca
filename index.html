@@ -3231,6 +3231,304 @@
             color: var(--text-light);
             font-size: 0.9rem;
         }
+
+        /* Knowledge Base Cards */
+        .kb-filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.25rem;
+        }
+
+        .kb-filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: var(--bg);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .kb-filter-btn:hover {
+            background: var(--card);
+        }
+
+        .kb-filter-btn.active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-color: transparent;
+        }
+
+        .kb-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .kb-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .kb-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-color: #10b981;
+        }
+
+        .kb-card.hidden {
+            display: none;
+        }
+
+        .kb-card-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .kb-card-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .kb-card-content h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            color: var(--text);
+        }
+
+        .kb-card-content p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin: 0 0 0.75rem 0;
+            line-height: 1.4;
+        }
+
+        .kb-card-tags {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .kb-card-tags span {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            border-radius: 4px;
+        }
+
+        .kb-card-actions {
+            flex-shrink: 0;
+        }
+
+        .kb-copy-btn {
+            padding: 0.6rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+
+        .kb-copy-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Guide Modal */
+        .guide-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .guide-modal-overlay.show {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .guide-modal {
+            background: var(--card);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+        }
+
+        .guide-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .guide-modal-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .guide-modal-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .guide-copy-all-btn {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .guide-copy-all-btn:hover {
+            opacity: 0.9;
+        }
+
+        .guide-close-btn {
+            padding: 0.5rem 0.75rem;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .guide-modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+            line-height: 1.7;
+        }
+
+        .guide-modal-body h1 {
+            font-size: 1.5rem;
+            color: #10b981;
+            margin: 0 0 1rem 0;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .guide-modal-body h2 {
+            font-size: 1.2rem;
+            color: #059669;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        .guide-modal-body h3 {
+            font-size: 1.05rem;
+            color: #047857;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .guide-modal-body ul,
+        .guide-modal-body ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .guide-modal-body li {
+            margin: 0.25rem 0;
+        }
+
+        .guide-modal-body code {
+            background: #f0fdf4;
+            color: #166534;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+
+        .guide-modal-body pre {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 0.75rem 0;
+        }
+
+        .guide-modal-body pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .guide-modal-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.75rem 0;
+            font-size: 0.9rem;
+        }
+
+        .guide-modal-body th,
+        .guide-modal-body td {
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+        }
+
+        .guide-modal-body th {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .guide-modal-body blockquote {
+            border-left: 4px solid #10b981;
+            margin: 0.75rem 0;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .guide-modal-body strong {
+            color: #059669;
+        }
+
+        .guide-modal-body hr {
+            border: none;
+            border-top: 2px solid var(--border);
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 600px) {
+            .kb-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .guide-modal-overlay {
+                padding: 1rem;
+            }
+
+            .guide-modal {
+                max-height: 95vh;
+            }
+        }
     </style>
 </head>
 
@@ -4800,69 +5098,148 @@
         <!-- KNOWLEDGE BASE TAB -->
         <div class="tab-content" id="knowledge-tab">
             <div class="section">
-                <div class="section-title">📚 Knowledge Base</div>
-                <div class="section-desc">Lưu và quản lý tài liệu, ghi chú để dùng với AI - dễ copy và sử dụng</div>
+                <div class="section-title">📚 Scriptwriting Knowledge Base</div>
+                <div class="section-desc">Tài liệu hướng dẫn viết kịch bản YouTube với AI - Click để xem chi tiết, copy
+                    nhanh để dùng</div>
 
-                <!-- Add Knowledge Form -->
-                <div class="knowledge-add-form" id="knowledgeForm">
-                    <!-- File Upload Section -->
-                    <div class="knowledge-upload-section">
-                        <div class="knowledge-upload-area" id="knowledgeUploadArea"
-                            onclick="document.getElementById('knowledgeFileInput').click()">
-                            <input type="file" id="knowledgeFileInput" accept=".md,.txt,.markdown" style="display:none"
-                                onchange="handleFileUpload(event)">
-                            <div class="upload-icon">📤</div>
-                            <div class="upload-text">
-                                <strong>Tải file lên</strong>
-                                <span>Kéo thả hoặc click để chọn file .md, .txt</span>
+                <!-- Quick Filter Buttons -->
+                <div class="kb-filter-bar">
+                    <button class="kb-filter-btn active" onclick="filterGuides('all')">📚 Tất cả</button>
+                    <button class="kb-filter-btn" onclick="filterGuides('shorts')">🎬 Shorts</button>
+                    <button class="kb-filter-btn" onclick="filterGuides('longform')">📺 Long-form</button>
+                    <button class="kb-filter-btn" onclick="filterGuides('workflow')">🔄 Workflow</button>
+                    <button class="kb-filter-btn" onclick="filterGuides('tools')">🛠️ Tools</button>
+                </div>
+
+                <!-- Guide Cards Grid -->
+                <div class="kb-cards" id="kbCards">
+                    <!-- Card 1: YouTube Shorts Guide -->
+                    <div class="kb-card" data-category="shorts" onclick="openGuideModal('shorts')">
+                        <div class="kb-card-icon">🎬</div>
+                        <div class="kb-card-content">
+                            <h3>YouTube Shorts Scriptwriting</h3>
+                            <p>Hướng dẫn viết kịch bản YouTube Shorts viral với hook mạnh, cấu trúc H-B-C-L</p>
+                            <div class="kb-card-tags">
+                                <span>Hook</span><span>60s</span><span>Retention</span>
                             </div>
                         </div>
-                        <div class="upload-or">hoặc nhập thủ công bên dưới</div>
+                        <div class="kb-card-actions">
+                            <button class="kb-copy-btn" onclick="event.stopPropagation(); copyGuide('shorts')"
+                                title="Copy toàn bộ">📋</button>
+                        </div>
                     </div>
 
-                    <input type="text" id="knowledgeName" class="knowledge-input"
-                        placeholder="Tiêu đề (VD: Cấu trúc kịch bản 3 phần)">
-                    <select id="knowledgeCategory" class="knowledge-select">
-                        <option value="">-- Chọn Category --</option>
-                        <option value="Scriptwriting">📝 Scriptwriting</option>
-                        <option value="Video Editing">🎬 Video Editing</option>
-                        <option value="AI Prompts">🤖 AI Prompts</option>
-                        <option value="Marketing">📢 Marketing</option>
-                        <option value="Research">🔍 Research</option>
-                        <option value="Templates">📋 Templates</option>
-                        <option value="Other">📁 Other</option>
-                    </select>
-                    <textarea id="knowledgeContent" class="knowledge-textarea"
-                        placeholder="Nội dung... (hỗ trợ Markdown)&#10;&#10;Ví dụ:&#10;## Hook (0-3 giây)&#10;- Câu hỏi gây tò mò: 'Bạn có biết...?'&#10;- FOMO: 'Chỉ 1% người biết điều này...'"></textarea>
-                    <input type="text" id="knowledgeTags" class="knowledge-input"
-                        placeholder="Tags (phân cách bằng dấu phẩy)">
-                    <div class="knowledge-form-btns">
-                        <button class="btn-add-knowledge" onclick="addKnowledge()">➕ Thêm tài liệu</button>
-                        <button class="btn-cancel-knowledge" id="btnCancelKnowledge" onclick="cancelEditKnowledge()"
-                            style="display:none;">❌ Hủy</button>
+                    <!-- Card 2: Long-form Guide -->
+                    <div class="kb-card" data-category="longform" onclick="openGuideModal('longform')">
+                        <div class="kb-card-icon">📺</div>
+                        <div class="kb-card-content">
+                            <h3>YouTube Long-form Scriptwriting</h3>
+                            <p>Hướng dẫn viết kịch bản video dài 10-30 phút với cấu trúc H-I-C-C-C</p>
+                            <div class="kb-card-tags">
+                                <span>Re-hooks</span><span>10-30min</span><span>Retention</span>
+                            </div>
+                        </div>
+                        <div class="kb-card-actions">
+                            <button class="kb-copy-btn" onclick="event.stopPropagation(); copyGuide('longform')"
+                                title="Copy toàn bộ">📋</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Workflow -->
+                    <div class="kb-card" data-category="workflow" onclick="openGuideModal('workflow')">
+                        <div class="kb-card-icon">🔄</div>
+                        <div class="kb-card-content">
+                            <h3>AI Scriptwriting Workflow</h3>
+                            <p>Quy trình 4 phases từ Foundation đến Finalize với prompts chi tiết</p>
+                            <div class="kb-card-tags">
+                                <span>4 Phases</span><span>Prompts</span><span>Step-by-step</span>
+                            </div>
+                        </div>
+                        <div class="kb-card-actions">
+                            <button class="kb-copy-btn" onclick="event.stopPropagation(); copyGuide('workflow')"
+                                title="Copy toàn bộ">📋</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Evaluator -->
+                    <div class="kb-card" data-category="tools" onclick="openGuideModal('evaluator')">
+                        <div class="kb-card-icon">🤖</div>
+                        <div class="kb-card-content">
+                            <h3>AI Script Evaluator System</h3>
+                            <p>Hệ thống đánh giá script 100 điểm với rubric chi tiết và prompts</p>
+                            <div class="kb-card-tags">
+                                <span>100 điểm</span><span>Rubric</span><span>Before/After</span>
+                            </div>
+                        </div>
+                        <div class="kb-card-actions">
+                            <button class="kb-copy-btn" onclick="event.stopPropagation(); copyGuide('evaluator')"
+                                title="Copy toàn bộ">📋</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Douyin Guide -->
+                    <div class="kb-card" data-category="shorts" onclick="openGuideModal('douyin')">
+                        <div class="kb-card-icon">🇨🇳</div>
+                        <div class="kb-card-content">
+                            <h3>Douyin → YouTube Shorts</h3>
+                            <p>Quy trình 7 bước chuyển đổi video Douyin thành YouTube Shorts VN</p>
+                            <div class="kb-card-tags">
+                                <span>Localize</span><span>Adapt</span><span>7 Steps</span>
+                            </div>
+                        </div>
+                        <div class="kb-card-actions">
+                            <button class="kb-copy-btn" onclick="event.stopPropagation(); copyGuide('douyin')"
+                                title="Copy toàn bộ">📋</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 6: Claude Techniques -->
+                    <div class="kb-card" data-category="tools" onclick="openGuideModal('claude')">
+                        <div class="kb-card-icon">🎭</div>
+                        <div class="kb-card-content">
+                            <h3>Claude Natural Writing</h3>
+                            <p>Kỹ thuật để Claude viết script tự nhiên, không giọng robot AI</p>
+                            <div class="kb-card-tags">
+                                <span>Prompts</span><span>Natural</span><span>Anti-AI</span>
+                            </div>
+                        </div>
+                        <div class="kb-card-actions">
+                            <button class="kb-copy-btn" onclick="event.stopPropagation(); copyGuide('claude')"
+                                title="Copy toàn bộ">📋</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 7: Create Assistant -->
+                    <div class="kb-card" data-category="tools" onclick="openGuideModal('assistant')">
+                        <div class="kb-card-icon">🛠️</div>
+                        <div class="kb-card-content">
+                            <h3>Tạo AI Script Assistant</h3>
+                            <p>5 phương pháp tạo AI assistant: Custom GPT, Claude, Gemini, API</p>
+                            <div class="kb-card-tags">
+                                <span>GPT</span><span>Claude</span><span>Gemini</span>
+                            </div>
+                        </div>
+                        <div class="kb-card-actions">
+                            <button class="kb-copy-btn" onclick="event.stopPropagation(); copyGuide('assistant')"
+                                title="Copy toàn bộ">📋</button>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Search and Filter -->
-                <div class="knowledge-search-bar">
-                    <input type="text" id="knowledgeSearch" class="knowledge-search-input"
-                        placeholder="🔍 Tìm tài liệu..." oninput="filterKnowledge()">
-                    <select id="knowledgeCategoryFilter" class="knowledge-filter-select" onchange="filterKnowledge()">
-                        <option value="">Tất cả Category</option>
-                        <option value="Scriptwriting">📝 Scriptwriting</option>
-                        <option value="Video Editing">🎬 Video Editing</option>
-                        <option value="AI Prompts">🤖 AI Prompts</option>
-                        <option value="Marketing">📢 Marketing</option>
-                        <option value="Research">🔍 Research</option>
-                        <option value="Templates">📋 Templates</option>
-                        <option value="Other">📁 Other</option>
-                    </select>
-                    <span class="knowledge-count" id="knowledgeCount">0 tài liệu</span>
+        <!-- Guide Modal -->
+        <div id="guideModal" class="guide-modal-overlay" onclick="if(event.target===this)closeGuideModal()">
+            <div class="guide-modal">
+                <div class="guide-modal-header">
+                    <h2 id="guideModalTitle">Guide Title</h2>
+                    <div class="guide-modal-actions">
+                        <button class="guide-copy-all-btn" onclick="copyCurrentGuide()">📋 Copy toàn bộ</button>
+                        <button class="guide-close-btn" onclick="closeGuideModal()">✕</button>
+                    </div>
                 </div>
-
-                <!-- Knowledge List -->
-                <div class="knowledge-list" id="knowledgeList">
-                    <div class="knowledge-empty">Chưa có tài liệu nào. Thêm tài liệu mới ở trên! 👆</div>
+                <div class="guide-modal-body markdown-body" id="guideModalContent">
+                    <!-- Content will be loaded here -->
                 </div>
             </div>
         </div>
@@ -9667,6 +10044,129 @@ Trả về JSON duy nhất, không giải thích:
         function filterKnowledge() {
             renderKnowledge();
         }
+
+        // ========== NEW KNOWLEDGE BASE GUIDES ==========
+        let currentGuideId = null;
+
+        // Guide URLs - cached content will be fetched from GitHub raw files or embedded
+        const guideUrls = {
+            shorts: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/AI_YouTube_Shorts_Scriptwriting_Guide.md',
+            longform: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/AI_YouTube_LongForm_Scriptwriting_Guide.md',
+            workflow: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/AI_Scriptwriting_Workflow.md',
+            evaluator: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/AI_Script_Evaluator_System.md',
+            douyin: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/Douyin_to_YouTube_Shorts_Guide.md',
+            claude: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/Claude_Natural_Writing_Techniques.md',
+            assistant: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/How_To_Create_AI_Script_Assistant.md'
+        };
+
+        const guideTitles = {
+            shorts: '🎬 YouTube Shorts Scriptwriting Guide',
+            longform: '📺 YouTube Long-form Scriptwriting Guide',
+            workflow: '🔄 AI Scriptwriting Workflow',
+            evaluator: '🤖 AI Script Evaluator System',
+            douyin: '🇨🇳 Douyin → YouTube Shorts Guide',
+            claude: '🎭 Claude Natural Writing Techniques',
+            assistant: '🛠️ Hướng dẫn Tạo AI Script Assistant'
+        };
+
+        // Cache for guide content
+        const guideCache = {};
+
+        function filterGuides(category) {
+            // Update active button
+            document.querySelectorAll('.kb-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(category) ||
+                    (category === 'all' && btn.textContent.includes('Tất cả'))) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Filter cards
+            document.querySelectorAll('.kb-card').forEach(card => {
+                const cardCategory = card.dataset.category;
+                if (category === 'all' || cardCategory === category) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        async function openGuideModal(guideId) {
+            currentGuideId = guideId;
+            const modal = document.getElementById('guideModal');
+            const titleEl = document.getElementById('guideModalTitle');
+            const contentEl = document.getElementById('guideModalContent');
+
+            titleEl.textContent = guideTitles[guideId] || 'Guide';
+            contentEl.innerHTML = '<div style="text-align:center;padding:3rem;"><div style="font-size:2rem;">⏳</div><p>Đang tải nội dung...</p></div>';
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+
+            try {
+                let content = '';
+                if (guideCache[guideId]) {
+                    content = guideCache[guideId];
+                } else {
+                    const res = await fetch(guideUrls[guideId]);
+                    if (res.ok) {
+                        content = await res.text();
+                        guideCache[guideId] = content;
+                    } else {
+                        throw new Error('Failed to fetch');
+                    }
+                }
+
+                // Render markdown
+                if (typeof marked !== 'undefined') {
+                    contentEl.innerHTML = marked.parse(content);
+                } else {
+                    contentEl.innerHTML = '<pre style="white-space:pre-wrap;">' + content + '</pre>';
+                }
+            } catch (e) {
+                contentEl.innerHTML = '<div style="text-align:center;padding:3rem;color:#ef4444;"><div style="font-size:2rem;">❌</div><p>Không thể tải nội dung. Vui lòng kiểm tra kết nối mạng.</p><p style="font-size:0.8rem;color:#666;">Nội dung sẽ được tải từ GitHub repository.</p></div>';
+                console.error('Error loading guide:', e);
+            }
+        }
+
+        function closeGuideModal() {
+            document.getElementById('guideModal').classList.remove('show');
+            document.body.style.overflow = '';
+            currentGuideId = null;
+        }
+
+        async function copyGuide(guideId) {
+            try {
+                let content = '';
+                if (guideCache[guideId]) {
+                    content = guideCache[guideId];
+                } else {
+                    const res = await fetch(guideUrls[guideId]);
+                    if (res.ok) {
+                        content = await res.text();
+                        guideCache[guideId] = content;
+                    }
+                }
+                await navigator.clipboard.writeText(content);
+                toast('📋 Đã copy toàn bộ guide!');
+            } catch (e) {
+                toast('❌ Không thể copy. Vui lòng thử lại.');
+            }
+        }
+
+        function copyCurrentGuide() {
+            if (currentGuideId) {
+                copyGuide(currentGuideId);
+            }
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && document.getElementById('guideModal').classList.contains('show')) {
+                closeGuideModal();
+            }
+        });
     </script>
 
     <!-- API Key Modal -->
