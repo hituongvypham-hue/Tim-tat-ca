@@ -2794,6 +2794,79 @@
             margin-bottom: 1rem;
         }
 
+        .knowledge-upload-section {
+            margin-bottom: 0.5rem;
+        }
+
+        .knowledge-upload-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            border: 2px dashed #10b981;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(5, 150, 105, 0.08));
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .knowledge-upload-area:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.15));
+            border-color: #059669;
+        }
+
+        .knowledge-upload-area.dragover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.25));
+            border-color: #047857;
+            transform: scale(1.02);
+        }
+
+        .knowledge-upload-area .upload-icon {
+            font-size: 2rem;
+        }
+
+        .knowledge-upload-area .upload-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .knowledge-upload-area .upload-text strong {
+            color: #059669;
+            font-size: 1rem;
+        }
+
+        .knowledge-upload-area .upload-text span {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .knowledge-upload-section .upload-or {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            margin-top: 0.75rem;
+            position: relative;
+        }
+
+        .knowledge-upload-section .upload-or::before,
+        .knowledge-upload-section .upload-or::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .knowledge-upload-section .upload-or::before {
+            left: 10%;
+        }
+
+        .knowledge-upload-section .upload-or::after {
+            right: 10%;
+        }
+
         .knowledge-input,
         .knowledge-textarea,
         .knowledge-select {
@@ -4732,6 +4805,21 @@
 
                 <!-- Add Knowledge Form -->
                 <div class="knowledge-add-form" id="knowledgeForm">
+                    <!-- File Upload Section -->
+                    <div class="knowledge-upload-section">
+                        <div class="knowledge-upload-area" id="knowledgeUploadArea"
+                            onclick="document.getElementById('knowledgeFileInput').click()">
+                            <input type="file" id="knowledgeFileInput" accept=".md,.txt,.markdown" style="display:none"
+                                onchange="handleFileUpload(event)">
+                            <div class="upload-icon">📤</div>
+                            <div class="upload-text">
+                                <strong>Tải file lên</strong>
+                                <span>Kéo thả hoặc click để chọn file .md, .txt</span>
+                            </div>
+                        </div>
+                        <div class="upload-or">hoặc nhập thủ công bên dưới</div>
+                    </div>
+
                     <input type="text" id="knowledgeName" class="knowledge-input"
                         placeholder="Tiêu đề (VD: Cấu trúc kịch bản 3 phần)">
                     <select id="knowledgeCategory" class="knowledge-select">
@@ -9313,6 +9401,85 @@ Trả về JSON duy nhất, không giải thích:
         let knowledgeBase = JSON.parse(localStorage.getItem('knowledgeBase') || '[]');
         let editingKnowledgeId = null;
 
+        // File Upload Handler
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                readFileContent(file);
+            }
+        }
+
+        function readFileContent(file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const content = e.target.result;
+
+                // Extract title from filename (remove extension)
+                let title = file.name.replace(/\.(md|txt|markdown)$/i, '');
+
+                // Or extract from first heading if exists
+                const headingMatch = content.match(/^#\s+(.+)$/m);
+                if (headingMatch) {
+                    title = headingMatch[1].replace(/[🎯📝🎬🤖📢🔍📋📁]/g, '').trim();
+                }
+
+                // Auto-detect category from content
+                let category = '';
+                const contentLower = content.toLowerCase();
+                if (contentLower.includes('script') || contentLower.includes('kịch bản') || contentLower.includes('hook')) {
+                    category = 'Scriptwriting';
+                } else if (contentLower.includes('video') || contentLower.includes('edit')) {
+                    category = 'Video Editing';
+                } else if (contentLower.includes('prompt') || contentLower.includes('ai')) {
+                    category = 'AI Prompts';
+                }
+
+                // Fill form
+                document.getElementById('knowledgeName').value = title;
+                document.getElementById('knowledgeCategory').value = category;
+                document.getElementById('knowledgeContent').value = content;
+
+                toast('✅ Đã tải file: ' + file.name);
+            };
+            reader.onerror = function () {
+                toast('❌ Không thể đọc file!');
+            };
+            reader.readAsText(file);
+        }
+
+        // Drag and Drop handlers
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadArea = document.getElementById('knowledgeUploadArea');
+            if (uploadArea) {
+                uploadArea.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+
+                uploadArea.addEventListener('dragleave', function (e) {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                });
+
+                uploadArea.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        const file = files[0];
+                        if (file.name.match(/\.(md|txt|markdown)$/i)) {
+                            readFileContent(file);
+                        } else {
+                            toast('⚠️ Chỉ hỗ trợ file .md, .txt');
+                        }
+                    }
+                });
+            }
+
+            renderKnowledge();
+        });
+
         function renderKnowledge() {
             const list = document.getElementById('knowledgeList');
             const search = document.getElementById('knowledgeSearch').value.toLowerCase();
@@ -9500,11 +9667,6 @@ Trả về JSON duy nhất, không giải thích:
         function filterKnowledge() {
             renderKnowledge();
         }
-
-        // Initialize Knowledge Base on page load
-        document.addEventListener('DOMContentLoaded', function () {
-            renderKnowledge();
-        });
     </script>
 
     <!-- API Key Modal -->
