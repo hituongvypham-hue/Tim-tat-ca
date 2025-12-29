@@ -2778,6 +2778,271 @@
             color: var(--text-light);
             font-size: 0.9rem;
         }
+
+        /* Knowledge Base Styles */
+        .knowledge-add-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1.25rem;
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .knowledge-input,
+        .knowledge-textarea,
+        .knowledge-select {
+            padding: 0.7rem 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: var(--bg);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .knowledge-textarea {
+            min-height: 120px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .knowledge-form-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-add-knowledge {
+            padding: 0.7rem 1.2rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-add-knowledge:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-cancel-knowledge {
+            padding: 0.7rem 1.2rem;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .knowledge-search-bar {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .knowledge-search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: var(--card);
+        }
+
+        .knowledge-filter-select {
+            padding: 0.7rem 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: var(--card);
+        }
+
+        .knowledge-count {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .knowledge-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .knowledge-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .knowledge-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .knowledge-item-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            cursor: pointer;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(5, 150, 105, 0.08));
+        }
+
+        .knowledge-item-header:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.12));
+        }
+
+        .knowledge-item-expand {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            transition: transform 0.2s;
+        }
+
+        .knowledge-item.expanded .knowledge-item-expand {
+            transform: rotate(90deg);
+        }
+
+        .knowledge-item-info {
+            flex: 1;
+        }
+
+        .knowledge-item-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .knowledge-item-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .knowledge-item-category {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .knowledge-item-tag {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            background: var(--bg);
+            color: var(--text-light);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .knowledge-item-actions {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .knowledge-action-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            background: transparent;
+            transition: all 0.2s;
+        }
+
+        .knowledge-action-btn.copy {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .knowledge-action-btn.copy:hover {
+            background: #bbf7d0;
+        }
+
+        .knowledge-action-btn.edit {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .knowledge-action-btn.edit:hover {
+            background: #bfdbfe;
+        }
+
+        .knowledge-action-btn.delete {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .knowledge-action-btn.delete:hover {
+            background: #fecaca;
+        }
+
+        .knowledge-item-body {
+            display: none;
+            padding: 0 1rem 1rem 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .knowledge-item.expanded .knowledge-item-body {
+            display: block;
+        }
+
+        .knowledge-item-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 0.75rem;
+        }
+
+        .knowledge-item-copy-full {
+            margin-top: 0.75rem;
+            padding: 0.6rem 1rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            width: 100%;
+        }
+
+        .knowledge-item-copy-full:hover {
+            opacity: 0.9;
+        }
+
+        .knowledge-empty {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 
@@ -2922,6 +3187,11 @@
                         <path
                             d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
                     </svg> Prompt</button>
+                <button class="tab" data-tab="knowledge" draggable="true"><svg width="16" height="16"
+                        viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z" />
+                    </svg> Knowledge</button>
             </div>
         </div>
 
@@ -4335,6 +4605,61 @@
 
                 <div class="prompt-list" id="promptList">
                     <div class="prompt-empty">Chưa có prompt nào. Thêm prompt mới ở trên! 👆</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KNOWLEDGE BASE TAB -->
+        <div class="tab-content" id="knowledge-tab">
+            <div class="section">
+                <div class="section-title">📚 Knowledge Base</div>
+                <div class="section-desc">Lưu và quản lý tài liệu, ghi chú để dùng với AI - dễ copy và sử dụng</div>
+
+                <!-- Add Knowledge Form -->
+                <div class="knowledge-add-form" id="knowledgeForm">
+                    <input type="text" id="knowledgeName" class="knowledge-input"
+                        placeholder="Tiêu đề (VD: Cấu trúc kịch bản 3 phần)">
+                    <select id="knowledgeCategory" class="knowledge-select">
+                        <option value="">-- Chọn Category --</option>
+                        <option value="Scriptwriting">📝 Scriptwriting</option>
+                        <option value="Video Editing">🎬 Video Editing</option>
+                        <option value="AI Prompts">🤖 AI Prompts</option>
+                        <option value="Marketing">📢 Marketing</option>
+                        <option value="Research">🔍 Research</option>
+                        <option value="Templates">📋 Templates</option>
+                        <option value="Other">📁 Other</option>
+                    </select>
+                    <textarea id="knowledgeContent" class="knowledge-textarea"
+                        placeholder="Nội dung... (hỗ trợ Markdown)&#10;&#10;Ví dụ:&#10;## Hook (0-3 giây)&#10;- Câu hỏi gây tò mò: 'Bạn có biết...?'&#10;- FOMO: 'Chỉ 1% người biết điều này...'"></textarea>
+                    <input type="text" id="knowledgeTags" class="knowledge-input"
+                        placeholder="Tags (phân cách bằng dấu phẩy)">
+                    <div class="knowledge-form-btns">
+                        <button class="btn-add-knowledge" onclick="addKnowledge()">➕ Thêm tài liệu</button>
+                        <button class="btn-cancel-knowledge" id="btnCancelKnowledge" onclick="cancelEditKnowledge()"
+                            style="display:none;">❌ Hủy</button>
+                    </div>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="knowledge-search-bar">
+                    <input type="text" id="knowledgeSearch" class="knowledge-search-input"
+                        placeholder="🔍 Tìm tài liệu..." oninput="filterKnowledge()">
+                    <select id="knowledgeCategoryFilter" class="knowledge-filter-select" onchange="filterKnowledge()">
+                        <option value="">Tất cả Category</option>
+                        <option value="Scriptwriting">📝 Scriptwriting</option>
+                        <option value="Video Editing">🎬 Video Editing</option>
+                        <option value="AI Prompts">🤖 AI Prompts</option>
+                        <option value="Marketing">📢 Marketing</option>
+                        <option value="Research">🔍 Research</option>
+                        <option value="Templates">📋 Templates</option>
+                        <option value="Other">📁 Other</option>
+                    </select>
+                    <span class="knowledge-count" id="knowledgeCount">0 tài liệu</span>
+                </div>
+
+                <!-- Knowledge List -->
+                <div class="knowledge-list" id="knowledgeList">
+                    <div class="knowledge-empty">Chưa có tài liệu nào. Thêm tài liệu mới ở trên! 👆</div>
                 </div>
             </div>
         </div>
@@ -7556,6 +7881,7 @@ Trả về JSON (chỉ JSON, không text khác):
                 platformOrder: JSON.parse(localStorage.getItem('platformOrder') || '{}'),
                 favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
                 history: JSON.parse(localStorage.getItem('searchHistory') || '[]'),
+                knowledgeBase: JSON.parse(localStorage.getItem('knowledgeBase') || '[]'),
                 settings: {
                     apiKey: localStorage.getItem('geminiApiKey') || '',
                     enableAI: localStorage.getItem('enableAI') !== 'false',
@@ -7583,6 +7909,9 @@ Trả về JSON (chỉ JSON, không text khác):
                 if (data.settings.apiKey) localStorage.setItem('geminiApiKey', data.settings.apiKey);
                 if (data.settings.enableAI !== undefined) localStorage.setItem('enableAI', data.settings.enableAI ? 'true' : 'false');
                 if (data.settings.lang) localStorage.setItem('lang', data.settings.lang);
+            }
+            if (data.knowledgeBase) {
+                localStorage.setItem('knowledgeBase', JSON.stringify(data.knowledgeBase));
             }
         }
 
@@ -8864,6 +9193,185 @@ Trả về JSON duy nhất, không giải thích:
         function filterPrompts() {
             renderPrompts();
         }
+
+        // ========== KNOWLEDGE BASE FUNCTIONS ==========
+        let knowledgeBase = JSON.parse(localStorage.getItem('knowledgeBase') || '[]');
+        let editingKnowledgeId = null;
+
+        function renderKnowledge() {
+            const list = document.getElementById('knowledgeList');
+            const search = document.getElementById('knowledgeSearch').value.toLowerCase();
+            const category = document.getElementById('knowledgeCategoryFilter').value;
+
+            const filtered = knowledgeBase.filter(item => {
+                const matchSearch = item.title.toLowerCase().includes(search) ||
+                    item.content.toLowerCase().includes(search) ||
+                    (item.tags && item.tags.some(t => t.toLowerCase().includes(search)));
+                const matchCategory = !category || item.category === category;
+                return matchSearch && matchCategory;
+            });
+
+            document.getElementById('knowledgeCount').textContent = `${filtered.length} tài liệu`;
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="knowledge-empty">Không tìm thấy tài liệu nào. Thêm mới ở trên! 👆</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map((item, idx) => {
+                const tagsHtml = item.tags && item.tags.length > 0
+                    ? item.tags.map(t => `<span class="knowledge-item-tag">${t}</span>`).join('')
+                    : '';
+                const previewContent = item.content.substring(0, 150) + (item.content.length > 150 ? '...' : '');
+
+                return `
+                    <div class="knowledge-item" data-id="${item.id}">
+                        <div class="knowledge-item-header" onclick="toggleKnowledgeItem('${item.id}')">
+                            <div class="knowledge-item-expand">▶</div>
+                            <div class="knowledge-item-info">
+                                <div class="knowledge-item-title">${escapeHtml(item.title)}</div>
+                                <div class="knowledge-item-meta">
+                                    ${item.category ? `<span class="knowledge-item-category">${item.category}</span>` : ''}
+                                    ${tagsHtml}
+                                </div>
+                            </div>
+                            <div class="knowledge-item-actions" onclick="event.stopPropagation()">
+                                <button class="knowledge-action-btn copy" onclick="copyKnowledge('${item.id}')" title="Copy">📋</button>
+                                <button class="knowledge-action-btn edit" onclick="editKnowledge('${item.id}')" title="Sửa">✏️</button>
+                                <button class="knowledge-action-btn delete" onclick="deleteKnowledge('${item.id}')" title="Xóa">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="knowledge-item-body">
+                            <div class="knowledge-item-content">${escapeHtml(item.content)}</div>
+                            <button class="knowledge-item-copy-full" onclick="copyKnowledge('${item.id}')">📋 Copy toàn bộ nội dung</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function toggleKnowledgeItem(id) {
+            const item = document.querySelector(`.knowledge-item[data-id="${id}"]`);
+            if (item) {
+                item.classList.toggle('expanded');
+            }
+        }
+
+        function addKnowledge() {
+            const title = document.getElementById('knowledgeName').value.trim();
+            const category = document.getElementById('knowledgeCategory').value;
+            const content = document.getElementById('knowledgeContent').value.trim();
+            const tagsInput = document.getElementById('knowledgeTags').value.trim();
+
+            if (!title || !content) {
+                toast('⚠️ Vui lòng nhập tiêu đề và nội dung!');
+                return;
+            }
+
+            const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
+
+            if (editingKnowledgeId) {
+                // Update existing
+                const idx = knowledgeBase.findIndex(k => k.id === editingKnowledgeId);
+                if (idx !== -1) {
+                    knowledgeBase[idx] = {
+                        ...knowledgeBase[idx],
+                        title,
+                        category,
+                        content,
+                        tags,
+                        updatedAt: new Date().toISOString()
+                    };
+                }
+                editingKnowledgeId = null;
+                document.getElementById('btnCancelKnowledge').style.display = 'none';
+                document.querySelector('.btn-add-knowledge').textContent = '➕ Thêm tài liệu';
+                toast('✅ Đã cập nhật tài liệu!');
+            } else {
+                // Add new
+                const newItem = {
+                    id: Date.now().toString(),
+                    title,
+                    category,
+                    content,
+                    tags,
+                    createdAt: new Date().toISOString()
+                };
+                knowledgeBase.unshift(newItem);
+                toast('✅ Đã thêm tài liệu!');
+            }
+
+            // Save and render
+            localStorage.setItem('knowledgeBase', JSON.stringify(knowledgeBase));
+            autoSyncToDrive();
+            clearKnowledgeForm();
+            renderKnowledge();
+        }
+
+        function editKnowledge(id) {
+            const item = knowledgeBase.find(k => k.id === id);
+            if (!item) return;
+
+            editingKnowledgeId = id;
+            document.getElementById('knowledgeName').value = item.title;
+            document.getElementById('knowledgeCategory').value = item.category || '';
+            document.getElementById('knowledgeContent').value = item.content;
+            document.getElementById('knowledgeTags').value = item.tags ? item.tags.join(', ') : '';
+
+            document.getElementById('btnCancelKnowledge').style.display = 'inline-block';
+            document.querySelector('.btn-add-knowledge').textContent = '💾 Cập nhật';
+
+            // Scroll to form
+            document.getElementById('knowledgeForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelEditKnowledge() {
+            editingKnowledgeId = null;
+            clearKnowledgeForm();
+            document.getElementById('btnCancelKnowledge').style.display = 'none';
+            document.querySelector('.btn-add-knowledge').textContent = '➕ Thêm tài liệu';
+        }
+
+        function clearKnowledgeForm() {
+            document.getElementById('knowledgeName').value = '';
+            document.getElementById('knowledgeCategory').value = '';
+            document.getElementById('knowledgeContent').value = '';
+            document.getElementById('knowledgeTags').value = '';
+        }
+
+        function deleteKnowledge(id) {
+            if (!confirm('Bạn có chắc muốn xóa tài liệu này?')) return;
+
+            knowledgeBase = knowledgeBase.filter(k => k.id !== id);
+            localStorage.setItem('knowledgeBase', JSON.stringify(knowledgeBase));
+            autoSyncToDrive();
+            renderKnowledge();
+            toast('🗑️ Đã xóa tài liệu!');
+        }
+
+        function copyKnowledge(id) {
+            const item = knowledgeBase.find(k => k.id === id);
+            if (!item) return;
+
+            navigator.clipboard.writeText(item.content).then(() => {
+                toast('📋 Đã copy nội dung!');
+            });
+        }
+
+        function filterKnowledge() {
+            renderKnowledge();
+        }
+
+        // Initialize Knowledge Base on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            renderKnowledge();
+        });
     </script>
 
     <!-- API Key Modal -->
