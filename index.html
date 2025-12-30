@@ -2782,6 +2782,67 @@
             font-size: 0.9rem;
         }
 
+        /* Workflow and Step Styles */
+        .prompt-item-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            flex-wrap: wrap;
+        }
+
+        .prompt-timestamp {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .prompt-workflow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.2rem 0.6rem;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border: 1px solid #667eea40;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .prompt-step {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .btn-copy-workflow {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-copy-workflow:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
         /* Knowledge Base Styles */
         .knowledge-add-form {
             display: flex;
@@ -5063,6 +5124,12 @@
                         <input type="text" id="promptTags" class="prompt-input"
                             placeholder="Tags (phân cách bằng dấu phẩy)">
                     </div>
+                    <div class="prompt-form-row">
+                        <input type="text" id="promptWorkflow" class="prompt-input"
+                            placeholder="🔄 Workflow (VD: Script Shorts, Viết blog)">
+                        <input type="number" id="promptStep" class="prompt-input" min="1" max="99" placeholder="Bước #"
+                            style="max-width:100px;">
+                    </div>
                     <textarea id="promptNote" class="prompt-textarea prompt-note"
                         placeholder="Ghi chú / Ví dụ output (tùy chọn)" rows="2"></textarea>
                     <div class="prompt-form-btns">
@@ -5086,6 +5153,13 @@
                         <option value="Education">📚 Education</option>
                         <option value="Other">📋 Other</option>
                     </select>
+                    <select id="promptWorkflowFilter" class="prompt-filter-select" onchange="filterPrompts()">
+                        <option value="">🔄 Tất cả Workflow</option>
+                    </select>
+                    <button class="btn-copy-workflow" id="btnCopyWorkflow" onclick="copyWorkflowSteps()"
+                        style="display:none;">
+                        📋 Copy All Steps
+                    </button>
                     <span class="prompt-count" id="promptCount">0 prompts</span>
                 </div>
 
@@ -9633,15 +9707,30 @@ Trả về JSON duy nhất, không giải thích:
             const countEl = document.getElementById('promptCount');
             const searchVal = document.getElementById('promptSearch')?.value?.toLowerCase() || '';
             const categoryFilter = document.getElementById('promptCategoryFilter')?.value || '';
+            const workflowFilter = document.getElementById('promptWorkflowFilter')?.value || '';
+            const copyBtn = document.getElementById('btnCopyWorkflow');
 
-            const filtered = prompts.filter(p => {
+            // Update workflow filter dropdown options
+            updateWorkflowDropdown();
+
+            // Show/hide Copy All Steps button
+            copyBtn.style.display = workflowFilter ? 'inline-block' : 'none';
+
+            let filtered = prompts.filter(p => {
                 const matchSearch = !searchVal ||
                     p.name.toLowerCase().includes(searchVal) ||
                     p.content.toLowerCase().includes(searchVal) ||
-                    (p.tags && p.tags.some(t => t.toLowerCase().includes(searchVal)));
+                    (p.tags && p.tags.some(t => t.toLowerCase().includes(searchVal))) ||
+                    (p.workflow && p.workflow.toLowerCase().includes(searchVal));
                 const matchCategory = !categoryFilter || p.category === categoryFilter;
-                return matchSearch && matchCategory;
+                const matchWorkflow = !workflowFilter || p.workflow === workflowFilter;
+                return matchSearch && matchCategory && matchWorkflow;
             });
+
+            // Sort by step if filtering by workflow
+            if (workflowFilter) {
+                filtered.sort((a, b) => (a.step || 999) - (b.step || 999));
+            }
 
             countEl.textContent = `${filtered.length} prompts`;
 
@@ -9657,12 +9746,29 @@ Trả về JSON duy nhất, không giải thích:
                     p.tags.map(t => `<span class="prompt-tag">#${t}</span>`).join('') : '';
                 const noteHtml = p.note ? `<div class="prompt-item-note">💡 ${escapeHtml(p.note)}</div>` : '';
 
+                // Format timestamp
+                const timestamp = p.createdAt ? formatTimestamp(p.createdAt) : '';
+
+                // Build meta line with timestamp, workflow, step
+                let metaHtml = '<div class="prompt-item-meta">';
+                if (p.step) {
+                    metaHtml += `<span class="prompt-step">${p.step}</span>`;
+                }
+                if (timestamp) {
+                    metaHtml += `<span class="prompt-timestamp">📅 ${timestamp}</span>`;
+                }
+                if (p.workflow) {
+                    metaHtml += `<span class="prompt-workflow-badge">🔄 ${escapeHtml(p.workflow)}</span>`;
+                }
+                metaHtml += '</div>';
+
                 return `
                     <div class="prompt-item">
                         <div class="prompt-item-header">
                             <span class="prompt-item-name">${escapeHtml(p.name)}</span>
                             ${p.category ? `<span class="prompt-item-category">${p.category}</span>` : ''}
                         </div>
+                        ${metaHtml}
                         <div class="prompt-item-content">${contentHtml}</div>
                         ${tagsHtml ? `<div class="prompt-item-tags">${tagsHtml}</div>` : ''}
                         ${noteHtml}
@@ -9676,18 +9782,68 @@ Trả về JSON duy nhất, không giải thích:
             }).join('');
         }
 
+        // Format timestamp helper
+        function formatTimestamp(isoString) {
+            try {
+                const date = new Date(isoString);
+                return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+            } catch (e) {
+                return '';
+            }
+        }
+
+        // Update workflow dropdown with unique workflow names
+        function updateWorkflowDropdown() {
+            const dropdown = document.getElementById('promptWorkflowFilter');
+            const currentValue = dropdown.value;
+            const workflows = [...new Set(prompts.filter(p => p.workflow).map(p => p.workflow))].sort();
+
+            dropdown.innerHTML = '<option value="">🔄 Tất cả Workflow</option>' +
+                workflows.map(w => `<option value="${escapeHtml(w)}">${escapeHtml(w)}</option>`).join('');
+
+            dropdown.value = currentValue;
+        }
+
+        // Copy all steps in workflow
+        function copyWorkflowSteps() {
+            const workflowFilter = document.getElementById('promptWorkflowFilter')?.value;
+            if (!workflowFilter) return;
+
+            const workflowPrompts = prompts
+                .filter(p => p.workflow === workflowFilter)
+                .sort((a, b) => (a.step || 999) - (b.step || 999));
+
+            if (workflowPrompts.length === 0) {
+                toast('❌ Không tìm thấy prompt nào trong workflow này');
+                return;
+            }
+
+            const allContent = workflowPrompts.map((p, i) => {
+                const stepLabel = p.step ? `[Bước ${p.step}]` : `[${i + 1}]`;
+                return `${stepLabel} ${p.name}\n${p.content}`;
+            }).join('\n\n---\n\n');
+
+            navigator.clipboard.writeText(allContent).then(() => {
+                toast(`📋 Đã copy ${workflowPrompts.length} prompts trong workflow "${workflowFilter}"`);
+            });
+        }
+
         function addPrompt() {
             const nameInput = document.getElementById('promptName');
             const contentInput = document.getElementById('promptContent');
             const categoryInput = document.getElementById('promptCategory');
             const tagsInput = document.getElementById('promptTags');
             const noteInput = document.getElementById('promptNote');
+            const workflowInput = document.getElementById('promptWorkflow');
+            const stepInput = document.getElementById('promptStep');
 
             const name = nameInput.value.trim();
             const content = contentInput.value.trim();
             const category = categoryInput.value;
             const tags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t);
             const note = noteInput.value.trim();
+            const workflow = workflowInput.value.trim() || null;
+            const step = parseInt(stepInput.value) || null;
 
             if (!name || !content) {
                 toast('⚠️ Nhập tên và nội dung prompt');
@@ -9701,6 +9857,8 @@ Trả về JSON duy nhất, không giải thích:
                 category,
                 tags,
                 note,
+                workflow,
+                step,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             };
@@ -9730,6 +9888,8 @@ Trả về JSON duy nhất, không giải thích:
             document.getElementById('promptCategory').value = '';
             document.getElementById('promptTags').value = '';
             document.getElementById('promptNote').value = '';
+            document.getElementById('promptWorkflow').value = '';
+            document.getElementById('promptStep').value = '';
         }
 
         function editPrompt(index) {
@@ -9739,6 +9899,8 @@ Trả về JSON duy nhất, không giải thích:
             document.getElementById('promptCategory').value = p.category || '';
             document.getElementById('promptTags').value = p.tags ? p.tags.join(', ') : '';
             document.getElementById('promptNote').value = p.note || '';
+            document.getElementById('promptWorkflow').value = p.workflow || '';
+            document.getElementById('promptStep').value = p.step || '';
             editingPromptIndex = index;
             document.getElementById('btnCancelPromptEdit').style.display = 'inline-block';
             document.querySelector('.btn-add-prompt').textContent = '💾 Lưu thay đổi';
