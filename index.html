@@ -2775,6 +2775,16 @@
             color: #c62828;
         }
 
+        .prompt-action-btn.move {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 0.3rem 0.5rem;
+        }
+
+        .prompt-action-btn.move:hover {
+            background: #bbdefb;
+        }
+
         .prompt-empty {
             text-align: center;
             padding: 3rem;
@@ -5125,10 +5135,13 @@
                             placeholder="Tags (phân cách bằng dấu phẩy)">
                     </div>
                     <div class="prompt-form-row">
-                        <input type="text" id="promptWorkflow" class="prompt-input"
-                            placeholder="🔄 Workflow (VD: Script Shorts, Viết blog)">
-                        <input type="number" id="promptStep" class="prompt-input" min="1" max="99" placeholder="Bước #"
-                            style="max-width:100px;">
+                        <select id="promptWorkflow" class="prompt-select" onchange="onWorkflowSelectChange()"
+                            onfocus="updateWorkflowFormDropdown()">
+                            <option value="">-- Không thuộc Workflow --</option>
+                            <option value="__new__">➕ Tạo Workflow mới...</option>
+                        </select>
+                        <input type="text" id="promptWorkflowNew" class="prompt-input" placeholder="Tên workflow mới"
+                            style="display:none;">
                     </div>
                     <textarea id="promptNote" class="prompt-textarea prompt-note"
                         placeholder="Ghi chú / Ví dụ output (tùy chọn)" rows="2"></textarea>
@@ -9749,11 +9762,8 @@ Trả về JSON duy nhất, không giải thích:
                 // Format timestamp
                 const timestamp = p.createdAt ? formatTimestamp(p.createdAt) : '';
 
-                // Build meta line with timestamp, workflow, step
+                // Build meta line with timestamp and workflow only
                 let metaHtml = '<div class="prompt-item-meta">';
-                if (p.step) {
-                    metaHtml += `<span class="prompt-step">${p.step}</span>`;
-                }
                 if (timestamp) {
                     metaHtml += `<span class="prompt-timestamp">📅 ${timestamp}</span>`;
                 }
@@ -9773,6 +9783,8 @@ Trả về JSON duy nhất, không giải thích:
                         ${tagsHtml ? `<div class="prompt-item-tags">${tagsHtml}</div>` : ''}
                         ${noteHtml}
                         <div class="prompt-item-actions">
+                            <button class="prompt-action-btn move" onclick="movePrompt(${realIndex}, -1)" title="Di chuyển lên">⬆️</button>
+                            <button class="prompt-action-btn move" onclick="movePrompt(${realIndex}, 1)" title="Di chuyển xuống">⬇️</button>
                             <button class="prompt-action-btn copy" onclick="copyPrompt(${realIndex})">📋 Copy</button>
                             <button class="prompt-action-btn" onclick="editPrompt(${realIndex})">✏️ Sửa</button>
                             <button class="prompt-action-btn delete" onclick="deletePrompt(${realIndex})">🗑️ Xóa</button>
@@ -9792,7 +9804,7 @@ Trả về JSON duy nhất, không giải thích:
             }
         }
 
-        // Update workflow dropdown with unique workflow names
+        // Update workflow dropdown for filter
         function updateWorkflowDropdown() {
             const dropdown = document.getElementById('promptWorkflowFilter');
             const currentValue = dropdown.value;
@@ -9804,14 +9816,38 @@ Trả về JSON duy nhất, không giải thích:
             dropdown.value = currentValue;
         }
 
-        // Copy all steps in workflow
+        // Update workflow dropdown for form (adding prompts)
+        function updateWorkflowFormDropdown() {
+            const dropdown = document.getElementById('promptWorkflow');
+            const currentValue = dropdown.value;
+            const workflows = [...new Set(prompts.filter(p => p.workflow).map(p => p.workflow))].sort();
+
+            dropdown.innerHTML = '<option value="">-- Không thuộc Workflow --</option>' +
+                workflows.map(w => `<option value="${escapeHtml(w)}">${escapeHtml(w)}</option>`).join('') +
+                '<option value="__new__">➕ Tạo Workflow mới...</option>';
+
+            dropdown.value = currentValue;
+        }
+
+        // Handle workflow dropdown change
+        function onWorkflowSelectChange() {
+            const select = document.getElementById('promptWorkflow');
+            const newInput = document.getElementById('promptWorkflowNew');
+            if (select.value === '__new__') {
+                newInput.style.display = 'block';
+                newInput.focus();
+            } else {
+                newInput.style.display = 'none';
+            }
+        }
+
+        // Copy all prompts in workflow (in position order)
         function copyWorkflowSteps() {
             const workflowFilter = document.getElementById('promptWorkflowFilter')?.value;
             if (!workflowFilter) return;
 
-            const workflowPrompts = prompts
-                .filter(p => p.workflow === workflowFilter)
-                .sort((a, b) => (a.step || 999) - (b.step || 999));
+            // Get prompts in their current position order (not by step number)
+            const workflowPrompts = prompts.filter(p => p.workflow === workflowFilter);
 
             if (workflowPrompts.length === 0) {
                 toast('❌ Không tìm thấy prompt nào trong workflow này');
@@ -9819,8 +9855,7 @@ Trả về JSON duy nhất, không giải thích:
             }
 
             const allContent = workflowPrompts.map((p, i) => {
-                const stepLabel = p.step ? `[Bước ${p.step}]` : `[${i + 1}]`;
-                return `${stepLabel} ${p.name}\n${p.content}`;
+                return `[${i + 1}] ${p.name}\n${p.content}`;
             }).join('\n\n---\n\n');
 
             navigator.clipboard.writeText(allContent).then(() => {
@@ -9834,16 +9869,22 @@ Trả về JSON duy nhất, không giải thích:
             const categoryInput = document.getElementById('promptCategory');
             const tagsInput = document.getElementById('promptTags');
             const noteInput = document.getElementById('promptNote');
-            const workflowInput = document.getElementById('promptWorkflow');
-            const stepInput = document.getElementById('promptStep');
+            const workflowSelect = document.getElementById('promptWorkflow');
+            const workflowNewInput = document.getElementById('promptWorkflowNew');
 
             const name = nameInput.value.trim();
             const content = contentInput.value.trim();
             const category = categoryInput.value;
             const tags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t);
             const note = noteInput.value.trim();
-            const workflow = workflowInput.value.trim() || null;
-            const step = parseInt(stepInput.value) || null;
+
+            // Handle workflow selection
+            let workflow = null;
+            if (workflowSelect.value === '__new__') {
+                workflow = workflowNewInput.value.trim() || null;
+            } else if (workflowSelect.value) {
+                workflow = workflowSelect.value;
+            }
 
             if (!name || !content) {
                 toast('⚠️ Nhập tên và nội dung prompt');
@@ -9858,7 +9899,6 @@ Trả về JSON duy nhất, không giải thích:
                 tags,
                 note,
                 workflow,
-                step,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             };
@@ -9889,18 +9929,26 @@ Trả về JSON duy nhất, không giải thích:
             document.getElementById('promptTags').value = '';
             document.getElementById('promptNote').value = '';
             document.getElementById('promptWorkflow').value = '';
-            document.getElementById('promptStep').value = '';
+            document.getElementById('promptWorkflowNew').value = '';
+            document.getElementById('promptWorkflowNew').style.display = 'none';
         }
 
         function editPrompt(index) {
             const p = prompts[index];
+            updateWorkflowFormDropdown(); // Populate dropdown first
             document.getElementById('promptName').value = p.name;
             document.getElementById('promptContent').value = p.content;
             document.getElementById('promptCategory').value = p.category || '';
             document.getElementById('promptTags').value = p.tags ? p.tags.join(', ') : '';
             document.getElementById('promptNote').value = p.note || '';
-            document.getElementById('promptWorkflow').value = p.workflow || '';
-            document.getElementById('promptStep').value = p.step || '';
+            // Set workflow dropdown value
+            const workflowSelect = document.getElementById('promptWorkflow');
+            if (p.workflow && [...workflowSelect.options].some(o => o.value === p.workflow)) {
+                workflowSelect.value = p.workflow;
+            } else {
+                workflowSelect.value = '';
+            }
+            document.getElementById('promptWorkflowNew').style.display = 'none';
             editingPromptIndex = index;
             document.getElementById('btnCancelPromptEdit').style.display = 'inline-block';
             document.querySelector('.btn-add-prompt').textContent = '💾 Lưu thay đổi';
@@ -9913,6 +9961,18 @@ Trả về JSON duy nhất, không giải thích:
             clearPromptForm();
             document.getElementById('btnCancelPromptEdit').style.display = 'none';
             document.querySelector('.btn-add-prompt').textContent = '➕ Lưu Prompt';
+        }
+
+        function movePrompt(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= prompts.length) return;
+
+            // Swap prompts
+            [prompts[index], prompts[newIndex]] = [prompts[newIndex], prompts[index]];
+
+            localStorage.setItem('promptLibrary', JSON.stringify(prompts));
+            renderPrompts();
+            autoSyncToDrive();
         }
 
         function deletePrompt(index) {
