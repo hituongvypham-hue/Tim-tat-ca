@@ -2674,10 +2674,25 @@
             margin-bottom: 0.5rem;
         }
 
-        .prompt-item-name {
-            font-weight: 600;
-            font-size: 1rem;
-            flex: 1;
+        .prompt-drag-handle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            cursor: grab;
+            padding: 0.25rem;
+            user-select: none;
+        }
+
+        .prompt-drag-handle:hover {
+            color: var(--primary);
+        }
+
+        .prompt-item.dragging {
+            opacity: 0.5;
+            border: 2px dashed var(--primary);
+        }
+
+        .prompt-item:not(.dragging):hover {
+            cursor: grab;
         }
 
         .prompt-item-category {
@@ -5114,8 +5129,6 @@
                 <div class="section-desc">Lưu và quản lý prompt AI với category, tags và biến {{variable}}</div>
 
                 <div class="prompt-add-form" id="promptForm">
-                    <input type="text" id="promptName" class="prompt-input"
-                        placeholder="Tên prompt (VD: Viết blog post)">
                     <textarea id="promptContent" class="prompt-textarea"
                         placeholder="Nội dung prompt... Dùng {{biến}} để tạo template&#10;VD: Viết bài về {{topic}} với giọng văn {{tone}}"
                         rows="4"></textarea>
@@ -9773,9 +9786,13 @@ Trả về JSON duy nhất, không giải thích:
                 metaHtml += '</div>';
 
                 return `
-                    <div class="prompt-item">
+                    <div class="prompt-item" draggable="true" 
+                         ondragstart="handleDragStart(event, ${realIndex})" 
+                         ondragover="handleDragOver(event)" 
+                         ondrop="handleDrop(event, ${realIndex})"
+                         data-index="${realIndex}">
                         <div class="prompt-item-header">
-                            <span class="prompt-item-name">${escapeHtml(p.name)}</span>
+                            <span class="prompt-drag-handle">≡</span>
                             ${p.category ? `<span class="prompt-item-category">${p.category}</span>` : ''}
                         </div>
                         ${metaHtml}
@@ -9783,8 +9800,6 @@ Trả về JSON duy nhất, không giải thích:
                         ${tagsHtml ? `<div class="prompt-item-tags">${tagsHtml}</div>` : ''}
                         ${noteHtml}
                         <div class="prompt-item-actions">
-                            <button class="prompt-action-btn move" onclick="movePrompt(${realIndex}, -1)" title="Di chuyển lên">⬆️</button>
-                            <button class="prompt-action-btn move" onclick="movePrompt(${realIndex}, 1)" title="Di chuyển xuống">⬇️</button>
                             <button class="prompt-action-btn copy" onclick="copyPrompt(${realIndex})">📋 Copy</button>
                             <button class="prompt-action-btn" onclick="editPrompt(${realIndex})">✏️ Sửa</button>
                             <button class="prompt-action-btn delete" onclick="deletePrompt(${realIndex})">🗑️ Xóa</button>
@@ -9792,6 +9807,9 @@ Trả về JSON duy nhất, không giải thích:
                     </div>
                 `;
             }).join('');
+
+            // Setup drag event listeners
+            setupDragListeners();
         }
 
         // Format timestamp helper
@@ -9864,7 +9882,6 @@ Trả về JSON duy nhất, không giải thích:
         }
 
         function addPrompt() {
-            const nameInput = document.getElementById('promptName');
             const contentInput = document.getElementById('promptContent');
             const categoryInput = document.getElementById('promptCategory');
             const tagsInput = document.getElementById('promptTags');
@@ -9872,7 +9889,6 @@ Trả về JSON duy nhất, không giải thích:
             const workflowSelect = document.getElementById('promptWorkflow');
             const workflowNewInput = document.getElementById('promptWorkflowNew');
 
-            const name = nameInput.value.trim();
             const content = contentInput.value.trim();
             const category = categoryInput.value;
             const tags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t);
@@ -9886,14 +9902,17 @@ Trả về JSON duy nhất, không giải thích:
                 workflow = workflowSelect.value;
             }
 
-            if (!name || !content) {
-                toast('⚠️ Nhập tên và nội dung prompt');
+            if (!content) {
+                toast('⚠️ Nhập nội dung prompt');
                 return;
             }
 
+            // Auto-generate name from first 50 chars
+            const autoName = content.substring(0, 50).replace(/\n/g, ' ') + (content.length > 50 ? '...' : '');
+
             const promptData = {
                 id: Date.now().toString(),
-                name,
+                name: autoName,
                 content,
                 category,
                 tags,
@@ -9923,7 +9942,6 @@ Trả về JSON duy nhất, không giải thích:
         }
 
         function clearPromptForm() {
-            document.getElementById('promptName').value = '';
             document.getElementById('promptContent').value = '';
             document.getElementById('promptCategory').value = '';
             document.getElementById('promptTags').value = '';
@@ -9936,7 +9954,6 @@ Trả về JSON duy nhất, không giải thích:
         function editPrompt(index) {
             const p = prompts[index];
             updateWorkflowFormDropdown(); // Populate dropdown first
-            document.getElementById('promptName').value = p.name;
             document.getElementById('promptContent').value = p.content;
             document.getElementById('promptCategory').value = p.category || '';
             document.getElementById('promptTags').value = p.tags ? p.tags.join(', ') : '';
@@ -9952,7 +9969,7 @@ Trả về JSON duy nhất, không giải thích:
             editingPromptIndex = index;
             document.getElementById('btnCancelPromptEdit').style.display = 'inline-block';
             document.querySelector('.btn-add-prompt').textContent = '💾 Lưu thay đổi';
-            document.getElementById('promptName').focus();
+            document.getElementById('promptContent').focus();
             document.getElementById('promptForm').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -9963,16 +9980,40 @@ Trả về JSON duy nhất, không giải thích:
             document.querySelector('.btn-add-prompt').textContent = '➕ Lưu Prompt';
         }
 
-        function movePrompt(index, direction) {
-            const newIndex = index + direction;
-            if (newIndex < 0 || newIndex >= prompts.length) return;
+        let draggedIndex = null;
 
-            // Swap prompts
-            [prompts[index], prompts[newIndex]] = [prompts[newIndex], prompts[index]];
+        function handleDragStart(event, index) {
+            draggedIndex = index;
+            event.target.classList.add('dragging');
+            event.dataTransfer.effectAllowed = 'move';
+        }
 
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDrop(event, dropIndex) {
+            event.preventDefault();
+            if (draggedIndex === null || draggedIndex === dropIndex) return;
+
+            // Reorder prompts
+            const [draggedItem] = prompts.splice(draggedIndex, 1);
+            prompts.splice(dropIndex, 0, draggedItem);
+
+            draggedIndex = null;
             localStorage.setItem('promptLibrary', JSON.stringify(prompts));
             renderPrompts();
             autoSyncToDrive();
+        }
+
+        function setupDragListeners() {
+            document.querySelectorAll('.prompt-item').forEach(item => {
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('dragging');
+                    draggedIndex = null;
+                });
+            });
         }
 
         function deletePrompt(index) {
