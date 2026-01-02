@@ -6175,7 +6175,55 @@
             submagic: 'https://www.submagic.co',
             captionsai: 'https://www.captions.ai',
             veedio: 'https://www.veed.io',
-            vmakerai: 'https://www.vmaker.com'
+            vmakerai: 'https://www.vmaker.com',
+
+            // Comic/Manga - Global
+            webtoon: 'https://www.webtoons.com',
+            mangaplus: 'https://mangaplus.shueisha.co.jp',
+            viz: 'https://www.viz.com',
+            tapas: 'https://tapas.io',
+            mangadex: 'https://mangadex.org',
+            comixology: 'https://www.amazon.com/kindle-dbs/comics-store/',
+            bookwalker: 'https://global.bookwalker.jp',
+            inkr: 'https://inkr.com',
+            mangamo: 'https://www.mangamo.com',
+            myanimelist: 'https://myanimelist.net/manga.php',
+            // Comic/Manga - Japan
+            linemanga: 'https://manga.line.me',
+            piccoma: 'https://piccoma.com',
+            mechacomic: 'https://mechacomic.jp',
+            cmoa: 'https://www.cmoa.jp',
+            jumpplus: 'https://shonenjumpplus.com',
+            magapoke: 'https://pocket.shonenmagazine.com',
+            mangaone: 'https://manga-one.com',
+            niconicoman: 'https://seiga.nicovideo.jp/manga/',
+            pixivcomic: 'https://comic.pixiv.net',
+            ebookjapan: 'https://ebookjapan.yahoo.co.jp',
+            mangabang: 'https://manga-bang.com',
+            // Comic/Manga - Korea
+            naverwebtoon: 'https://comic.naver.com',
+            kakaowebtoon: 'https://webtoon.kakao.com',
+            kakaopage: 'https://page.kakao.com',
+            lezhin: 'https://www.lezhin.com',
+            toomics: 'https://toomics.com',
+            manta: 'https://manta.net',
+            tappytoon: 'https://www.tappytoon.com',
+            bomtoon: 'https://www.bomtoon.com',
+            // Comic/Manga - China
+            kuaikan: 'https://www.kuaikanmanhua.com',
+            qqcomic: 'https://ac.qq.com',
+            bilibilicomic: 'https://manga.bilibili.com',
+            u17: 'https://www.u17.com',
+            dmzj: 'https://m.dmzj.com',
+            mangabz: 'https://www.mangabz.com',
+            iqiyicomic: 'https://comic.iqiyi.com',
+            // Comic/Manga - Russia
+            mangalib: 'https://mangalib.me',
+            remanga: 'https://remanga.org',
+            desu: 'https://desu.me',
+            acomics: 'https://acomics.ru',
+            bubble: 'https://bubble.ru',
+            senkuro: 'https://senkuro.me'
         };
 
         // REVERSE IMAGE SEARCH URLS - Direct upload pages
@@ -7509,6 +7557,9 @@ Trả về JSON (chỉ JSON, không text khác):
                     query = input ? input.value.trim() : '';
                 } else if (currentTab === 'ebook') {
                     const input = document.getElementById('ebookInput');
+                    query = input ? input.value.trim() : '';
+                } else if (currentTab === 'comic') {
+                    const input = document.getElementById('comicInput');
                     query = input ? input.value.trim() : '';
                 } else if (currentTab === 'apk') {
                     const input = document.getElementById('apkInput');
