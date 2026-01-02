@@ -101,6 +101,418 @@ const PLATFORMS = {
     }
 };
 
+// Comic/Manga Platform configurations - Ranked by popularity (01/2026)
+const COMIC_PLATFORMS = {
+    // ============================================
+    // 🌍 GLOBAL - International Platforms
+    // ============================================
+    webtoon: {
+        name: 'WEBTOON',
+        searchUrl: (q) => `https://www.webtoons.com/en/search?keyword=${encodeURIComponent(q)}`,
+        icon: '📱',
+        users: '170M+',
+        region: 'global',
+        rank: 1,
+        desc: 'Largest webtoon platform globally'
+    },
+    mangaplus: {
+        name: 'Manga Plus',
+        searchUrl: (q) => `https://mangaplus.shueisha.co.jp/search_result?keyword=${encodeURIComponent(q)}`,
+        icon: '📖',
+        users: 'Official',
+        region: 'global',
+        rank: 2,
+        desc: 'Shueisha official, FREE'
+    },
+    viz: {
+        name: 'VIZ / Shonen Jump',
+        searchUrl: (q) => `https://www.viz.com/search?search=${encodeURIComponent(q)}`,
+        icon: '⚡',
+        users: 'Top',
+        region: 'global',
+        rank: 3,
+        desc: 'Largest manga publisher outside Japan'
+    },
+    tapas: {
+        name: 'Tapas',
+        searchUrl: (q) => `https://tapas.io/search?q=${encodeURIComponent(q)}`,
+        icon: '📚',
+        users: 'Popular',
+        region: 'global',
+        rank: 4,
+        desc: 'Webtoons + Web novels'
+    },
+    mangadex: {
+        name: 'MangaDex',
+        searchUrl: (q) => `https://mangadex.org/search?q=${encodeURIComponent(q)}`,
+        icon: '🔍',
+        users: 'Fan',
+        region: 'global',
+        rank: 5,
+        desc: 'Largest fan translation site'
+    },
+    comixology: {
+        name: 'ComiXology',
+        searchUrl: (q) => `https://www.amazon.com/s?k=${encodeURIComponent(q)}&i=comics-manga`,
+        icon: '🦸',
+        users: '200K+',
+        region: 'global',
+        rank: 6,
+        desc: 'Amazon, Marvel/DC/Manga'
+    },
+    bookwalker: {
+        name: 'BookWalker',
+        searchUrl: (q) => `https://global.bookwalker.jp/search/?word=${encodeURIComponent(q)}`,
+        icon: '📕',
+        users: 'Premium',
+        region: 'global',
+        rank: 7,
+        desc: 'KADOKAWA official'
+    },
+    inkr: {
+        name: 'INKR Comics',
+        searchUrl: (q) => `https://inkr.com/search?q=${encodeURIComponent(q)}`,
+        icon: '✒️',
+        users: 'Growing',
+        region: 'global',
+        rank: 8,
+        desc: 'Multi-publisher platform'
+    },
+    mangamo: {
+        name: 'Mangamo',
+        searchUrl: (q) => `https://www.mangamo.com/search?q=${encodeURIComponent(q)}`,
+        icon: '📱',
+        users: '1K+',
+        region: 'global',
+        rank: 9,
+        desc: 'Subscription-based'
+    },
+    myanimelist: {
+        name: 'MyAnimeList',
+        searchUrl: (q) => `https://myanimelist.net/manga.php?q=${encodeURIComponent(q)}`,
+        icon: '📋',
+        users: 'Database',
+        region: 'global',
+        rank: 10,
+        desc: 'Manga database & tracking'
+    },
+
+    // ============================================
+    // 🇯🇵 JAPAN - Japanese Platforms
+    // ============================================
+    linemanga: {
+        name: 'LINE Manga',
+        searchUrl: (q) => `https://manga.line.me/search/product?word=${encodeURIComponent(q)}`,
+        icon: '💚',
+        users: '82M',
+        region: 'japan',
+        rank: 1,
+        desc: '#1 Japan 2025, Naver platform'
+    },
+    piccoma: {
+        name: 'Piccoma ピッコマ',
+        searchUrl: (q) => `https://piccoma.com/web/search/result?word=${encodeURIComponent(q)}`,
+        icon: '🟡',
+        users: '45M+',
+        region: 'japan',
+        rank: 2,
+        desc: '#2 Japan, Kakao platform'
+    },
+    mechacomic: {
+        name: 'めちゃコミック',
+        searchUrl: (q) => `https://mechacomic.jp/search?keyword=${encodeURIComponent(q)}`,
+        icon: '📗',
+        users: '30M+',
+        region: 'japan',
+        rank: 3,
+        desc: 'Largest e-comic service'
+    },
+    cmoa: {
+        name: 'コミックシーモア',
+        searchUrl: (q) => `https://www.cmoa.jp/search/result/?header_word=${encodeURIComponent(q)}`,
+        icon: '📘',
+        users: '1.6M titles',
+        region: 'japan',
+        rank: 4,
+        desc: 'NTT Solmare, largest catalog'
+    },
+    jumpplus: {
+        name: '少年ジャンプ+',
+        searchUrl: (q) => `https://shonenjumpplus.com/search?q=${encodeURIComponent(q)}`,
+        icon: '🔴',
+        users: 'Shueisha',
+        region: 'japan',
+        rank: 5,
+        desc: 'Weekly Shonen Jump official'
+    },
+    magapoke: {
+        name: 'マガポケ',
+        searchUrl: (q) => `https://pocket.shonenmagazine.com/search?q=${encodeURIComponent(q)}`,
+        icon: '📙',
+        users: 'Kodansha',
+        region: 'japan',
+        rank: 6,
+        desc: 'Shonen Magazine official'
+    },
+    mangaone: {
+        name: 'マンガワン',
+        searchUrl: (q) => `https://manga-one.com/search?word=${encodeURIComponent(q)}`,
+        icon: '1️⃣',
+        users: '30M+',
+        region: 'japan',
+        rank: 7,
+        desc: 'Shogakukan official'
+    },
+    niconicoman: {
+        name: 'ニコニコ漫画',
+        searchUrl: (q) => `https://seiga.nicovideo.jp/manga/search?q=${encodeURIComponent(q)}`,
+        icon: '😊',
+        users: '10yr',
+        region: 'japan',
+        rank: 8,
+        desc: 'Dwango, comment overlay'
+    },
+    pixivcomic: {
+        name: 'pixivコミック',
+        searchUrl: (q) => `https://comic.pixiv.net/search?q=${encodeURIComponent(q)}`,
+        icon: '🎨',
+        users: '13yr',
+        region: 'japan',
+        rank: 9,
+        desc: 'pixiv creator platform'
+    },
+    ebookjapan: {
+        name: 'ebookjapan',
+        searchUrl: (q) => `https://ebookjapan.yahoo.co.jp/search/?keyword=${encodeURIComponent(q)}`,
+        icon: '📚',
+        users: 'Yahoo',
+        region: 'japan',
+        rank: 10,
+        desc: 'Yahoo Japan ebooks'
+    },
+    mangabang: {
+        name: 'マンガBANG!',
+        searchUrl: (q) => `https://manga-bang.com/search?q=${encodeURIComponent(q)}`,
+        icon: '💥',
+        users: '30M+',
+        region: 'japan',
+        rank: 11,
+        desc: '8 free chapters/day'
+    },
+
+    // ============================================
+    // 🇰🇷 KOREA - Korean Platforms
+    // ============================================
+    naverwebtoon: {
+        name: 'Naver Webtoon 네이버',
+        searchUrl: (q) => `https://comic.naver.com/search?keyword=${encodeURIComponent(q)}`,
+        icon: '🟢',
+        users: '6.2M/day',
+        region: 'korea',
+        rank: 1,
+        desc: '#1 Korea & World, pioneer since 2004'
+    },
+    kakaowebtoon: {
+        name: 'Kakao Webtoon 카카오',
+        searchUrl: (q) => `https://webtoon.kakao.com/search?keyword=${encodeURIComponent(q)}`,
+        icon: '🟡',
+        users: '45%',
+        region: 'korea',
+        rank: 2,
+        desc: '#2 Korea, KakaoPage'
+    },
+    kakaopage: {
+        name: 'KakaoPage 카카오페이지',
+        searchUrl: (q) => `https://page.kakao.com/search/result?keyword=${encodeURIComponent(q)}`,
+        icon: '📖',
+        users: 'Top',
+        region: 'korea',
+        rank: 3,
+        desc: 'Webtoon + Web novel'
+    },
+    lezhin: {
+        name: 'Lezhin 레진코믹스',
+        searchUrl: (q) => `https://www.lezhin.com/en/search?q=${encodeURIComponent(q)}`,
+        icon: '🔞',
+        users: 'Premium',
+        region: 'korea',
+        rank: 4,
+        desc: 'Premium + Adult content'
+    },
+    toomics: {
+        name: 'Toomics',
+        searchUrl: (q) => `https://toomics.com/en/search?keyword=${encodeURIComponent(q)}`,
+        icon: '📱',
+        users: 'VIP',
+        region: 'korea',
+        rank: 5,
+        desc: 'Weekly updates'
+    },
+    manta: {
+        name: 'Manta',
+        searchUrl: (q) => `https://manta.net/en/search?keyword=${encodeURIComponent(q)}`,
+        icon: '🐋',
+        users: 'Sub',
+        region: 'korea',
+        rank: 6,
+        desc: 'Ridi Corp, subscription'
+    },
+    tappytoon: {
+        name: 'Tappytoon',
+        searchUrl: (q) => `https://www.tappytoon.com/en/search?word=${encodeURIComponent(q)}`,
+        icon: '💕',
+        users: 'EN',
+        region: 'korea',
+        rank: 7,
+        desc: 'English translations, Romance/BL'
+    },
+    bomtoon: {
+        name: 'Bomtoon 봄툰',
+        searchUrl: (q) => `https://www.bomtoon.com/search?keyword=${encodeURIComponent(q)}`,
+        icon: '🌸',
+        users: 'BL/GL',
+        region: 'korea',
+        rank: 8,
+        desc: 'BL/GL focused'
+    },
+
+    // ============================================
+    // 🇨🇳 CHINA - Chinese Platforms
+    // ============================================
+    kuaikan: {
+        name: '快看漫画 Kuaikan',
+        searchUrl: (q) => `https://www.kuaikanmanhua.com/search/mini/${encodeURIComponent(q)}`,
+        icon: '⚡',
+        users: '200M+',
+        region: 'china',
+        rank: 1,
+        desc: '#1 China, 20.6% penetration, AI comics'
+    },
+    qqcomic: {
+        name: '腾讯漫画 Tencent',
+        searchUrl: (q) => `https://ac.qq.com/Search/comicSearch?wd=${encodeURIComponent(q)}`,
+        icon: '🐧',
+        users: '7.3%',
+        region: 'china',
+        rank: 2,
+        desc: 'Largest IP, 60+ animations/year'
+    },
+    bilibilicomic: {
+        name: '哔哩哔哩漫画',
+        searchUrl: (q) => `https://manga.bilibili.com/search?keyword=${encodeURIComponent(q)}`,
+        icon: '📺',
+        users: '3.2%',
+        region: 'china',
+        rank: 3,
+        desc: 'Bilibili ACG ecosystem'
+    },
+    u17: {
+        name: '有妖气 U17',
+        searchUrl: (q) => `https://www.u17.com/search/index?search_key=${encodeURIComponent(q)}`,
+        icon: '👻',
+        users: 'OG',
+        region: 'china',
+        rank: 4,
+        desc: 'Original Chinese webcomics'
+    },
+    dmzj: {
+        name: '动漫之家 DMZJ',
+        searchUrl: (q) => `https://m.dmzj.com/search/${encodeURIComponent(q)}.html`,
+        icon: '🏠',
+        users: 'Popular',
+        region: 'china',
+        rank: 5,
+        desc: 'Manga + Manhua'
+    },
+    mangabz: {
+        name: 'MangaBZ 漫画BZ',
+        searchUrl: (q) => `https://www.mangabz.com/search?title=${encodeURIComponent(q)}`,
+        icon: '📖',
+        users: 'Free',
+        region: 'china',
+        rank: 6,
+        desc: 'Free manga reading'
+    },
+    iqiyicomic: {
+        name: '爱奇艺漫画',
+        searchUrl: (q) => `https://comic.iqiyi.com/search?key=${encodeURIComponent(q)}`,
+        icon: '🎬',
+        users: 'iQiyi',
+        region: 'china',
+        rank: 7,
+        desc: 'iQiyi video platform'
+    },
+
+    // ============================================
+    // 🇷🇺 RUSSIA - Russian Platforms
+    // ============================================
+    mangalib: {
+        name: 'MangaLib',
+        searchUrl: (q) => `https://mangalib.me/search?q=${encodeURIComponent(q)}`,
+        icon: '📚',
+        users: '#1 RU',
+        region: 'russia',
+        rank: 1,
+        desc: 'Most popular in Russia'
+    },
+    remanga: {
+        name: 'ReManga',
+        searchUrl: (q) => `https://remanga.org/search?q=${encodeURIComponent(q)}`,
+        icon: '🔄',
+        users: 'Top 4',
+        region: 'russia',
+        rank: 2,
+        desc: 'Russian translations'
+    },
+    desu: {
+        name: 'Desu.me',
+        searchUrl: (q) => `https://desu.me/search/?q=${encodeURIComponent(q)}`,
+        icon: '😊',
+        users: 'Top 5',
+        region: 'russia',
+        rank: 3,
+        desc: 'Manga/anime community'
+    },
+    acomics: {
+        name: 'Acomics.ru',
+        searchUrl: (q) => `https://acomics.ru/search?q=${encodeURIComponent(q)}`,
+        icon: '🇷🇺',
+        users: 'OG',
+        region: 'russia',
+        rank: 4,
+        desc: 'Original Russian webcomics'
+    },
+    bubble: {
+        name: 'Bubble Comics',
+        searchUrl: (q) => `https://bubble.ru/search?query=${encodeURIComponent(q)}`,
+        icon: '💬',
+        users: 'Publisher',
+        region: 'russia',
+        rank: 5,
+        desc: 'Russian superhero publisher'
+    },
+    senkuro: {
+        name: 'Senkuro',
+        searchUrl: (q) => `https://senkuro.me/search?q=${encodeURIComponent(q)}`,
+        icon: '🎌',
+        users: 'Top 3',
+        region: 'russia',
+        rank: 6,
+        desc: 'Animation/comics site'
+    }
+};
+
+// Comic Preset configurations
+const COMIC_PRESETS = {
+    'top-global': ['webtoon', 'mangaplus', 'viz', 'tapas', 'mangadex'],
+    'japan': ['linemanga', 'piccoma', 'mechacomic', 'cmoa', 'jumpplus', 'pixivcomic'],
+    'korea': ['naverwebtoon', 'kakaowebtoon', 'kakaopage', 'lezhin', 'manta', 'tappytoon'],
+    'china': ['kuaikan', 'qqcomic', 'bilibilicomic', 'u17', 'dmzj'],
+    'russia': ['mangalib', 'remanga', 'desu', 'acomics', 'bubble'],
+    'legal-free': ['mangaplus', 'webtoon', 'tapas', 'jumpplus', 'pixivcomic'],
+    'all-comics': Object.keys(COMIC_PLATFORMS)
+};
+
 // Preset configurations
 const PRESETS = {
     'top-global': ['youtube', 'tiktok', 'vimeo'],
