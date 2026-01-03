@@ -3741,11 +3741,6 @@
                         <path
                             d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z" />
                     </svg> Ebook</button>
-                <button class="tab" data-tab="comic" data-category="media" draggable="true"><svg width="16" height="16"
-                        viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z" />
-                    </svg> Comic</button>
                 <button class="tab" data-tab="apk" data-category="media" draggable="true"><svg width="16" height="16"
                         viewBox="0 0 24 24" fill="currentColor">
                         <path
@@ -4245,139 +4240,6 @@
                 <button class="btn-search" id="ebookSearchBtn">Search<span class="count"
                         id="ebookCount">0</span></button>
                 <button class="btn-select" onclick="toggleAll('ebook')">Toggle</button>
-            </div>
-        </div>
-
-
-        <!-- COMIC/MANGA TAB -->
-        <div class="tab-content" id="comic-tab">
-            <div class="search-wrapper">
-                <input type="text" id="comicInput" class="search-input" placeholder="Tên truyện, tác giả, thể loại...">
-            </div>
-
-            <div class="section">
-                <div class="section-title">🌍 Global <span class="badge hot">TOP</span></div>
-                <div class="section-desc">Nền tảng manga/webtoon quốc tế - Legal & Recommended</div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="webtoon"><span class="platform-label"><span
-                                class="platform-icon">📱</span>WEBTOON</span></label>
-                    <label class="platform"><input type="checkbox" data-p="mangaplus"><span class="platform-label"><span
-                                class="platform-icon">📖</span>Manga Plus</span></label>
-                    <label class="platform"><input type="checkbox" data-p="viz"><span class="platform-label"><span
-                                class="platform-icon">⚡</span>VIZ/Shonen Jump</span></label>
-                    <label class="platform"><input type="checkbox" data-p="tapas"><span class="platform-label"><span
-                                class="platform-icon">📚</span>Tapas</span></label>
-                    <label class="platform"><input type="checkbox" data-p="mangadex"><span class="platform-label"><span
-                                class="platform-icon">🔍</span>MangaDex</span></label>
-                    <label class="platform"><input type="checkbox" data-p="comixology"><span
-                            class="platform-label"><span class="platform-icon">🦸</span>ComiXology</span></label>
-                    <label class="platform"><input type="checkbox" data-p="bookwalker"><span
-                            class="platform-label"><span class="platform-icon">📕</span>BookWalker</span></label>
-                    <label class="platform"><input type="checkbox" data-p="inkr"><span class="platform-label"><span
-                                class="platform-icon">✒️</span>INKR</span></label>
-                    <label class="platform"><input type="checkbox" data-p="mangamo"><span class="platform-label"><span
-                                class="platform-icon">📱</span>Mangamo</span></label>
-                    <label class="platform"><input type="checkbox" data-p="myanimelist"><span
-                            class="platform-label"><span class="platform-icon">📋</span>MAL</span></label>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🇯🇵 Japan <span class="badge">#1 2025</span></div>
-                <div class="section-desc">Nền tảng manga Nhật Bản - LINE Manga dẫn đầu 2025</div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="linemanga"><span class="platform-label"><span
-                                class="platform-icon">💚</span>LINE Manga</span></label>
-                    <label class="platform"><input type="checkbox" data-p="piccoma"><span class="platform-label"><span
-                                class="platform-icon">🟡</span>Piccoma</span></label>
-                    <label class="platform"><input type="checkbox" data-p="mechacomic"><span
-                            class="platform-label"><span class="platform-icon">📗</span>めちゃコミ</span></label>
-                    <label class="platform"><input type="checkbox" data-p="cmoa"><span class="platform-label"><span
-                                class="platform-icon">📘</span>シーモア</span></label>
-                    <label class="platform"><input type="checkbox" data-p="jumpplus"><span class="platform-label"><span
-                                class="platform-icon">🔴</span>ジャンプ+</span></label>
-                    <label class="platform"><input type="checkbox" data-p="magapoke"><span class="platform-label"><span
-                                class="platform-icon">📙</span>マガポケ</span></label>
-                    <label class="platform"><input type="checkbox" data-p="mangaone"><span class="platform-label"><span
-                                class="platform-icon">1️⃣</span>マンガワン</span></label>
-                    <label class="platform"><input type="checkbox" data-p="niconicoman"><span
-                            class="platform-label"><span class="platform-icon">😊</span>ニコニコ</span></label>
-                    <label class="platform"><input type="checkbox" data-p="pixivcomic"><span
-                            class="platform-label"><span class="platform-icon">🎨</span>pixivコミック</span></label>
-                    <label class="platform"><input type="checkbox" data-p="ebookjapan"><span
-                            class="platform-label"><span class="platform-icon">📚</span>ebookjapan</span></label>
-                    <label class="platform"><input type="checkbox" data-p="mangabang"><span class="platform-label"><span
-                                class="platform-icon">💥</span>マンガBANG!</span></label>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🇰🇷 Korea <span class="badge hot">WEBTOON</span></div>
-                <div class="section-desc">Nền tảng manhwa/webtoon Hàn Quốc - Naver + Kakao chiếm 90%</div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="naverwebtoon"><span
-                            class="platform-label"><span class="platform-icon">🟢</span>Naver Webtoon</span></label>
-                    <label class="platform"><input type="checkbox" data-p="kakaowebtoon"><span
-                            class="platform-label"><span class="platform-icon">🟡</span>Kakao Webtoon</span></label>
-                    <label class="platform"><input type="checkbox" data-p="kakaopage"><span class="platform-label"><span
-                                class="platform-icon">📖</span>KakaoPage</span></label>
-                    <label class="platform"><input type="checkbox" data-p="lezhin"><span class="platform-label"><span
-                                class="platform-icon">🔞</span>Lezhin</span></label>
-                    <label class="platform"><input type="checkbox" data-p="toomics"><span class="platform-label"><span
-                                class="platform-icon">📱</span>Toomics</span></label>
-                    <label class="platform"><input type="checkbox" data-p="manta"><span class="platform-label"><span
-                                class="platform-icon">🐋</span>Manta</span></label>
-                    <label class="platform"><input type="checkbox" data-p="tappytoon"><span class="platform-label"><span
-                                class="platform-icon">💕</span>Tappytoon</span></label>
-                    <label class="platform"><input type="checkbox" data-p="bomtoon"><span class="platform-label"><span
-                                class="platform-icon">🌸</span>Bomtoon</span></label>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🇨🇳 China <span class="badge">200M+</span></div>
-                <div class="section-desc">Nền tảng manhua Trung Quốc - Kuaikan dẫn đầu</div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="kuaikan"><span class="platform-label"><span
-                                class="platform-icon">⚡</span>快看漫画</span></label>
-                    <label class="platform"><input type="checkbox" data-p="qqcomic"><span class="platform-label"><span
-                                class="platform-icon">🐧</span>腾讯漫画</span></label>
-                    <label class="platform"><input type="checkbox" data-p="bilibilicomic"><span
-                            class="platform-label"><span class="platform-icon">📺</span>哔哩哔哩漫画</span></label>
-                    <label class="platform"><input type="checkbox" data-p="u17"><span class="platform-label"><span
-                                class="platform-icon">👻</span>有妖气</span></label>
-                    <label class="platform"><input type="checkbox" data-p="dmzj"><span class="platform-label"><span
-                                class="platform-icon">🏠</span>动漫之家</span></label>
-                    <label class="platform"><input type="checkbox" data-p="mangabz"><span class="platform-label"><span
-                                class="platform-icon">📖</span>漫画BZ</span></label>
-                    <label class="platform"><input type="checkbox" data-p="iqiyicomic"><span
-                            class="platform-label"><span class="platform-icon">🎬</span>爱奇艺漫画</span></label>
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🇷🇺 Russia</div>
-                <div class="section-desc">Nền tảng manga/comic Nga - MangaLib phổ biến nhất</div>
-                <div class="platforms">
-                    <label class="platform"><input type="checkbox" data-p="mangalib"><span class="platform-label"><span
-                                class="platform-icon">📚</span>MangaLib</span></label>
-                    <label class="platform"><input type="checkbox" data-p="remanga"><span class="platform-label"><span
-                                class="platform-icon">🔄</span>ReManga</span></label>
-                    <label class="platform"><input type="checkbox" data-p="desu"><span class="platform-label"><span
-                                class="platform-icon">😊</span>Desu.me</span></label>
-                    <label class="platform"><input type="checkbox" data-p="acomics"><span class="platform-label"><span
-                                class="platform-icon">🇷🇺</span>Acomics</span></label>
-                    <label class="platform"><input type="checkbox" data-p="bubble"><span class="platform-label"><span
-                                class="platform-icon">💬</span>Bubble</span></label>
-                    <label class="platform"><input type="checkbox" data-p="senkuro"><span class="platform-label"><span
-                                class="platform-icon">🎌</span>Senkuro</span></label>
-                </div>
-            </div>
-
-            <div class="actions">
-                <button class="btn-search" id="comicSearchBtn">Search<span class="count"
-                        id="comicCount">0</span></button>
-                <button class="btn-select" onclick="toggleAll('comic')">Toggle</button>
             </div>
         </div>
 
@@ -5688,61 +5550,6 @@
             googlebooks: q => `https://www.google.com/search?tbm=bks&q=${encodeURIComponent(q)}`
         };
 
-        // COMIC/MANGA SEARCH URLS
-        const COMIC_URLS = {
-            // Global
-            webtoon: q => `https://www.webtoons.com/en/search?keyword=${encodeURIComponent(q)}`,
-            mangaplus: q => `https://mangaplus.shueisha.co.jp/search_result?keyword=${encodeURIComponent(q)}`,
-            viz: q => `https://www.viz.com/search?search=${encodeURIComponent(q)}`,
-            tapas: q => `https://tapas.io/search?q=${encodeURIComponent(q)}`,
-            mangadex: q => `https://mangadex.org/search?q=${encodeURIComponent(q)}`,
-            comixology: q => `https://www.amazon.com/s?k=${encodeURIComponent(q)}&i=comics-manga`,
-            bookwalker: q => `https://global.bookwalker.jp/search/?word=${encodeURIComponent(q)}`,
-            inkr: q => `https://inkr.com/search?q=${encodeURIComponent(q)}`,
-            mangamo: q => `https://www.mangamo.com/search?q=${encodeURIComponent(q)}`,
-            myanimelist: q => `https://myanimelist.net/manga.php?q=${encodeURIComponent(q)}`,
-
-            // Japan
-            linemanga: q => `https://manga.line.me/search/product?word=${encodeURIComponent(q)}`,
-            piccoma: q => `https://piccoma.com/web/search/result?word=${encodeURIComponent(q)}`,
-            mechacomic: q => `https://mechacomic.jp/search?keyword=${encodeURIComponent(q)}`,
-            cmoa: q => `https://www.cmoa.jp/search/result/?header_word=${encodeURIComponent(q)}`,
-            jumpplus: q => `https://shonenjumpplus.com/search?q=${encodeURIComponent(q)}`,
-            magapoke: q => `https://pocket.shonenmagazine.com/search?q=${encodeURIComponent(q)}`,
-            mangaone: q => `https://manga-one.com/search?word=${encodeURIComponent(q)}`,
-            niconicoman: q => `https://seiga.nicovideo.jp/manga/search?q=${encodeURIComponent(q)}`,
-            pixivcomic: q => `https://comic.pixiv.net/search?q=${encodeURIComponent(q)}`,
-            ebookjapan: q => `https://ebookjapan.yahoo.co.jp/search/?keyword=${encodeURIComponent(q)}`,
-            mangabang: q => `https://manga-bang.com/search?q=${encodeURIComponent(q)}`,
-
-            // Korea
-            naverwebtoon: q => `https://comic.naver.com/search?keyword=${encodeURIComponent(q)}`,
-            kakaowebtoon: q => `https://webtoon.kakao.com/search?keyword=${encodeURIComponent(q)}`,
-            kakaopage: q => `https://page.kakao.com/search/result?keyword=${encodeURIComponent(q)}`,
-            lezhin: q => `https://www.lezhin.com/en/search?q=${encodeURIComponent(q)}`,
-            toomics: q => `https://toomics.com/en/search?keyword=${encodeURIComponent(q)}`,
-            manta: q => `https://manta.net/en/search?keyword=${encodeURIComponent(q)}`,
-            tappytoon: q => `https://www.tappytoon.com/en/search?word=${encodeURIComponent(q)}`,
-            bomtoon: q => `https://www.bomtoon.com/search?keyword=${encodeURIComponent(q)}`,
-
-            // China
-            kuaikan: q => `https://www.kuaikanmanhua.com/search/mini/${encodeURIComponent(q)}`,
-            qqcomic: q => `https://ac.qq.com/Search/comicSearch?wd=${encodeURIComponent(q)}`,
-            bilibilicomic: q => `https://manga.bilibili.com/search?keyword=${encodeURIComponent(q)}`,
-            u17: q => `https://www.u17.com/search/index?search_key=${encodeURIComponent(q)}`,
-            dmzj: q => `https://m.dmzj.com/search/${encodeURIComponent(q)}.html`,
-            mangabz: q => `https://www.mangabz.com/search?title=${encodeURIComponent(q)}`,
-            iqiyicomic: q => `https://comic.iqiyi.com/search?key=${encodeURIComponent(q)}`,
-
-            // Russia
-            mangalib: q => `https://mangalib.me/search?q=${encodeURIComponent(q)}`,
-            remanga: q => `https://remanga.org/search?q=${encodeURIComponent(q)}`,
-            desu: q => `https://desu.me/search/?q=${encodeURIComponent(q)}`,
-            acomics: q => `https://acomics.ru/search?q=${encodeURIComponent(q)}`,
-            bubble: q => `https://bubble.ru/search?query=${encodeURIComponent(q)}`,
-            senkuro: q => `https://senkuro.me/search?q=${encodeURIComponent(q)}`
-        };
-
         // MOVIE SEARCH URLS
         const MOVIE_URLS = {
             // Global Hot - Reddit recommended 2024
@@ -6177,53 +5984,7 @@
             veedio: 'https://www.veed.io',
             vmakerai: 'https://www.vmaker.com',
 
-            // Comic/Manga - Global
-            webtoon: 'https://www.webtoons.com',
-            mangaplus: 'https://mangaplus.shueisha.co.jp',
-            viz: 'https://www.viz.com',
-            tapas: 'https://tapas.io',
-            mangadex: 'https://mangadex.org',
-            comixology: 'https://www.amazon.com/kindle-dbs/comics-store/',
-            bookwalker: 'https://global.bookwalker.jp',
-            inkr: 'https://inkr.com',
-            mangamo: 'https://www.mangamo.com',
-            myanimelist: 'https://myanimelist.net/manga.php',
-            // Comic/Manga - Japan
-            linemanga: 'https://manga.line.me',
-            piccoma: 'https://piccoma.com',
-            mechacomic: 'https://mechacomic.jp',
-            cmoa: 'https://www.cmoa.jp',
-            jumpplus: 'https://shonenjumpplus.com',
-            magapoke: 'https://pocket.shonenmagazine.com',
-            mangaone: 'https://manga-one.com',
-            niconicoman: 'https://seiga.nicovideo.jp/manga/',
-            pixivcomic: 'https://comic.pixiv.net',
-            ebookjapan: 'https://ebookjapan.yahoo.co.jp',
-            mangabang: 'https://manga-bang.com',
-            // Comic/Manga - Korea
-            naverwebtoon: 'https://comic.naver.com',
-            kakaowebtoon: 'https://webtoon.kakao.com',
-            kakaopage: 'https://page.kakao.com',
-            lezhin: 'https://www.lezhin.com',
-            toomics: 'https://toomics.com',
-            manta: 'https://manta.net',
-            tappytoon: 'https://www.tappytoon.com',
-            bomtoon: 'https://www.bomtoon.com',
-            // Comic/Manga - China
-            kuaikan: 'https://www.kuaikanmanhua.com',
-            qqcomic: 'https://ac.qq.com',
-            bilibilicomic: 'https://manga.bilibili.com',
-            u17: 'https://www.u17.com',
-            dmzj: 'https://m.dmzj.com',
-            mangabz: 'https://www.mangabz.com',
-            iqiyicomic: 'https://comic.iqiyi.com',
-            // Comic/Manga - Russia
-            mangalib: 'https://mangalib.me',
-            remanga: 'https://remanga.org',
-            desu: 'https://desu.me',
-            acomics: 'https://acomics.ru',
-            bubble: 'https://bubble.ru',
-            senkuro: 'https://senkuro.me'
+
         };
 
         // REVERSE IMAGE SEARCH URLS - Direct upload pages
@@ -7421,7 +7182,6 @@ Trả về JSON (chỉ JSON, không text khác):
             document.getElementById('movieCount').textContent = document.querySelectorAll('#movie-tab .platform input:checked').length;
             document.getElementById('imageCount').textContent = document.querySelectorAll('#image-tab .platform input:checked').length;
             document.getElementById('ebookCount').textContent = document.querySelectorAll('#ebook-tab .platform input:checked').length;
-            document.getElementById('comicCount').textContent = document.querySelectorAll('#comic-tab .platform input:checked').length;
             document.getElementById('apkCount').textContent = document.querySelectorAll('#apk-tab .platform input:checked').length;
             document.getElementById('softwareCount').textContent = document.querySelectorAll('#software-tab .platform input:checked').length;
             document.getElementById('aiCount').textContent = document.querySelectorAll('#ai-tab .platform input:checked').length;
@@ -7459,10 +7219,6 @@ Trả về JSON (chỉ JSON, không text khác):
             } else if (currentTab === 'ebook') {
                 input = document.getElementById('ebookInput');
                 urls = EBOOK_URLS;
-                query = input ? input.value.trim() : '';
-            } else if (currentTab === 'comic') {
-                input = document.getElementById('comicInput');
-                urls = COMIC_URLS;
                 query = input ? input.value.trim() : '';
             } else if (currentTab === 'apk') {
                 input = document.getElementById('apkInput');
@@ -7519,7 +7275,6 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('movieSearchBtn').addEventListener('click', search);
         document.getElementById('imageSearchBtn').addEventListener('click', search);
         document.getElementById('ebookSearchBtn').addEventListener('click', search);
-        document.getElementById('comicSearchBtn').addEventListener('click', search);
         document.getElementById('apkSearchBtn').addEventListener('click', search);
         document.getElementById('softwareSearchBtn').addEventListener('click', search);
         document.getElementById('aiSearchBtn').addEventListener('click', search);
@@ -7531,7 +7286,6 @@ Trả về JSON (chỉ JSON, không text khác):
         document.getElementById('movieInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('imageInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('ebookInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
-        document.getElementById('comicInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('apkInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('softwareInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
         document.getElementById('wikiInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
@@ -7557,9 +7311,6 @@ Trả về JSON (chỉ JSON, không text khác):
                     query = input ? input.value.trim() : '';
                 } else if (currentTab === 'ebook') {
                     const input = document.getElementById('ebookInput');
-                    query = input ? input.value.trim() : '';
-                } else if (currentTab === 'comic') {
-                    const input = document.getElementById('comicInput');
                     query = input ? input.value.trim() : '';
                 } else if (currentTab === 'apk') {
                     const input = document.getElementById('apkInput');
