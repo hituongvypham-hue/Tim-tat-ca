@@ -11237,7 +11237,12 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 } catch (error) {
                     console.error("Analysis Error:", error);
                     hideProcessing();
-                    alert('❌ Lỗi xử lý: ' + error.message + '\n\n(Vui lòng kiểm tra lại API Key hoặc kết nối mạng)');
+
+                    if (error.message.includes("429") || error.message.includes("Resource exhausted")) {
+                        alert('⏳ Server đang bận (429 Too Many Requests).\n\nAPI miễn phí có giới hạn số lần gọi trong 1 phút.\nVui lòng đợi khoảng 30-60 giây rồi thử lại!');
+                    } else {
+                        alert('❌ Lỗi xử lý: ' + error.message + '\n\n(Vui lòng kiểm tra lại API Key hoặc kết nối mạng)');
+                    }
                 } finally {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
