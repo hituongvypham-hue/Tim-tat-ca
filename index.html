@@ -8648,6 +8648,11 @@ Trả về JSON (chỉ JSON, không text khác):
                     } else if (currentTab === 'wiki') {
                         const input = document.getElementById('wikiInput');
                         query = input ? input.value.trim() : '';
+                    } else if (currentTab === 'reverse') {
+                        // Check both pasted URL and uploaded result URL
+                        const urlInput = document.getElementById('imageUrlInput');
+                        const resultInput = document.getElementById('resultUrl');
+                        query = (urlInput && urlInput.value.trim()) || (resultInput && resultInput.value.trim()) || '';
                     }
 
                     // Only open homepage if NO query (if has query, must use Search button)
