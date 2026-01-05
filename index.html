@@ -12515,13 +12515,13 @@ Return ONLY a valid JSON object:
                 <!-- Copy Style Modal -->
                 <div id="copyStyleModal" class="style-modal" style="display: none;">
                     <div class="style-modal-content">
-                        <!-- Loading Overlay -->
-                        <div id="styleProcessingOverlay" class="processing-overlay">
+                        <!-- Loading Overlay (hidden by default) -->
+                        <div id="styleProcessingOverlay" class="processing-overlay" style="display: none;">
                             <div class="processing-spinner"></div>
                             <div class="processing-text" id="styleProcessingText">Đang xử lý...</div>
                         </div>
                         <span class="close-modal" onclick="closeCopyStyleModal()"
-                            style="position:absolute; right:20px; top:20px; font-size:24px; cursor:pointer;">&times;</span>
+                            style="position:absolute; right:20px; top:20px; font-size:24px; cursor:pointer; z-index: 100002;">&times;</span>
                         <h3 style="margin-top:0">🎨 Copy Style & Reverse Prompt</h3>
                         <p style="color:#5f6368; font-size:13px; margin-bottom:20px;">AI sẽ phân tích ảnh hoặc prompt
                             mẫu để tự
