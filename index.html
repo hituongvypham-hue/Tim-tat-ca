@@ -12609,6 +12609,21 @@ Return ONLY a valid JSON object:
                 videoTab.classList.add('active');
             }
         });
+
+        // Close Copy Style Modal
+        function closeCopyStyleModal() {
+            const modal = document.getElementById('copyStyleModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Also add click handler to close modal when clicking backdrop
+        document.addEventListener('click', function (e) {
+            if (e.target.id === 'copyStyleModal') {
+                closeCopyStyleModal();
+            }
+        });
     </script>
 
 </body>
