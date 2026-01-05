@@ -9849,7 +9849,7 @@ Trả về JSON (chỉ JSON, không text khác):
             let autoSyncTimeout = null;
             function autoSyncToDrive() {
                 // Only sync if user is signed in
-                if (!googleAccessToken) return;
+                if (!window.googleAccessToken) return;
 
                 // Debounce: wait 3 seconds after last change before syncing
                 if (autoSyncTimeout) clearTimeout(autoSyncTimeout);
@@ -9860,7 +9860,7 @@ Trả về JSON (chỉ JSON, không text khác):
                         // Search for existing file
                         const searchRes = await fetch(
                             `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FILE_NAME}'`,
-                            { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
+                            { headers: { 'Authorization': 'Bearer ' + window.googleAccessToken } }
                         );
 
                         if (!searchRes.ok) return; // Silently fail
@@ -9883,7 +9883,7 @@ Trả về JSON (chỉ JSON, không text khác):
 
                         await fetch(uploadUrl, {
                             method: fileId ? 'PATCH' : 'POST',
-                            headers: { 'Authorization': 'Bearer ' + googleAccessToken },
+                            headers: { 'Authorization': 'Bearer ' + window.googleAccessToken },
                             body: form
                         });
 
@@ -9935,77 +9935,127 @@ Trả về JSON (chỉ JSON, không text khác):
                 }
             }
 
-            let googleAccessToken = null;
-            let googleUser = null;
-            let tokenClient = null;
+            // Use window scope for accessibility from onclick handlers
+            window.googleAccessToken = null;
+            window.googleUser = null;
+            window.tokenClient = null;
+            window.googleAuthInitialized = false;
 
             // Initialize Google Identity Services
             function initGoogleAuth() {
+                // Check protocol first
+                if (window.location.protocol === 'file:') {
+                    console.warn('Google OAuth does not work with file:// protocol');
+                    updateGoogleButtonState();
+                    return;
+                }
+
                 if (typeof google === 'undefined' || !google.accounts) {
                     console.log('Google Identity Services not loaded yet');
                     setTimeout(initGoogleAuth, 500);
                     return;
                 }
 
-                tokenClient = google.accounts.oauth2.initTokenClient({
-                    client_id: GOOGLE_CLIENT_ID,
-                    scope: DRIVE_SCOPE,
-                    callback: handleGoogleCallback
-                });
+                try {
+                    window.tokenClient = google.accounts.oauth2.initTokenClient({
+                        client_id: GOOGLE_CLIENT_ID,
+                        scope: DRIVE_SCOPE,
+                        callback: handleGoogleCallback
+                    });
+                    window.googleAuthInitialized = true;
+                    console.log('Google Auth initialized successfully');
+                } catch (e) {
+                    console.error('Failed to init Google Auth:', e);
+                }
 
                 // Check if user is already signed in
                 const savedToken = localStorage.getItem('googleAccessToken');
                 const savedUser = localStorage.getItem('googleUser');
                 if (savedToken && savedUser) {
-                    googleAccessToken = savedToken;
-                    googleUser = JSON.parse(savedUser);
+                    window.googleAccessToken = savedToken;
+                    window.googleUser = JSON.parse(savedUser);
                     showSignedInState();
+                }
+
+                updateGoogleButtonState();
+            }
+
+            // Update button state based on initialization
+            function updateGoogleButtonState() {
+                const btn = document.querySelector('[onclick="signInGoogle()"]');
+                if (!btn) return;
+
+                if (window.location.protocol === 'file:') {
+                    btn.innerHTML = '⚠️ Cần chạy qua HTTP Server';
+                    btn.disabled = true;
+                    btn.style.opacity = '0.6';
+                    btn.title = 'Google OAuth không hoạt động với file://. Hãy chạy qua localhost hoặc deploy lên web.';
+                } else if (!window.googleAuthInitialized) {
+                    btn.innerHTML = '⏳ Đang tải Google API...';
+                    btn.disabled = true;
+                } else {
+                    btn.innerHTML = '<img src="https://www.google.com/favicon.ico" style="width:14px;height:14px;margin-right:6px;"> Đăng nhập Google';
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
                 }
             }
 
             function handleGoogleCallback(response) {
                 if (response.error) {
                     console.error('Google auth error:', response.error);
-                    toast('Đăng nhập thất bại');
+                    toast('Đăng nhập thất bại: ' + (response.error_description || response.error));
                     return;
                 }
 
-                googleAccessToken = response.access_token;
-                localStorage.setItem('googleAccessToken', googleAccessToken);
+                window.googleAccessToken = response.access_token;
+                localStorage.setItem('googleAccessToken', window.googleAccessToken);
 
                 // Get user info
                 fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-                    headers: { 'Authorization': 'Bearer ' + googleAccessToken }
+                    headers: { 'Authorization': 'Bearer ' + window.googleAccessToken }
                 })
                     .then(res => res.json())
                     .then(user => {
-                        googleUser = user;
+                        window.googleUser = user;
                         localStorage.setItem('googleUser', JSON.stringify(user));
                         showSignedInState();
                         toast('Đăng nhập thành công!');
                     })
                     .catch(err => {
                         console.error('User info error:', err);
+                        toast('Lỗi lấy thông tin user: ' + err.message);
                     });
             }
 
             function signInGoogle() {
-                if (!tokenClient) {
-                    toast('Google API chưa sẵn sàng, thử lại sau');
+                // Check protocol first
+                if (window.location.protocol === 'file:') {
+                    toast('⚠️ Google Sync chỉ hoạt động khi chạy qua HTTP server (localhost hoặc web)');
+                    return;
+                }
+
+                if (!window.tokenClient) {
+                    toast('Google API đang khởi tạo, vui lòng đợi...');
                     initGoogleAuth();
                     return;
                 }
-                tokenClient.requestAccessToken();
+
+                try {
+                    window.tokenClient.requestAccessToken();
+                } catch (e) {
+                    console.error('Google auth error:', e);
+                    toast('Lỗi kết nối Google: ' + e.message);
+                }
             }
 
             function signOutGoogle() {
-                if (googleAccessToken) {
-                    google.accounts.oauth2.revoke(googleAccessToken, () => {
+                if (window.googleAccessToken) {
+                    google.accounts.oauth2.revoke(window.googleAccessToken, () => {
                         console.log('Token revoked');
                     });
                 }
-                googleAccessToken = null;
-                googleUser = null;
+                window.googleAccessToken = null;
+                window.googleUser = null;
                 localStorage.removeItem('googleAccessToken');
                 localStorage.removeItem('googleUser');
                 showNotSignedInState();
@@ -10015,17 +10065,17 @@ Trả về JSON (chỉ JSON, không text khác):
             function showSignedInState() {
                 document.getElementById('driveNotSignedIn').style.display = 'none';
                 document.getElementById('driveSignedIn').style.display = 'block';
-                if (googleUser) {
+                if (window.googleUser) {
                     const photoEl = document.getElementById('driveUserPhoto');
                     const nameEl = document.getElementById('driveUserName');
 
-                    if (googleUser.picture) {
-                        photoEl.src = googleUser.picture;
+                    if (window.googleUser.picture) {
+                        photoEl.src = window.googleUser.picture;
                         photoEl.style.display = 'block';
                     }
 
                     // Show email (prioritize email, show name as fallback)
-                    nameEl.textContent = googleUser.email || googleUser.name || 'Đã đăng nhập';
+                    nameEl.textContent = window.googleUser.email || window.googleUser.name || 'Đã đăng nhập';
                 }
             }
 
@@ -10084,7 +10134,7 @@ Trả về JSON (chỉ JSON, không text khác):
             }
 
             async function syncToDrive() {
-                if (!googleAccessToken) {
+                if (!window.googleAccessToken) {
                     toast('Vui lòng đăng nhập Google');
                     return;
                 }
@@ -10099,7 +10149,7 @@ Trả về JSON (chỉ JSON, không text khác):
                     // First, search for existing file
                     const searchRes = await fetch(
                         `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FILE_NAME}'`,
-                        { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
+                        { headers: { 'Authorization': 'Bearer ' + window.googleAccessToken } }
                     );
 
                     if (!searchRes.ok) {
@@ -10132,7 +10182,7 @@ Trả về JSON (chỉ JSON, không text khác):
 
                     const uploadRes = await fetch(uploadUrl, {
                         method: fileId ? 'PATCH' : 'POST',
-                        headers: { 'Authorization': 'Bearer ' + googleAccessToken },
+                        headers: { 'Authorization': 'Bearer ' + window.googleAccessToken },
                         body: form
                     });
 
@@ -10150,7 +10200,7 @@ Trả về JSON (chỉ JSON, không text khác):
             }
 
             async function syncFromDrive() {
-                if (!googleAccessToken) {
+                if (!window.googleAccessToken) {
                     toast('Vui lòng đăng nhập Google');
                     return;
                 }
@@ -10165,7 +10215,7 @@ Trả về JSON (chỉ JSON, không text khác):
                     // Search for file
                     const searchRes = await fetch(
                         `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FILE_NAME}'`,
-                        { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
+                        { headers: { 'Authorization': 'Bearer ' + window.googleAccessToken } }
                     );
 
                     console.log('🔍 Search response status:', searchRes.status);
@@ -10197,7 +10247,7 @@ Trả về JSON (chỉ JSON, không text khác):
                     // Download file content
                     const downloadRes = await fetch(
                         `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
-                        { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
+                        { headers: { 'Authorization': 'Bearer ' + window.googleAccessToken } }
                     );
 
                     console.log('📥 Download response status:', downloadRes.status);
