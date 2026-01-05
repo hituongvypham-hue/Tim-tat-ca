@@ -956,6 +956,50 @@
             opacity: 0.9;
         }
 
+        /* Processing Overlay */
+        .processing-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            z-index: 10;
+        }
+
+        .processing-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1a73e8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        .processing-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #202124;
+            max-width: 80%;
+            text-align: center;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
         color: #c5221f;
         }
 
@@ -10239,12 +10283,28 @@ Trả về JSON duy nhất, không giải thích:
         }
 
         // --- Style Transfer Logic ---
+        // --- Style Transfer Logic ---
+        function showProcessing(msg) {
+            const overlay = document.getElementById('styleProcessingOverlay');
+            const text = document.getElementById('styleProcessingText');
+            if (overlay && text) {
+                overlay.style.display = 'flex';
+                text.textContent = msg;
+            }
+        }
+
+        function hideProcessing() {
+            const overlay = document.getElementById('styleProcessingOverlay');
+            if (overlay) overlay.style.display = 'none';
+        }
+
         function openCopyStyleModal() {
             document.getElementById('copyStyleModal').style.display = 'flex';
         }
 
         function closeCopyStyleModal() {
             document.getElementById('copyStyleModal').style.display = 'none';
+            hideProcessing();
         }
 
         function switchStyleTab(type) {
@@ -10262,29 +10322,37 @@ Trả về JSON duy nhất, không giải thích:
 
         function previewStyleImage(input) {
             if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('⚠️ Ảnh quá lớn (>5MB). Vui lòng chọn ảnh nhỏ hơn để AI xử lý nhanh hơn.');
+                    input.value = ''; // Reset input
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     document.getElementById('styleImagePreview').src = e.target.result;
                     document.getElementById('styleImagePreview').style.display = 'block';
                     document.getElementById('uploadPlaceholder').style.display = 'none';
                 }
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(file);
             }
         }
 
         async function analyzeAndApplyStyle() {
             const apiKey = localStorage.getItem('geminiApiKey');
             if (!apiKey) {
-                toast('⚠️ Vui lòng lưu API Key trước (trong icon ⚙️ góc phải)');
+                alert('⚠️ Vui lòng lưu API Key trong phần Cài đặt (icon ⚙️) trước khi sử dụng tính năng này.');
                 return;
             }
 
             const btn = document.getElementById('analyzeBtn');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '⏳ Đang phân tích style...';
             btn.disabled = true;
 
             try {
+                showProcessing('Đang khởi tạo...');
+
                 const isImageTab = document.getElementById('styleInputImage').style.display !== 'none';
                 let prompt = "";
                 let imagePart = null;
@@ -10292,9 +10360,12 @@ Trả về JSON duy nhất, không giải thích:
                 if (isImageTab) {
                     const fileInput = document.getElementById('styleImageInput');
                     if (!fileInput.files[0]) {
+                        hideProcessing();
                         toast('⚠️ Vui lòng chọn ảnh!');
-                        throw new Error("No image selected");
+                        throw new Error("Chưa chọn ảnh");
                     }
+
+                    showProcessing('Đang xử lý ảnh (Nén & Mã hóa)...');
 
                     // Convert file to base64
                     const base64 = await new Promise((resolve) => {
@@ -10326,9 +10397,12 @@ Extract the following elements and return ONLY a JSON object:
                 } else {
                     const textInput = document.getElementById('stylePromptInput').value.trim();
                     if (!textInput) {
+                        hideProcessing();
                         toast('⚠️ Vui lòng nhập prompt!');
-                        throw new Error("No prompt entered");
+                        throw new Error("Chưa nhập prompt");
                     }
+
+                    showProcessing('Đang phân tích text...');
 
                     prompt = `Analyze this image prompt to extract its artistic style:
 "${textInput}"
@@ -10346,44 +10420,64 @@ Extract the elements and return ONLY a JSON object:
 }`;
                 }
 
+                showProcessing('Đang gửi tới Gemini AI (Vision)...');
+
                 // Call Gemini (using 1.5-flash for vision/speed context window)
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-                const parts = [{ text: prompt }];
+                const parts = [{
+                    text: prompt
+                }];
                 if (imagePart) parts.push(imagePart);
 
                 const response = await fetch(url, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({
-                        contents: [{ parts: parts }],
-                        generationConfig: { temperature: 0.4 } // Low temperature for factual extraction
+                        contents: [{
+                            parts: parts
+                        }],
+                        generationConfig: {
+                            temperature: 0.4
+                        } // Low temperature for factual extraction
                     })
                 });
 
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error?.message || response.statusText);
+                }
+
+                showProcessing('AI đang phân tích style...');
                 const data = await response.json();
 
-                if (data.error) throw new Error(data.error.message);
-
                 let resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!resultText) throw new Error("No response from AI");
+                if (!resultText) throw new Error("AI không trả về kết quả.");
 
                 // Clean markdown if present
                 resultText = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+                showProcessing('Đang áp dụng style...');
                 const jsonMatch = resultText.match(/\{[\s\S]*\}/);
                 const analysis = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(resultText);
 
                 // Apply results
                 applyAISuggestion(analysis);
 
+                hideProcessing();
                 closeCopyStyleModal();
                 toast('✅ Đã Copy Style thành công!');
                 // Auto scroll to prompt builder
-                document.querySelector('.prompt-builder').scrollIntoView({ behavior: 'smooth' });
+                document.querySelector('.prompt-builder').scrollIntoView({
+                    behavior: 'smooth'
+                });
 
             } catch (error) {
                 console.error("Analysis Error:", error);
-                toast('❌ Lỗi: ' + error.message);
+                hideProcessing();
+                alert('❌ Lỗi xử lý: ' + error.message + '\n\n(Vui lòng kiểm tra lại API Key hoặc kết nối mạng)');
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
@@ -11736,6 +11830,11 @@ Extract the elements and return ONLY a JSON object:
     <!-- Copy Style Modal -->
     <div id="copyStyleModal" class="style-modal" style="display: none;">
         <div class="style-modal-content">
+            <!-- Loading Overlay -->
+            <div id="styleProcessingOverlay" class="processing-overlay">
+                <div class="processing-spinner"></div>
+                <div class="processing-text" id="styleProcessingText">Đang xử lý...</div>
+            </div>
             <span class="close-modal" onclick="closeCopyStyleModal()"
                 style="position:absolute; right:20px; top:20px; font-size:24px; cursor:pointer;">&times;</span>
             <h3 style="margin-top:0">🎨 Copy Style & Reverse Prompt</h3>
