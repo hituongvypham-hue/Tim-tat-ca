@@ -12513,15 +12513,17 @@ Return ONLY a valid JSON object:
                     </div>
                 </div>
                 <!-- Copy Style Modal -->
-                <div id="copyStyleModal" class="style-modal" style="display: none;">
-                    <div class="style-modal-content">
+                <div id="copyStyleModal" class="style-modal" style="display: none;"
+                    onclick="if(event.target===this){this.style.display='none';}">
+                    <div class="style-modal-content" style="position: relative;">
                         <!-- Loading Overlay (hidden by default) -->
                         <div id="styleProcessingOverlay" class="processing-overlay" style="display: none;">
                             <div class="processing-spinner"></div>
                             <div class="processing-text" id="styleProcessingText">Đang xử lý...</div>
                         </div>
-                        <span class="close-modal" onclick="closeCopyStyleModal()"
-                            style="position:absolute; right:20px; top:20px; font-size:24px; cursor:pointer; z-index: 100002;">&times;</span>
+                        <!-- Close Button - using button element with inline JS -->
+                        <button type="button" onclick="document.getElementById('copyStyleModal').style.display='none';"
+                            style="position:absolute; right:15px; top:15px; font-size:20px; cursor:pointer; z-index: 100002; background:rgba(0,0,0,0.1); border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center;">&times;</button>
                         <h3 style="margin-top:0">🎨 Copy Style & Reverse Prompt</h3>
                         <p style="color:#5f6368; font-size:13px; margin-bottom:20px;">AI sẽ phân tích ảnh hoặc prompt
                             mẫu để tự
@@ -12555,14 +12557,24 @@ Return ONLY a valid JSON object:
                                 style="width:100%; resize:vertical; background:#f8f9fa;"></textarea>
                         </div>
 
-                        <button class="analyze-btn" id="analyzeBtn" onclick="analyzeAndApplyStyle()">
-                            <span>✨ Phân tích & Áp dụng Style</span>
-                        </button>
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <button class="analyze-btn" id="analyzeBtn" onclick="analyzeAndApplyStyle()"
+                                style="flex:1;">
+                                <span>✨ Phân tích & Áp dụng Style</span>
+                            </button>
+                            <button type="button"
+                                onclick="document.getElementById('copyStyleModal').style.display='none';"
+                                style="padding: 12px 20px; background: #e0e0e0; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;">
+                                Đóng
+                            </button>
+                        </div>
                     </div>
                 </div>
+        </div>
+    </div>
 
-        </div> <!-- End .container -->
-        </main> <!-- End .mac-content -->
+    </div> <!-- End .container -->
+    </main> <!-- End .mac-content -->
     </div> <!-- End .mac-layout -->
     </div> <!-- End .mac-window -->
 
