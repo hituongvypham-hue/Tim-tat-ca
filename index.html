@@ -51,6 +51,14 @@
             --google-blue-hover: var(--mac-accent-hover);
             --mac-radius: 12px;
             --mac-radius-lg: 16px;
+
+            /* Legacy Variable Mappings (Fix for broken UI) */
+            --bg: var(--mac-bg);
+            --card: #ffffff; /* Use solid white for card to avoid transparency issues without blur */
+            --text: var(--mac-text);
+            --text-light: var(--mac-text-secondary);
+            --border: var(--mac-border);
+            --primary: var(--mac-accent);
         }
 
         * {
