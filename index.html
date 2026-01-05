@@ -236,9 +236,17 @@
         }
 
         .api-modal-overlay .modal-btn,
-        .api-modal-overlay button {
+        .api-modal-overlay button,
+        .style-modal .close-modal,
+        .style-modal button,
+        .style-modal .style-tab-btn,
+        .style-modal .analyze-btn,
+        .guide-modal-overlay button,
+        .guide-modal-overlay .modal-close-btn {
             pointer-events: auto !important;
             cursor: pointer !important;
+            position: relative;
+            z-index: 100001 !important;
         }
 
         /* Dropdown z-index fix */
