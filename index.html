@@ -9838,450 +9838,455 @@ Trả về JSON (chỉ JSON, không text khác):
                 });
             });
 
-            // ========== GOOGLE DRIVE SYNC ==========
-            // Google OAuth Client ID - Replace with your own from Google Cloud Console
-            // Use window scope for accessibility from onclick handlers
-            window.GOOGLE_CLIENT_ID = '676557816670-38kek48cab0ge88hmsvbo8lcpslp82fv.apps.googleusercontent.com';
-            // Using full drive scope to allow cross-browser sync (drive.file only works within same session)
-            window.DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
-            window.DRIVE_FILE_NAME = 'media-search-pro-settings.json';
+            // ========== GOOGLE DRIVE SYNC (REWRITTEN) ==========
+            // Configuration - all in window scope for global access
+            (function () {
+                'use strict';
 
-            // Auto sync with debounce (3 seconds)
-            let autoSyncTimeout = null;
-            function autoSyncToDrive() {
-                // Only sync if user is signed in
-                if (!window.googleAccessToken) return;
+                // Config constants
+                const CONFIG = {
+                    CLIENT_ID: '676557816670-38kek48cab0ge88hmsvbo8lcpslp82fv.apps.googleusercontent.com',
+                    SCOPES: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+                    FILE_NAME: 'media-search-pro-settings.json',
+                    AUTO_SYNC_DELAY: 3000
+                };
 
-                // Debounce: wait 3 seconds after last change before syncing
-                if (autoSyncTimeout) clearTimeout(autoSyncTimeout);
-                autoSyncTimeout = setTimeout(async () => {
+                // State
+                let accessToken = null;
+                let currentUser = null;
+                let tokenClient = null;
+                let isInitialized = false;
+                let autoSyncTimer = null;
+
+                // ===== INITIALIZATION =====
+                function init() {
+                    console.log('[GDrive] Initializing...');
+
+                    // Check protocol
+                    if (location.protocol === 'file:') {
+                        console.warn('[GDrive] Cannot run on file:// protocol');
+                        updateUI('file-protocol');
+                        return;
+                    }
+
+                    // Wait for Google Identity Services
+                    if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+                        console.log('[GDrive] Waiting for Google API...');
+                        setTimeout(init, 500);
+                        return;
+                    }
+
                     try {
-                        const data = getSyncData();
+                        tokenClient = google.accounts.oauth2.initTokenClient({
+                            client_id: CONFIG.CLIENT_ID,
+                            scope: CONFIG.SCOPES,
+                            callback: onTokenResponse,
+                            error_callback: onTokenError
+                        });
 
-                        // Search for existing file
+                        isInitialized = true;
+                        console.log('[GDrive] Initialized successfully');
+
+                        // Restore session if exists
+                        restoreSession();
+
+                    } catch (err) {
+                        console.error('[GDrive] Init error:', err);
+                        updateUI('init-error', err.message);
+                    }
+                }
+
+                // ===== SESSION MANAGEMENT =====
+                function restoreSession() {
+                    const savedToken = localStorage.getItem('gdrive_token');
+                    const savedUser = localStorage.getItem('gdrive_user');
+
+                    if (savedToken && savedUser) {
+                        accessToken = savedToken;
+                        try {
+                            currentUser = JSON.parse(savedUser);
+                            // Validate token
+                            validateToken().then(valid => {
+                                if (valid) {
+                                    updateUI('signed-in');
+                                } else {
+                                    clearSession();
+                                    updateUI('signed-out');
+                                }
+                            });
+                        } catch (e) {
+                            clearSession();
+                            updateUI('signed-out');
+                        }
+                    } else {
+                        updateUI('signed-out');
+                    }
+                }
+
+                async function validateToken() {
+                    if (!accessToken) return false;
+                    try {
+                        const res = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+                            headers: { 'Authorization': 'Bearer ' + accessToken }
+                        });
+                        return res.ok;
+                    } catch {
+                        return false;
+                    }
+                }
+
+                function clearSession() {
+                    accessToken = null;
+                    currentUser = null;
+                    localStorage.removeItem('gdrive_token');
+                    localStorage.removeItem('gdrive_user');
+                }
+
+                // ===== AUTH CALLBACKS =====
+                function onTokenResponse(response) {
+                    console.log('[GDrive] Token received');
+
+                    if (response.error) {
+                        console.error('[GDrive] Token error:', response);
+                        toast('Đăng nhập thất bại: ' + (response.error_description || response.error));
+                        updateUI('signed-out');
+                        return;
+                    }
+
+                    accessToken = response.access_token;
+                    localStorage.setItem('gdrive_token', accessToken);
+
+                    // Get user info
+                    fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+                        headers: { 'Authorization': 'Bearer ' + accessToken }
+                    })
+                        .then(res => res.json())
+                        .then(user => {
+                            currentUser = user;
+                            localStorage.setItem('gdrive_user', JSON.stringify(user));
+                            updateUI('signed-in');
+                            toast('✓ Đăng nhập Google thành công!');
+                        })
+                        .catch(err => {
+                            console.error('[GDrive] User info error:', err);
+                            toast('Lỗi: ' + err.message);
+                        });
+                }
+
+                function onTokenError(error) {
+                    console.error('[GDrive] Token error callback:', error);
+
+                    let msg = 'Lỗi đăng nhập Google';
+                    if (error.type === 'popup_closed') {
+                        msg = 'Bạn đã đóng cửa sổ đăng nhập';
+                    } else if (error.type === 'popup_blocked') {
+                        msg = 'Popup bị chặn. Vui lòng cho phép popup.';
+                    }
+
+                    toast(msg);
+                    updateUI('signed-out');
+                }
+
+                // ===== USER ACTIONS =====
+                window.signInGoogle = function () {
+                    console.log('[GDrive] Sign in clicked');
+
+                    if (location.protocol === 'file:') {
+                        toast('⚠️ Cần chạy qua HTTP Server (localhost)');
+                        return;
+                    }
+
+                    if (!isInitialized || !tokenClient) {
+                        toast('Đang khởi tạo Google API...');
+                        init();
+                        return;
+                    }
+
+                    try {
+                        tokenClient.requestAccessToken({ prompt: 'consent' });
+                    } catch (err) {
+                        console.error('[GDrive] Request token error:', err);
+                        toast('Lỗi: ' + err.message);
+                    }
+                };
+
+                window.signOutGoogle = function () {
+                    console.log('[GDrive] Sign out clicked');
+
+                    if (accessToken && typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+                        try {
+                            google.accounts.oauth2.revoke(accessToken, () => {
+                                console.log('[GDrive] Token revoked');
+                            });
+                        } catch (e) {
+                            console.warn('[GDrive] Revoke error:', e);
+                        }
+                    }
+
+                    clearSession();
+                    updateUI('signed-out');
+                    toast('Đã đăng xuất Google');
+                };
+
+                window.syncToDrive = async function () {
+                    if (!accessToken) {
+                        toast('Vui lòng đăng nhập Google trước');
+                        return;
+                    }
+
+                    const statusEl = document.getElementById('driveStatus');
+                    if (statusEl) {
+                        statusEl.textContent = '⏳ Đang lưu...';
+                        statusEl.className = 'sync-status';
+                    }
+
+                    try {
+                        const data = collectSyncData();
+
+                        // Find existing file
                         const searchRes = await fetch(
-                            `https://www.googleapis.com/drive/v3/files?q=name='${window.DRIVE_FILE_NAME}'`,
-                            { headers: { 'Authorization': 'Bearer ' + window.googleAccessToken } }
+                            `https://www.googleapis.com/drive/v3/files?q=name='${CONFIG.FILE_NAME}'&spaces=drive`,
+                            { headers: { 'Authorization': 'Bearer ' + accessToken } }
                         );
 
-                        if (!searchRes.ok) return; // Silently fail
+                        if (!searchRes.ok) {
+                            if (searchRes.status === 401) {
+                                clearSession();
+                                updateUI('signed-out');
+                                toast('Phiên hết hạn, vui lòng đăng nhập lại');
+                                return;
+                            }
+                            throw new Error(`Search failed: ${searchRes.status}`);
+                        }
 
-                        const searchResult = await searchRes.json();
-                        let fileId = searchResult.files && searchResult.files[0] ? searchResult.files[0].id : null;
+                        const searchData = await searchRes.json();
+                        const existingFileId = searchData.files?.[0]?.id;
 
-                        const metadata = {
-                            name: window.DRIVE_FILE_NAME,
-                            mimeType: 'application/json'
-                        };
-
+                        // Prepare upload
+                        const metadata = { name: CONFIG.FILE_NAME, mimeType: 'application/json' };
                         const form = new FormData();
                         form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
                         form.append('file', new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
 
-                        const uploadUrl = fileId
-                            ? `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`
+                        const uploadUrl = existingFileId
+                            ? `https://www.googleapis.com/upload/drive/v3/files/${existingFileId}?uploadType=multipart`
                             : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
 
-                        await fetch(uploadUrl, {
-                            method: fileId ? 'PATCH' : 'POST',
-                            headers: { 'Authorization': 'Bearer ' + window.googleAccessToken },
+                        const uploadRes = await fetch(uploadUrl, {
+                            method: existingFileId ? 'PATCH' : 'POST',
+                            headers: { 'Authorization': 'Bearer ' + accessToken },
                             body: form
                         });
 
-                        console.log('Auto-synced to Drive');
-                    } catch (e) {
-                        console.error('Auto-sync error:', e);
-                    }
-                }, 3000);
-            }
+                        if (!uploadRes.ok) throw new Error(`Upload failed: ${uploadRes.status}`);
 
-            // Sync data helpers
-            function getSyncData() {
-                return {
-                    customSites,
-                    platformOrder: JSON.parse(localStorage.getItem('platformOrder') || '{}'),
-                    favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
-                    history: JSON.parse(localStorage.getItem('searchHistory') || '[]'),
-                    knowledgeBase: JSON.parse(localStorage.getItem('knowledgeBase') || '[]'),
-                    settings: {
-                        apiKey: localStorage.getItem('geminiApiKey') || '',
-                        enableAI: localStorage.getItem('enableAI') !== 'false',
-                        lang: currentLang
-                    },
-                    lastSync: new Date().toISOString()
-                };
-            }
-
-            function applySyncData(data) {
-                if (data.customSites) {
-                    customSites = data.customSites;
-                    localStorage.setItem('customSites', JSON.stringify(customSites));
-                }
-                if (data.platformOrder) {
-                    localStorage.setItem('platformOrder', JSON.stringify(data.platformOrder));
-                }
-                if (data.favorites) {
-                    localStorage.setItem('favorites', JSON.stringify(data.favorites));
-                }
-                if (data.history) {
-                    localStorage.setItem('searchHistory', JSON.stringify(data.history));
-                }
-                if (data.settings) {
-                    if (data.settings.apiKey) localStorage.setItem('geminiApiKey', data.settings.apiKey);
-                    if (data.settings.enableAI !== undefined) localStorage.setItem('enableAI', data.settings.enableAI ? 'true' : 'false');
-                    if (data.settings.lang) localStorage.setItem('lang', data.settings.lang);
-                }
-                if (data.knowledgeBase) {
-                    localStorage.setItem('knowledgeBase', JSON.stringify(data.knowledgeBase));
-                }
-            }
-
-            // Use window scope for accessibility from onclick handlers
-            window.googleAccessToken = null;
-            window.googleUser = null;
-            window.tokenClient = null;
-            window.googleAuthInitialized = false;
-
-            // Initialize Google Identity Services
-            function initGoogleAuth() {
-                // Check protocol first
-                if (window.location.protocol === 'file:') {
-                    console.warn('Google OAuth does not work with file:// protocol');
-                    updateGoogleButtonState();
-                    return;
-                }
-
-                if (typeof google === 'undefined' || !google.accounts) {
-                    console.log('Google Identity Services not loaded yet');
-                    setTimeout(initGoogleAuth, 500);
-                    return;
-                }
-
-                try {
-                    window.tokenClient = google.accounts.oauth2.initTokenClient({
-                        client_id: window.GOOGLE_CLIENT_ID,
-                        scope: window.DRIVE_SCOPE,
-                        callback: handleGoogleCallback
-                    });
-                    window.googleAuthInitialized = true;
-                    console.log('Google Auth initialized successfully');
-                } catch (e) {
-                    console.error('Failed to init Google Auth:', e);
-                }
-
-                // Check if user is already signed in
-                const savedToken = localStorage.getItem('googleAccessToken');
-                const savedUser = localStorage.getItem('googleUser');
-                if (savedToken && savedUser) {
-                    window.googleAccessToken = savedToken;
-                    window.googleUser = JSON.parse(savedUser);
-                    showSignedInState();
-                }
-
-                updateGoogleButtonState();
-            }
-
-            // Update button state based on initialization
-            function updateGoogleButtonState() {
-                const btn = document.querySelector('[onclick="signInGoogle()"]');
-                if (!btn) return;
-
-                if (window.location.protocol === 'file:') {
-                    btn.innerHTML = '⚠️ Cần chạy qua HTTP Server';
-                    btn.disabled = true;
-                    btn.style.opacity = '0.6';
-                    btn.title = 'Google OAuth không hoạt động với file://. Hãy chạy qua localhost hoặc deploy lên web.';
-                } else if (!window.googleAuthInitialized) {
-                    btn.innerHTML = '⏳ Đang tải Google API...';
-                    btn.disabled = true;
-                } else {
-                    btn.innerHTML = '<img src="https://www.google.com/favicon.ico" style="width:14px;height:14px;margin-right:6px;"> Đăng nhập Google';
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                }
-            }
-
-            function handleGoogleCallback(response) {
-                if (response.error) {
-                    console.error('Google auth error:', response.error);
-                    toast('Đăng nhập thất bại: ' + (response.error_description || response.error));
-                    return;
-                }
-
-                window.googleAccessToken = response.access_token;
-                localStorage.setItem('googleAccessToken', window.googleAccessToken);
-
-                // Get user info
-                fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-                    headers: { 'Authorization': 'Bearer ' + window.googleAccessToken }
-                })
-                    .then(res => res.json())
-                    .then(user => {
-                        window.googleUser = user;
-                        localStorage.setItem('googleUser', JSON.stringify(user));
-                        showSignedInState();
-                        toast('Đăng nhập thành công!');
-                    })
-                    .catch(err => {
-                        console.error('User info error:', err);
-                        toast('Lỗi lấy thông tin user: ' + err.message);
-                    });
-            }
-
-            function signInGoogle() {
-                // Check protocol first
-                if (window.location.protocol === 'file:') {
-                    toast('⚠️ Google Sync chỉ hoạt động khi chạy qua HTTP server (localhost hoặc web)');
-                    return;
-                }
-
-                if (!window.tokenClient) {
-                    toast('Google API đang khởi tạo, vui lòng đợi...');
-                    initGoogleAuth();
-                    return;
-                }
-
-                try {
-                    window.tokenClient.requestAccessToken();
-                } catch (e) {
-                    console.error('Google auth error:', e);
-                    toast('Lỗi kết nối Google: ' + e.message);
-                }
-            }
-
-            function signOutGoogle() {
-                if (window.googleAccessToken) {
-                    google.accounts.oauth2.revoke(window.googleAccessToken, () => {
-                        console.log('Token revoked');
-                    });
-                }
-                window.googleAccessToken = null;
-                window.googleUser = null;
-                localStorage.removeItem('googleAccessToken');
-                localStorage.removeItem('googleUser');
-                showNotSignedInState();
-                toast('Đã đăng xuất');
-            }
-
-            function showSignedInState() {
-                document.getElementById('driveNotSignedIn').style.display = 'none';
-                document.getElementById('driveSignedIn').style.display = 'block';
-                if (window.googleUser) {
-                    const photoEl = document.getElementById('driveUserPhoto');
-                    const nameEl = document.getElementById('driveUserName');
-
-                    if (window.googleUser.picture) {
-                        photoEl.src = window.googleUser.picture;
-                        photoEl.style.display = 'block';
-                    }
-
-                    // Show email (prioritize email, show name as fallback)
-                    nameEl.textContent = window.googleUser.email || window.googleUser.name || 'Đã đăng nhập';
-                }
-            }
-
-            function showNotSignedInState() {
-                document.getElementById('driveNotSignedIn').style.display = 'block';
-                document.getElementById('driveSignedIn').style.display = 'none';
-            }
-
-            // Get all data to sync to Drive
-            function getSyncData() {
-                return {
-                    version: 2,
-                    timestamp: new Date().toISOString(),
-                    // User preferences
-                    geminiApiKey: localStorage.getItem('geminiApiKey') || '',
-                    enableAI: localStorage.getItem('enableAI') || 'true',
-                    lang: localStorage.getItem('lang') || 'vi',
-                    // Tab and platform order
-                    tabOrder: JSON.parse(localStorage.getItem('tabOrder') || '[]'),
-                    platformOrder: JSON.parse(localStorage.getItem('platformOrder') || '{}'),
-                    // Custom data
-                    customSites: JSON.parse(localStorage.getItem('customSites') || '{}'),
-                    customHomepages: JSON.parse(localStorage.getItem('customHomepages') || '{}'),
-                    defaultHomepages: JSON.parse(localStorage.getItem('defaultHomepages') || '{}'),
-                    // User content
-                    searchHistory: JSON.parse(localStorage.getItem('searchHistory') || '[]'),
-                    myTools: JSON.parse(localStorage.getItem('myTools') || '[]'),
-                    promptLibrary: JSON.parse(localStorage.getItem('promptLibrary') || '[]'),
-                    favorites: JSON.parse(localStorage.getItem('favorites') || '[]')
-                };
-            }
-
-            // Apply synced data from Drive
-            function applySyncData(data) {
-                if (!data) return;
-
-                // User preferences
-                if (data.geminiApiKey) localStorage.setItem('geminiApiKey', data.geminiApiKey);
-                if (data.enableAI !== undefined) localStorage.setItem('enableAI', data.enableAI);
-                if (data.lang) localStorage.setItem('lang', data.lang);
-
-                // Tab and platform order
-                if (data.tabOrder) localStorage.setItem('tabOrder', JSON.stringify(data.tabOrder));
-                if (data.platformOrder) localStorage.setItem('platformOrder', JSON.stringify(data.platformOrder));
-
-                // Custom data
-                if (data.customSites) localStorage.setItem('customSites', JSON.stringify(data.customSites));
-                if (data.customHomepages) localStorage.setItem('customHomepages', JSON.stringify(data.customHomepages));
-                if (data.defaultHomepages) localStorage.setItem('defaultHomepages', JSON.stringify(data.defaultHomepages));
-
-                // User content
-                if (data.searchHistory) localStorage.setItem('searchHistory', JSON.stringify(data.searchHistory));
-                if (data.myTools) localStorage.setItem('myTools', JSON.stringify(data.myTools));
-                if (data.promptLibrary) localStorage.setItem('promptLibrary', JSON.stringify(data.promptLibrary));
-                if (data.favorites) localStorage.setItem('favorites', JSON.stringify(data.favorites));
-            }
-
-            async function syncToDrive() {
-                if (!window.googleAccessToken) {
-                    toast('Vui lòng đăng nhập Google');
-                    return;
-                }
-
-                const statusEl = document.getElementById('driveStatus');
-                statusEl.textContent = 'Đang lưu lên Drive...';
-                statusEl.className = 'sync-status';
-
-                try {
-                    const data = getSyncData();
-
-                    // First, search for existing file
-                    const searchRes = await fetch(
-                        `https://www.googleapis.com/drive/v3/files?q=name='${window.DRIVE_FILE_NAME}'`,
-                        { headers: { 'Authorization': 'Bearer ' + window.googleAccessToken } }
-                    );
-
-                    if (!searchRes.ok) {
-                        if (searchRes.status === 401) {
-                            // Token expired
-                            signOutGoogle();
-                            toast('Phiên đăng nhập hết hạn, vui lòng đăng nhập lại');
-                            return;
+                        if (statusEl) {
+                            statusEl.textContent = '✓ Đã lưu lên Drive!';
+                            statusEl.className = 'sync-status success';
                         }
-                        throw new Error('Search failed');
-                    }
+                        toast('✓ Đã lưu lên Google Drive!');
 
-                    const searchResult = await searchRes.json();
-                    let fileId = searchResult.files && searchResult.files[0] ? searchResult.files[0].id : null;
-
-                    const metadata = {
-                        name: window.DRIVE_FILE_NAME,
-                        mimeType: 'application/json'
-                    };
-
-                    // New file will be created in root folder (visible in Drive)
-
-                    const form = new FormData();
-                    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-                    form.append('file', new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
-
-                    const uploadUrl = fileId
-                        ? `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`
-                        : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
-
-                    const uploadRes = await fetch(uploadUrl, {
-                        method: fileId ? 'PATCH' : 'POST',
-                        headers: { 'Authorization': 'Bearer ' + window.googleAccessToken },
-                        body: form
-                    });
-
-                    if (!uploadRes.ok) throw new Error('Upload failed');
-
-                    statusEl.textContent = '✓ Đã lưu lên Google Drive!';
-                    statusEl.className = 'sync-status success';
-                    toast('Đã lưu lên Google Drive!');
-
-                } catch (e) {
-                    console.error('Drive sync error:', e);
-                    statusEl.textContent = '✗ Lỗi: ' + e.message;
-                    statusEl.className = 'sync-status error';
-                }
-            }
-
-            async function syncFromDrive() {
-                if (!window.googleAccessToken) {
-                    toast('Vui lòng đăng nhập Google');
-                    return;
-                }
-
-                const statusEl = document.getElementById('driveStatus');
-                statusEl.textContent = 'Đang tải xuống...';
-                statusEl.className = 'sync-status';
-
-                try {
-                    console.log('🔍 Searching for file:', window.DRIVE_FILE_NAME);
-
-                    // Search for file
-                    const searchRes = await fetch(
-                        `https://www.googleapis.com/drive/v3/files?q=name='${window.DRIVE_FILE_NAME}'`,
-                        { headers: { 'Authorization': 'Bearer ' + window.googleAccessToken } }
-                    );
-
-                    console.log('🔍 Search response status:', searchRes.status);
-
-                    if (!searchRes.ok) {
-                        if (searchRes.status === 401) {
-                            signOutGoogle();
-                            toast('Phiên đăng nhập hết hạn, vui lòng đăng nhập lại');
-                            return;
+                    } catch (err) {
+                        console.error('[GDrive] Sync to drive error:', err);
+                        if (statusEl) {
+                            statusEl.textContent = '✗ Lỗi: ' + err.message;
+                            statusEl.className = 'sync-status error';
                         }
-                        const errorText = await searchRes.text();
-                        console.error('Search error:', errorText);
-                        throw new Error('Search failed: ' + searchRes.status);
+                        toast('Lỗi: ' + err.message);
                     }
+                };
 
-                    const searchResult = await searchRes.json();
-                    console.log('🔍 Search result:', searchResult);
-
-                    if (!searchResult.files || searchResult.files.length === 0) {
-                        statusEl.textContent = 'Không tìm thấy file backup trên Drive';
-                        statusEl.className = 'sync-status error';
-                        console.log('❌ No files found on Drive');
+                window.syncFromDrive = async function () {
+                    if (!accessToken) {
+                        toast('Vui lòng đăng nhập Google trước');
                         return;
                     }
 
-                    const fileId = searchResult.files[0].id;
-                    console.log('📥 Downloading file with ID:', fileId);
-
-                    // Download file content
-                    const downloadRes = await fetch(
-                        `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
-                        { headers: { 'Authorization': 'Bearer ' + window.googleAccessToken } }
-                    );
-
-                    console.log('📥 Download response status:', downloadRes.status);
-
-                    if (!downloadRes.ok) {
-                        const errorText = await downloadRes.text();
-                        console.error('Download error:', errorText);
-                        throw new Error('Download failed: ' + downloadRes.status);
+                    const statusEl = document.getElementById('driveStatus');
+                    if (statusEl) {
+                        statusEl.textContent = '⏳ Đang tải xuống...';
+                        statusEl.className = 'sync-status';
                     }
 
-                    const data = await downloadRes.json();
-                    console.log('📦 Downloaded data:', data);
-                    console.log('📦 myTools in data:', data.myTools);
-                    console.log('📦 promptLibrary in data:', data.promptLibrary);
+                    try {
+                        // Find file
+                        const searchRes = await fetch(
+                            `https://www.googleapis.com/drive/v3/files?q=name='${CONFIG.FILE_NAME}'&spaces=drive`,
+                            { headers: { 'Authorization': 'Bearer ' + accessToken } }
+                        );
 
-                    applySyncData(data);
-                    console.log('✅ Data applied to localStorage');
+                        if (!searchRes.ok) {
+                            if (searchRes.status === 401) {
+                                clearSession();
+                                updateUI('signed-out');
+                                toast('Phiên hết hạn, vui lòng đăng nhập lại');
+                                return;
+                            }
+                            throw new Error(`Search failed: ${searchRes.status}`);
+                        }
 
-                    statusEl.textContent = '✓ Đã tải xuống! Đang reload...';
-                    statusEl.className = 'sync-status success';
-                    toast('Đã tải xuống từ Google Drive!');
+                        const searchData = await searchRes.json();
+                        if (!searchData.files?.length) {
+                            if (statusEl) {
+                                statusEl.textContent = 'Không tìm thấy file backup';
+                                statusEl.className = 'sync-status error';
+                            }
+                            return;
+                        }
 
-                    setTimeout(() => location.reload(), 1500);
+                        // Download file
+                        const fileId = searchData.files[0].id;
+                        const downloadRes = await fetch(
+                            `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+                            { headers: { 'Authorization': 'Bearer ' + accessToken } }
+                        );
 
-                } catch (e) {
-                    console.error('Drive download error:', e);
-                    statusEl.textContent = '✗ Lỗi: ' + e.message;
-                    statusEl.className = 'sync-status error';
+                        if (!downloadRes.ok) throw new Error(`Download failed: ${downloadRes.status}`);
+
+                        const data = await downloadRes.json();
+                        applySyncData(data);
+
+                        if (statusEl) {
+                            statusEl.textContent = '✓ Đã tải xuống! Reloading...';
+                            statusEl.className = 'sync-status success';
+                        }
+                        toast('✓ Đã tải xuống từ Google Drive!');
+
+                        setTimeout(() => location.reload(), 1500);
+
+                    } catch (err) {
+                        console.error('[GDrive] Sync from drive error:', err);
+                        if (statusEl) {
+                            statusEl.textContent = '✗ Lỗi: ' + err.message;
+                            statusEl.className = 'sync-status error';
+                        }
+                        toast('Lỗi: ' + err.message);
+                    }
+                };
+
+                // ===== DATA HELPERS =====
+                function collectSyncData() {
+                    return {
+                        version: 3,
+                        timestamp: new Date().toISOString(),
+                        geminiApiKey: localStorage.getItem('geminiApiKey') || '',
+                        enableAI: localStorage.getItem('enableAI') || 'true',
+                        lang: localStorage.getItem('lang') || 'vi',
+                        tabOrder: JSON.parse(localStorage.getItem('tabOrder') || '[]'),
+                        platformOrder: JSON.parse(localStorage.getItem('platformOrder') || '{}'),
+                        customSites: JSON.parse(localStorage.getItem('customSites') || '{}'),
+                        customHomepages: JSON.parse(localStorage.getItem('customHomepages') || '{}'),
+                        defaultHomepages: JSON.parse(localStorage.getItem('defaultHomepages') || '{}'),
+                        searchHistory: JSON.parse(localStorage.getItem('searchHistory') || '[]'),
+                        myTools: JSON.parse(localStorage.getItem('myTools') || '[]'),
+                        promptLibrary: JSON.parse(localStorage.getItem('promptLibrary') || '[]'),
+                        favorites: JSON.parse(localStorage.getItem('favorites') || '[]')
+                    };
                 }
-            }
 
-            // Init Google Auth when page loads
-            window.addEventListener('load', initGoogleAuth);
+                function applySyncData(data) {
+                    if (!data) return;
+
+                    const keys = ['geminiApiKey', 'enableAI', 'lang'];
+                    keys.forEach(k => {
+                        if (data[k] !== undefined) localStorage.setItem(k, data[k]);
+                    });
+
+                    const jsonKeys = ['tabOrder', 'platformOrder', 'customSites', 'customHomepages',
+                        'defaultHomepages', 'searchHistory', 'myTools', 'promptLibrary', 'favorites'];
+                    jsonKeys.forEach(k => {
+                        if (data[k]) localStorage.setItem(k, JSON.stringify(data[k]));
+                    });
+                }
+
+                // Auto-sync when data changes
+                window.autoSyncToDrive = function () {
+                    if (!accessToken) return;
+
+                    if (autoSyncTimer) clearTimeout(autoSyncTimer);
+                    autoSyncTimer = setTimeout(() => {
+                        console.log('[GDrive] Auto-syncing...');
+                        window.syncToDrive();
+                    }, CONFIG.AUTO_SYNC_DELAY);
+                };
+
+                // ===== UI UPDATE =====
+                function updateUI(state, errorMsg) {
+                    const notSignedIn = document.getElementById('driveNotSignedIn');
+                    const signedIn = document.getElementById('driveSignedIn');
+                    const loginBtn = document.querySelector('[onclick="signInGoogle()"]');
+                    const userPhoto = document.getElementById('driveUserPhoto');
+                    const userName = document.getElementById('driveUserName');
+
+                    switch (state) {
+                        case 'file-protocol':
+                            if (notSignedIn) notSignedIn.style.display = 'block';
+                            if (signedIn) signedIn.style.display = 'none';
+                            if (loginBtn) {
+                                loginBtn.innerHTML = '⚠️ Cần HTTP Server';
+                                loginBtn.disabled = true;
+                                loginBtn.style.opacity = '0.6';
+                                loginBtn.title = 'Chạy qua localhost hoặc deploy web';
+                            }
+                            break;
+
+                        case 'init-error':
+                            if (notSignedIn) notSignedIn.style.display = 'block';
+                            if (signedIn) signedIn.style.display = 'none';
+                            if (loginBtn) {
+                                loginBtn.innerHTML = '⚠️ Lỗi: ' + (errorMsg || 'Không thể khởi tạo');
+                                loginBtn.disabled = true;
+                                loginBtn.style.opacity = '0.6';
+                            }
+                            break;
+
+                        case 'signed-in':
+                            if (notSignedIn) notSignedIn.style.display = 'none';
+                            if (signedIn) signedIn.style.display = 'block';
+                            if (currentUser) {
+                                if (userPhoto && currentUser.picture) {
+                                    userPhoto.src = currentUser.picture;
+                                    userPhoto.style.display = 'block';
+                                }
+                                if (userName) {
+                                    userName.textContent = currentUser.email || currentUser.name || 'Đã đăng nhập';
+                                }
+                            }
+                            break;
+
+                        case 'signed-out':
+                        default:
+                            if (notSignedIn) notSignedIn.style.display = 'block';
+                            if (signedIn) signedIn.style.display = 'none';
+                            if (loginBtn) {
+                                loginBtn.innerHTML = '<img src="https://www.google.com/favicon.ico" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"> Đăng nhập Google';
+                                loginBtn.disabled = false;
+                                loginBtn.style.opacity = '1';
+                            }
+                            break;
+                    }
+                }
+
+                // ===== EXPOSE TO WINDOW FOR LEGACY COMPAT =====
+                window.googleAccessToken = null; // For backward compat, updated via getter
+                Object.defineProperty(window, 'googleAccessToken', {
+                    get: () => accessToken,
+                    set: (v) => { accessToken = v; }
+                });
+
+                // Initialize on DOM ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', init);
+                } else {
+                    init();
+                }
+
+                // Also init on window load (backup)
+                window.addEventListener('load', function () {
+                    if (!isInitialized) init();
+                });
+
+            })();
 
             // Initialize all features - ORDER MATTERS!
             // 1. First add custom buttons so containers are ready
