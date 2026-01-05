@@ -659,13 +659,203 @@
         }
 
         .pb-input,
-        .pb-select {
+        .pb-select,
+        .pb-textarea {
             padding: 10px 12px;
             border: 1px solid #dadce0;
             border-radius: 8px;
             font-size: 14px;
             transition: border-color 0.2s;
         }
+
+        /* Negative Prompt Grid */
+        .negative-prompt-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .neg-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+            background: #fef7f7;
+            border: 1px solid #fce8e8;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .neg-checkbox:hover {
+            background: #fce8e8;
+            border-color: #ea4335;
+        }
+
+        .neg-checkbox input[type="checkbox"] {
+            accent-color: #ea4335;
+        }
+
+        .neg-checkbox input[type="checkbox"]:checked+span,
+        .neg-checkbox:has(input:checked) {
+            color: #c5221f;
+            font-weight: 500;
+        }
+
+        /* Formula Cards Section */
+        .formula-section .toggle-hint {
+            font-size: 11px;
+            color: #9aa0a6;
+            font-weight: 400;
+        }
+
+        .formula-cards {
+            margin-top: 12px;
+            padding: 12px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #fff5f5 50%, #f5fff5 100%);
+            border-radius: 12px;
+            border: 1px solid #e8eaed;
+        }
+
+        .recipe-category {
+            margin-bottom: 16px;
+        }
+
+        .recipe-category:last-of-type {
+            margin-bottom: 8px;
+        }
+
+        .recipe-category-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #202124;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px dashed #dadce0;
+        }
+
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
+        }
+
+        .recipe-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .recipe-card:hover {
+            border-color: #1a73e8;
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .recipe-card:active {
+            transform: translateY(0);
+        }
+
+        .recipe-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1a73e8;
+            margin-bottom: 6px;
+        }
+
+        .recipe-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .recipe-tag {
+            font-size: 9px;
+            padding: 2px 6px;
+            background: #f1f3f4;
+            border-radius: 10px;
+            color: #5f6368;
+            white-space: nowrap;
+        }
+
+        .recipe-tag:nth-child(1) {
+            background: #e8f0fe;
+            color: #1967d2;
+        }
+
+        /* Style */
+        .recipe-tag:nth-child(2) {
+            background: #fef7e0;
+            color: #b06000;
+        }
+
+        /* Lighting */
+        .recipe-tag:nth-child(3) {
+            background: #e6f4ea;
+            color: #137333;
+        }
+
+        /* Camera */
+        .recipe-tag:nth-child(4) {
+            background: #fce8e6;
+            color: #c5221f;
+        }
+
+        /* Mood */
+        .recipe-tag:nth-child(5) {
+            background: #f3e8fd;
+            color: #7627bb;
+        }
+
+        /* Color */
+
+        .formula-legend {
+            margin-top: 12px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #5f6368;
+            text-align: center;
+        }
+
+        .formula-legend .legend-item {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            margin: 0 2px;
+        }
+
+        .formula-legend .legend-item:nth-of-type(1) {
+            background: #e8f0fe;
+            color: #1967d2;
+        }
+
+        .formula-legend .legend-item:nth-of-type(2) {
+            background: #fef7e0;
+            color: #b06000;
+        }
+
+        .formula-legend .legend-item:nth-of-type(3) {
+            background: #e6f4ea;
+            color: #137333;
+        }
+
+        .formula-legend .legend-item:nth-of-type(4) {
+            background: #fce8e6;
+            color: #c5221f;
+        }
+
+        .formula-legend .legend-item:nth-of-type(5) {
+            background: #f3e8fd;
+            color: #7627bb;
+        }
+
 
         .pb-input-group {
             display: flex;
@@ -4599,6 +4789,213 @@
 
         <!-- CREATE TAB - Prompt Builder -->
         <div class="tab-content" id="create-tab">
+            <!-- Formula Cards Section -->
+            <div class="section formula-section">
+                <div class="section-title" onclick="toggleFormulaCards()" style="cursor:pointer;">
+                    📋 Công thức gợi ý <span class="toggle-hint">(click để mở/đóng)</span>
+                    <span id="formulaToggleIcon" style="float:right;">▼</span>
+                </div>
+                <div id="formulaCards" class="formula-cards" style="display:none;">
+                    <!-- Stock Photography Recipes -->
+                    <div class="recipe-category">
+                        <div class="recipe-category-title">📷 Stock Photography</div>
+                        <div class="recipe-grid">
+                            <div class="recipe-card" onclick="applyRecipe('business')">
+                                <div class="recipe-name">💼 Business/Corporate</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">Stock - Business</span>
+                                    <span class="recipe-tag">Window Light</span>
+                                    <span class="recipe-tag">Medium Shot</span>
+                                    <span class="recipe-tag">Professional</span>
+                                    <span class="recipe-tag">Cool Tones</span>
+                                </div>
+                            </div>
+                            <div class="recipe-card" onclick="applyRecipe('lifestyle')">
+                                <div class="recipe-name">🏡 Lifestyle</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">Stock - Lifestyle</span>
+                                    <span class="recipe-tag">Golden Hour</span>
+                                    <span class="recipe-tag">Wide Shot</span>
+                                    <span class="recipe-tag">Authentic</span>
+                                    <span class="recipe-tag">Warm Tones</span>
+                                </div>
+                            </div>
+                            <div class="recipe-card" onclick="applyRecipe('food')">
+                                <div class="recipe-name">🍽️ Food</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">Stock - Food</span>
+                                    <span class="recipe-tag">Window Light</span>
+                                    <span class="recipe-tag">Overhead Flat Lay</span>
+                                    <span class="recipe-tag">Playful</span>
+                                    <span class="recipe-tag">Warm Tones</span>
+                                </div>
+                            </div>
+                            <div class="recipe-card" onclick="applyRecipe('product')">
+                                <div class="recipe-name">📦 Product</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">Stock - Product</span>
+                                    <span class="recipe-tag">High-Key</span>
+                                    <span class="recipe-tag">Close-up</span>
+                                    <span class="recipe-tag">Minimalist</span>
+                                    <span class="recipe-tag">Monochromatic</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vector/Illustration Recipes -->
+                    <div class="recipe-category">
+                        <div class="recipe-category-title">🎨 Vector/Illustration</div>
+                        <div class="recipe-grid">
+                            <div class="recipe-card" onclick="applyRecipe('vector-corporate')">
+                                <div class="recipe-name">🏢 Corporate Flat</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">Vector - Corporate</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">Isometric</span>
+                                    <span class="recipe-tag">Professional</span>
+                                    <span class="recipe-tag">Cool Tones</span>
+                                </div>
+                            </div>
+                            <div class="recipe-card" onclick="applyRecipe('vector-icon')">
+                                <div class="recipe-name">🎯 Icons/UI</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">Vector - Icons</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">Minimalist</span>
+                                    <span class="recipe-tag">Monochromatic</span>
+                                </div>
+                            </div>
+                            <div class="recipe-card" onclick="applyRecipe('vector-mascot')">
+                                <div class="recipe-name">🦊 Mascot</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">Vector - Character</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">Portrait</span>
+                                    <span class="recipe-tag">Playful</span>
+                                    <span class="recipe-tag">Vibrant</span>
+                                </div>
+                            </div>
+                            <div class="recipe-card" onclick="applyRecipe('vector-pattern')">
+                                <div class="recipe-name">🌸 Pattern</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">Vector - Pattern</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">Bold</span>
+                                    <span class="recipe-tag">Pastel</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backgrounds Recipes -->
+                    <div class="recipe-category">
+                        <div class="recipe-category-title">🖼️ Backgrounds</div>
+                        <div class="recipe-grid">
+                            <div class="recipe-card" onclick="applyRecipe('bg-gradient')">
+                                <div class="recipe-name">🌈 Gradient Abstract</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">BG - Gradient</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">Dreamy</span>
+                                    <span class="recipe-tag">Pastel</span>
+                                </div>
+                            </div>
+                            <div class="recipe-card" onclick="applyRecipe('bg-tech')">
+                                <div class="recipe-name">🌃 Tech/Cyber</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">BG - Tech</span>
+                                    <span class="recipe-tag">Neon</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">Mysterious</span>
+                                    <span class="recipe-tag">Neon</span>
+                                </div>
+                            </div>
+                            <div class="recipe-card" onclick="applyRecipe('bg-nature')">
+                                <div class="recipe-name">🌿 Nature Blur</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">BG - Nature Blur</span>
+                                    <span class="recipe-tag">Golden Hour</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">Serene</span>
+                                    <span class="recipe-tag">Earth Tones</span>
+                                </div>
+                            </div>
+                            <div class="recipe-card" onclick="applyRecipe('bg-studio')">
+                                <div class="recipe-name">⬜ Studio Clean</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">BG - Studio</span>
+                                    <span class="recipe-tag">High-Key</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">Minimalist</span>
+                                    <span class="recipe-tag">Monochromatic</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trending 2025-2026 -->
+                    <div class="recipe-category">
+                        <div class="recipe-category-title">🔥 Xu hướng 2025-2026</div>
+                        <div class="recipe-grid">
+                            <div class="recipe-card" onclick="applyRecipe('trend-authentic')">
+                                <div class="recipe-name">📸 Authentic Human</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">Trend - Authentic</span>
+                                    <span class="recipe-tag">Natural</span>
+                                    <span class="recipe-tag">Rule of Thirds</span>
+                                    <span class="recipe-tag">Authentic</span>
+                                    <span class="recipe-tag">Muted</span>
+                                </div>
+                            </div>
+                            <div class="recipe-card" onclick="applyRecipe('trend-hyperreal')">
+                                <div class="recipe-name">✨ Hyperreal AI</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">Trend - Hyperreal</span>
+                                    <span class="recipe-tag">Cinematic</span>
+                                    <span class="recipe-tag">Close-up</span>
+                                    <span class="recipe-tag">Dreamy</span>
+                                    <span class="recipe-tag">Vibrant</span>
+                                </div>
+                            </div>
+                            <div class="recipe-card" onclick="applyRecipe('trend-y2k')">
+                                <div class="recipe-name">💿 Y2K Revival</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">Trend - Y2K</span>
+                                    <span class="recipe-tag">Neon</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">Nostalgic</span>
+                                    <span class="recipe-tag">Neon</span>
+                                </div>
+                            </div>
+                            <div class="recipe-card" onclick="applyRecipe('trend-mixed')">
+                                <div class="recipe-name">🎭 Mixed Media</div>
+                                <div class="recipe-items">
+                                    <span class="recipe-tag">Trend - Mixed</span>
+                                    <span class="recipe-tag">Dramatic</span>
+                                    <span class="recipe-tag">N/A</span>
+                                    <span class="recipe-tag">Bold</span>
+                                    <span class="recipe-tag">Complementary</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="formula-legend">
+                        <strong>Công thức:</strong>
+                        <span class="legend-item">Style</span> +
+                        <span class="legend-item">Ánh sáng</span> +
+                        <span class="legend-item">Góc máy</span> +
+                        <span class="legend-item">Mood</span> +
+                        <span class="legend-item">Màu sắc</span>
+                        <br><small>💡 Click vào công thức để tự động điền!</small>
+                    </div>
+                </div>
+            </div>
+
             <div class="section">
                 <div class="section-title">🎨 Prompt Builder</div>
                 <div class="prompt-builder">
@@ -4612,6 +5009,12 @@
                                 🤖 AI
                             </button>
                         </div>
+                    </div>
+                    <!-- AI Intent Field (New) -->
+                    <div class="pb-row">
+                        <label class="pb-label">✨ Ý tưởng & Mục đích (Giúp AI tối ưu hóa)</label>
+                        <textarea id="pbIntent" class="pb-textarea" rows="2"
+                            placeholder="Ví dụ: Làm thumbnail YouTube cho video du lịch, cần màu sắc rực rỡ và khoảng trống bên phải để chèn chữ..."></textarea>
                     </div>
                     <div class="pb-row">
                         <label class="pb-label">2. Chi tiết</label>
@@ -4629,6 +5032,98 @@
                         <label class="pb-label">4. Style</label>
                         <select id="pbStyle" class="pb-select" onchange="updateFinalPrompt()">
                             <option value="">-- Chọn style --</option>
+                            <optgroup label="📷 Stock Photography">
+                                <option
+                                    value="stock photography, authentic lifestyle, natural lighting, diverse subjects, commercial use, editorial quality, candid moment, genuine emotion">
+                                    📷 Stock - Lifestyle</option>
+                                <option
+                                    value="corporate stock photography, professional business setting, modern office, diverse team collaboration, clean composition, commercial license">
+                                    📷 Stock - Business/Corporate</option>
+                                <option
+                                    value="food photography, appetizing presentation, overhead flat lay, natural lighting, fresh ingredients, culinary art, food magazine style">
+                                    📷 Stock - Food</option>
+                                <option
+                                    value="product photography, clean white background, studio lighting, commercial quality, e-commerce ready, sharp focus, professional">
+                                    📷 Stock - Product</option>
+                                <option
+                                    value="travel stock photography, destination scenery, wanderlust, vibrant colors, tourism, adventure, landscape, cultural">
+                                    📷 Stock - Travel</option>
+                                <option
+                                    value="technology stock, modern devices, startup environment, digital workspace, screens and gadgets, clean tech aesthetic">
+                                    📷 Stock - Technology</option>
+                                <option
+                                    value="healthcare stock photography, medical professionals, patient care, hospital setting, clinical, compassionate, clean">
+                                    📷 Stock - Healthcare</option>
+                            </optgroup>
+                            <optgroup label="🎨 Vector/Flat Design">
+                                <option
+                                    value="flat vector illustration, clean geometric shapes, bold colors, minimalist design, 2D, scalable, consistent line weight, print-ready">
+                                    🎨 Vector - Flat Design</option>
+                                <option
+                                    value="isometric vector illustration, 3D-like perspective, clean geometry, modern infographic style, technical precision, soft shadows">
+                                    🎨 Vector - Isometric</option>
+                                <option
+                                    value="line art illustration, clean outlines, minimal detail, elegant simplicity, single weight stroke, modern graphic design">
+                                    🎨 Vector - Line Art</option>
+                                <option
+                                    value="icon design, flat vector icons, consistent style, UI/UX ready, simple shapes, scalable SVG, professional iconography">
+                                    🎨 Vector - Icons/UI</option>
+                                <option
+                                    value="corporate flat illustration, business concept, professional color palette, simplified human figures, presentation ready, brand-safe">
+                                    🎨 Vector - Corporate</option>
+                                <option
+                                    value="character illustration, cartoon style, mascot design, friendly expression, vibrant colors, scalable vector">
+                                    🎨 Vector - Character/Mascot</option>
+                                <option
+                                    value="seamless pattern design, repeating tile, textile print, geometric or floral, vector pattern, surface design">
+                                    🎨 Vector - Pattern/Seamless</option>
+                            </optgroup>
+                            <optgroup label="🖼️ Backgrounds">
+                                <option
+                                    value="soft gradient background, smooth color transition, abstract, minimalist, suitable for text overlay, clean design">
+                                    🖼️ BG - Gradient</option>
+                                <option
+                                    value="marble texture background, elegant stone surface, white and gray veins, luxurious, high-resolution, product backdrop">
+                                    🖼️ BG - Marble/Texture</option>
+                                <option
+                                    value="blurred nature background, soft bokeh, green foliage, out of focus, dreamy atmosphere, natural light">
+                                    🖼️ BG - Nature Blur</option>
+                                <option
+                                    value="studio backdrop, clean solid color, professional photography background, seamless, shadow gradient">
+                                    🖼️ BG - Studio/Solid</option>
+                                <option
+                                    value="futuristic tech background, neon lights, cyber grid, dark atmosphere, sci-fi aesthetic, digital matrix">
+                                    🖼️ BG - Tech/Futuristic</option>
+                                <option
+                                    value="abstract geometric background, modern shapes, overlapping forms, bold colors, dynamic composition, contemporary art">
+                                    🖼️ BG - Geometric Abstract</option>
+                                <option
+                                    value="watercolor wash background, soft bleeds, artistic texture, pastel tones, paper texture, hand-painted feel">
+                                    🖼️ BG - Watercolor Wash</option>
+                            </optgroup>
+                            <optgroup label="🔥 Trending 2025-2026">
+                                <option
+                                    value="authentic human storytelling, genuine emotion, candid documentary style, diverse representation, real moments, unposed, natural imperfections">
+                                    🔥 Trend - Authentic Human</option>
+                                <option
+                                    value="hyperreal AI photography, surreal details, impossible perfection combined with reality, dreamlike quality, cutting-edge visual">
+                                    🔥 Trend - Hyperreal AI</option>
+                                <option
+                                    value="neo-traditionalism, hand-drawn aesthetic, organic lines, visible brush strokes, imperfect by design, tactile texture, post-AI authenticity">
+                                    🔥 Trend - Neo-Traditional</option>
+                                <option
+                                    value="mixed media collage, layered textures, scanned materials, digital meets analog, experimental composition, artistic fusion">
+                                    🔥 Trend - Mixed Media</option>
+                                <option
+                                    value="maximalist psychedelia, hyper-colorful, intricate patterns, 70s retrofuturism, bold and vibrant, surreal dreamscape">
+                                    🔥 Trend - Maximalist</option>
+                                <option
+                                    value="Y2K aesthetic, early 2000s nostalgia, chrome effects, bubble fonts, digital glitch, retro-futuristic">
+                                    🔥 Trend - Y2K Revival</option>
+                                <option
+                                    value="3D meets flat design, dimensional vector, volumetric shapes with 2D elements, modern hybrid style">
+                                    🔥 Trend - 3D + Flat</option>
+                            </optgroup>
                             <optgroup label="📸 Photorealistic">
                                 <option
                                     value="photorealistic, 8K UHD, ultra-detailed, DSLR quality, shot on Canon EOS R5, 85mm f/1.4 lens, shallow depth of field, natural bokeh, detailed skin texture, visible pores">
@@ -4687,28 +5182,59 @@
                         <label class="pb-label">5. Ánh sáng</label>
                         <select id="pbLighting" class="pb-select" onchange="updateFinalPrompt()">
                             <option value="">-- Chọn ánh sáng --</option>
-                            <option value="natural lighting">Natural</option>
-                            <option value="golden hour lighting">Golden Hour</option>
-                            <option value="dramatic lighting">Dramatic</option>
-                            <option value="soft diffused lighting">Soft</option>
-                            <option value="neon lights">Neon</option>
-                            <option value="backlit, rim lighting">Backlit</option>
-                            <option value="studio lighting">Studio</option>
-                            <option value="cinematic lighting">Cinematic</option>
+                            <optgroup label="🌞 Natural">
+                                <option value="natural lighting, soft daylight">Natural Daylight</option>
+                                <option value="golden hour lighting, warm sun">Golden Hour</option>
+                                <option value="soft window light, indirect sunlight">Window Light</option>
+                                <option value="overcast lighting, soft diffused, no harsh shadows">Overcast/Cloudy
+                                </option>
+                                <option value="blue hour lighting, twilight, cool tones">Blue Hour</option>
+                            </optgroup>
+                            <optgroup label="🎬 Studio/Professional">
+                                <option value="professional studio lighting, three-point setup">Studio 3-Point</option>
+                                <option value="high-key lighting, bright, minimal shadows, clean">High-Key (Bright)
+                                </option>
+                                <option value="low-key lighting, dramatic shadows, moody">Low-Key (Dark/Moody)</option>
+                                <option value="ring light, beauty lighting, even illumination">Ring Light</option>
+                                <option value="softbox lighting, diffused, professional portrait">Softbox</option>
+                                <option value="product lighting, clean, commercial quality">Product Lighting</option>
+                            </optgroup>
+                            <optgroup label="✨ Creative/Dramatic">
+                                <option value="dramatic lighting, strong contrast">Dramatic</option>
+                                <option value="backlit, rim lighting, silhouette edge">Backlit/Rim</option>
+                                <option value="neon lights, colorful glow, cyberpunk">Neon</option>
+                                <option value="cinematic lighting, movie quality, depth">Cinematic</option>
+                                <option value="chiaroscuro, Renaissance lighting, strong shadow">Chiaroscuro</option>
+                                <option value="volumetric lighting, god rays, atmospheric">Volumetric/God Rays</option>
+                            </optgroup>
                         </select>
                     </div>
                     <div class="pb-row">
                         <label class="pb-label">6. Góc máy</label>
                         <select id="pbComposition" class="pb-select" onchange="updateFinalPrompt()">
                             <option value="">-- Chọn góc máy --</option>
-                            <option value="close-up portrait">Close-up</option>
-                            <option value="wide shot">Wide Shot</option>
-                            <option value="portrait, centered">Portrait</option>
-                            <option value="bird's eye view">Bird's Eye</option>
-                            <option value="low angle shot">Low Angle</option>
-                            <option value="symmetrical composition">Symmetrical</option>
-                            <option value="rule of thirds">Rule of Thirds</option>
-                            <option value="macro shot">Macro</option>
+                            <optgroup label="📐 Standard">
+                                <option value="close-up portrait, face detail">Close-up</option>
+                                <option value="medium shot, waist up">Medium Shot</option>
+                                <option value="wide shot, full body, environment">Wide Shot</option>
+                                <option value="portrait composition, centered subject">Portrait/Centered</option>
+                                <option value="extreme close-up, macro detail">Macro/Extreme Close-up</option>
+                            </optgroup>
+                            <optgroup label="🎥 Angles">
+                                <option value="bird's eye view, top-down, aerial">Bird's Eye (Top-Down)</option>
+                                <option value="overhead flat lay, product arrangement">Overhead Flat Lay</option>
+                                <option value="low angle shot, heroic perspective">Low Angle</option>
+                                <option value="high angle shot, looking down">High Angle</option>
+                                <option value="dutch angle, tilted frame, dynamic">Dutch Angle (Tilted)</option>
+                                <option value="point of view, first person, POV">POV (First Person)</option>
+                            </optgroup>
+                            <optgroup label="🖼️ Composition">
+                                <option value="symmetrical composition, balanced">Symmetrical</option>
+                                <option value="rule of thirds, off-center subject">Rule of Thirds</option>
+                                <option value="isometric view, 3D-like angle, vector style">Isometric</option>
+                                <option value="negative space, minimalist composition">Negative Space</option>
+                                <option value="leading lines, depth perspective">Leading Lines</option>
+                            </optgroup>
                         </select>
                     </div>
                     <div class="pb-row">
@@ -4722,6 +5248,56 @@
                             <option value="4:3 landscape format">4:3 (Ngang - Ảnh cổ điển)</option>
                             <option value="3:2 classic photo format">3:2 (DSLR - Film)</option>
                         </select>
+                    </div>
+                    <div class="pb-row">
+                        <label class="pb-label">8. Mood/Không khí</label>
+                        <select id="pbMood" class="pb-select" onchange="updateFinalPrompt()">
+                            <option value="">-- Chọn mood --</option>
+                            <option value="professional, corporate, clean, business-appropriate">💼
+                                Professional/Corporate</option>
+                            <option value="authentic, candid, genuine emotion, real moment">📷 Authentic/Candid</option>
+                            <option value="dreamy, ethereal, soft focus, romantic">✨ Dreamy/Ethereal</option>
+                            <option value="bold, vibrant, energetic, dynamic">⚡ Bold/Vibrant</option>
+                            <option value="minimalist, clean, simple, uncluttered">🔲 Minimalist/Clean</option>
+                            <option value="nostalgic, vintage, retro, film grain">📼 Nostalgic/Vintage</option>
+                            <option value="luxury, premium, elegant, high-end">💎 Luxury/Premium</option>
+                            <option value="playful, fun, cheerful, colorful">🎉 Playful/Fun</option>
+                            <option value="mysterious, moody, dark, atmospheric">🌙 Mysterious/Moody</option>
+                            <option value="serene, peaceful, calm, tranquil">🧘 Serene/Peaceful</option>
+                        </select>
+                    </div>
+                    <div class="pb-row">
+                        <label class="pb-label">9. Bảng màu</label>
+                        <select id="pbColorPalette" class="pb-select" onchange="updateFinalPrompt()">
+                            <option value="">-- Chọn bảng màu --</option>
+                            <option value="warm color palette, golden tones, amber, orange">🌅 Warm Tones</option>
+                            <option value="cool color palette, blue tones, teal, cyan">❄️ Cool/Blue Tones</option>
+                            <option value="pastel colors, soft muted tones, gentle">🎀 Pastel</option>
+                            <option value="vibrant saturated colors, bold, vivid">🌈 Vibrant/Saturated</option>
+                            <option value="monochromatic, single color scheme, variations">⬛ Monochromatic</option>
+                            <option value="earth tones, natural colors, brown, green, beige">🌿 Earth Tones</option>
+                            <option value="black and white, grayscale, high contrast">🖤 Black & White</option>
+                            <option value="neon colors, cyberpunk palette, electric">💜 Neon/Electric</option>
+                            <option value="muted desaturated colors, film look, cinematic">🎬 Muted/Cinematic</option>
+                            <option value="complementary colors, color contrast, dynamic">🎨 Complementary</option>
+                        </select>
+                    </div>
+                    <div class="pb-row">
+                        <label class="pb-label">10. Loại bỏ (Negative Prompt)</label>
+                        <div class="negative-prompt-grid">
+                            <label class="neg-checkbox"><input type="checkbox" id="negText"
+                                    onchange="updateFinalPrompt()"> 🚫 No text/watermark</label>
+                            <label class="neg-checkbox"><input type="checkbox" id="negBlur"
+                                    onchange="updateFinalPrompt()"> 🚫 No blur/artifacts</label>
+                            <label class="neg-checkbox"><input type="checkbox" id="negFingers"
+                                    onchange="updateFinalPrompt()"> 🚫 No extra fingers</label>
+                            <label class="neg-checkbox"><input type="checkbox" id="negPlastic"
+                                    onchange="updateFinalPrompt()"> 🚫 No plastic skin</label>
+                            <label class="neg-checkbox"><input type="checkbox" id="negDeformed"
+                                    onchange="updateFinalPrompt()"> 🚫 No deformed faces</label>
+                            <label class="neg-checkbox"><input type="checkbox" id="negLowQuality"
+                                    onchange="updateFinalPrompt()"> 🚫 No low quality</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -4757,6 +5333,14 @@
                             Stable Diffusion</span><small>Open-source, local</small></label>
                     <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="aistudio"><span>🧪
                             AI Studio</span><small>Google, Nano Banana Pro</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="kittl"><span>✂️
+                            Kittl AI</span><small>Vector, logo chuyên nghiệp</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="recraft"><span>📐
+                            Recraft</span><small>SVG native, icons</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="reve"><span>🌟
+                            Reve Image</span><small>Photorealistic mới</small></label>
+                    <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="freepik-ai"><span>🎨
+                            Freepik AI</span><small>Stock có license</small></label>
                 </div>
             </div>
 
@@ -8950,7 +9534,171 @@ Trả về JSON (chỉ JSON, không text khác):
         updateClock();
         setInterval(updateClock, 60000);
 
-        // 6. Prompt Builder functions
+        // 6. Formula Cards functions
+        function toggleFormulaCards() {
+            const cards = document.getElementById('formulaCards');
+            const icon = document.getElementById('formulaToggleIcon');
+            if (cards.style.display === 'none') {
+                cards.style.display = 'block';
+                icon.textContent = '▲';
+            } else {
+                cards.style.display = 'none';
+                icon.textContent = '▼';
+            }
+        }
+
+        // Recipe presets mapping
+        const recipePresets = {
+            // Stock Photography
+            'business': {
+                style: 'Stock - Business/Corporate',
+                lighting: 'Window Light',
+                composition: 'Medium Shot',
+                mood: 'Professional/Corporate',
+                color: 'Cool/Blue Tones'
+            },
+            'lifestyle': {
+                style: 'Stock - Lifestyle',
+                lighting: 'Golden Hour',
+                composition: 'Wide Shot',
+                mood: 'Authentic/Candid',
+                color: 'Warm Tones'
+            },
+            'food': {
+                style: 'Stock - Food',
+                lighting: 'Window Light',
+                composition: 'Overhead Flat Lay',
+                mood: 'Playful/Fun',
+                color: 'Warm Tones'
+            },
+            'product': {
+                style: 'Stock - Product',
+                lighting: 'High-Key',
+                composition: 'Close-up',
+                mood: 'Minimalist/Clean',
+                color: 'Monochromatic'
+            },
+            // Vector
+            'vector-corporate': {
+                style: 'Vector - Corporate',
+                lighting: '',
+                composition: 'Isometric',
+                mood: 'Professional/Corporate',
+                color: 'Cool/Blue Tones'
+            },
+            'vector-icon': {
+                style: 'Vector - Icons/UI',
+                lighting: '',
+                composition: '',
+                mood: 'Minimalist/Clean',
+                color: 'Monochromatic'
+            },
+            'vector-mascot': {
+                style: 'Vector - Character/Mascot',
+                lighting: '',
+                composition: 'Portrait/Centered',
+                mood: 'Playful/Fun',
+                color: 'Vibrant/Saturated'
+            },
+            'vector-pattern': {
+                style: 'Vector - Pattern/Seamless',
+                lighting: '',
+                composition: '',
+                mood: 'Bold/Vibrant',
+                color: 'Pastel'
+            },
+            // Backgrounds
+            'bg-gradient': {
+                style: 'BG - Gradient',
+                lighting: '',
+                composition: '',
+                mood: 'Dreamy/Ethereal',
+                color: 'Pastel'
+            },
+            'bg-tech': {
+                style: 'BG - Tech/Futuristic',
+                lighting: 'Neon',
+                composition: '',
+                mood: 'Mysterious/Moody',
+                color: 'Neon/Electric'
+            },
+            'bg-nature': {
+                style: 'BG - Nature Blur',
+                lighting: 'Golden Hour',
+                composition: '',
+                mood: 'Serene/Peaceful',
+                color: 'Earth Tones'
+            },
+            'bg-studio': {
+                style: 'BG - Studio/Solid',
+                lighting: 'High-Key',
+                composition: '',
+                mood: 'Minimalist/Clean',
+                color: 'Monochromatic'
+            },
+            // Trending
+            'trend-authentic': {
+                style: 'Trend - Authentic Human',
+                lighting: 'Natural Daylight',
+                composition: 'Rule of Thirds',
+                mood: 'Authentic/Candid',
+                color: 'Muted/Cinematic'
+            },
+            'trend-hyperreal': {
+                style: 'Trend - Hyperreal AI',
+                lighting: 'Cinematic',
+                composition: 'Close-up',
+                mood: 'Dreamy/Ethereal',
+                color: 'Vibrant/Saturated'
+            },
+            'trend-y2k': {
+                style: 'Trend - Y2K Revival',
+                lighting: 'Neon',
+                composition: '',
+                mood: 'Nostalgic/Vintage',
+                color: 'Neon/Electric'
+            },
+            'trend-mixed': {
+                style: 'Trend - Mixed Media',
+                lighting: 'Dramatic',
+                composition: '',
+                mood: 'Bold/Vibrant',
+                color: 'Complementary'
+            }
+        };
+
+        function applyRecipe(recipeId) {
+            const recipe = recipePresets[recipeId];
+            if (!recipe) return;
+
+            // Helper to select option by partial text match
+            const selectByText = (selectId, searchText) => {
+                if (!searchText) return;
+                const select = document.getElementById(selectId);
+                if (!select) return;
+                for (let opt of select.options) {
+                    if (opt.text.includes(searchText) || opt.value.includes(searchText.toLowerCase())) {
+                        select.value = opt.value;
+                        break;
+                    }
+                }
+            };
+
+            // Apply recipe values
+            selectByText('pbStyle', recipe.style);
+            selectByText('pbLighting', recipe.lighting);
+            selectByText('pbComposition', recipe.composition);
+            selectByText('pbMood', recipe.mood);
+            selectByText('pbColorPalette', recipe.color);
+
+            // Update the final prompt
+            updateFinalPrompt();
+
+            // Show toast
+            toast(`✨ Đã áp dụng công thức: ${recipeId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`);
+        }
+
+        // 7. Prompt Builder functions
         function updateFinalPrompt() {
             const subject = document.getElementById('pbSubject').value.trim();
             const details = document.getElementById('pbDetails').value.trim();
@@ -8959,6 +9707,8 @@ Trả về JSON (chỉ JSON, không text khác):
             const lighting = document.getElementById('pbLighting').value;
             const composition = document.getElementById('pbComposition').value;
             const aspectRatio = document.getElementById('pbAspectRatio').value;
+            const mood = document.getElementById('pbMood')?.value || '';
+            const colorPalette = document.getElementById('pbColorPalette')?.value || '';
 
             let parts = [];
             if (subject) parts.push(subject);
@@ -8968,18 +9718,34 @@ Trả về JSON (chỉ JSON, không text khác):
             if (lighting) parts.push(lighting);
             if (composition) parts.push(composition);
             if (aspectRatio) parts.push(aspectRatio);
+            if (mood) parts.push(mood);
+            if (colorPalette) parts.push(colorPalette);
 
-            document.getElementById('finalPrompt').value = parts.join(', ');
+            // Build negative prompt
+            let negatives = [];
+            if (document.getElementById('negText')?.checked) negatives.push('no text', 'no watermark', 'no logo');
+            if (document.getElementById('negBlur')?.checked) negatives.push('no blur', 'no artifacts', 'sharp focus');
+            if (document.getElementById('negFingers')?.checked) negatives.push('no extra fingers', 'no extra limbs', 'correct anatomy');
+            if (document.getElementById('negPlastic')?.checked) negatives.push('no plastic skin', 'natural skin texture', 'realistic');
+            if (document.getElementById('negDeformed')?.checked) negatives.push('no deformed faces', 'proper facial features', 'symmetrical face');
+            if (document.getElementById('negLowQuality')?.checked) negatives.push('no low quality', 'high resolution', '8K', 'ultra detailed');
+
+            let finalPrompt = parts.join(', ');
+            if (negatives.length > 0) {
+                finalPrompt += ' --neg ' + negatives.join(', ');
+            }
+
+            document.getElementById('finalPrompt').value = finalPrompt;
         }
 
         function copyFinalPrompt() {
             const prompt = document.getElementById('finalPrompt').value;
             if (!prompt) {
-                showToast('⚠️ Prompt trống!');
+                toast('⚠️ Prompt trống!');
                 return;
             }
             navigator.clipboard.writeText(prompt).then(() => {
-                showToast('✅ Đã copy prompt!');
+                toast('✅ Đã copy prompt!');
             });
         }
 
@@ -9021,12 +9787,16 @@ Trả về JSON (chỉ JSON, không text khác):
                 'doubao-image': 'https://www.doubao.com/',
                 'tongyi': 'https://tongyi.aliyun.com/wanxiang/',
                 'ernie-vilg': 'https://yiyan.baidu.com/',
-                'aistudio': 'https://aistudio.google.com/prompts/new_chat?model=gemini-3-pro-image-preview'
+                'aistudio': 'https://aistudio.google.com/prompts/new_chat?model=gemini-3-pro-image-preview',
+                'kittl': 'https://www.kittl.com/create',
+                'recraft': 'https://www.recraft.ai/create',
+                'reve': 'https://reve.art/generate',
+                'freepik-ai': 'https://www.freepik.com/ai/image-generator'
             };
 
             // Copy prompt to clipboard
             navigator.clipboard.writeText(prompt).then(() => {
-                showToast(`✅ Đã copy prompt! Mở ${selectedModels.length} tool...`);
+                toast(`✅ Đã copy prompt! Mở ${selectedModels.length} tool...`);
             }).catch(() => { });
 
             // Open all selected AI tools
@@ -9039,63 +9809,196 @@ Trả về JSON (chỉ JSON, không text khác):
         }
 
         // 7. AI Assist Function - Smart Presets + Gemini API
+        // ATTRACTIVE IMAGE PRINCIPLES:
+        // 1. Contrast: Warm subject + Cool background OR Cool subject + Warm background
+        // 2. Focal Point: Clear subject with appropriate camera angle
+        // 3. Mood Harmony: Lighting should match mood
+        // 4. Color Balance: Complementary or harmonious palette
+
         const SMART_PRESETS = {
-            // Paleoart keywords
-            dinosaur: { style: 'dinosaur art, detailed scales and feathers, Mesozoic era, lush prehistoric jungle', lighting: 'natural lighting', composition: 'wide shot', aspectRatio: '16:9 horizontal landscape format' },
-            't-rex': { style: 'dinosaur art, detailed scales and feathers, Mesozoic era, lush prehistoric jungle', lighting: 'dramatic lighting', composition: 'low angle shot', aspectRatio: '16:9 horizontal landscape format' },
-            prehistoric: { style: 'ecological paleoart, ancient ecosystem, prehistoric environment, flora and fauna coexisting', lighting: 'golden hour lighting', composition: 'wide shot', aspectRatio: '16:9 horizontal landscape format' },
-            mammoth: { style: 'prehistoric mammal art, Ice Age, mammoth, saber-tooth, megafauna, tundra landscape', lighting: 'soft diffused lighting', composition: 'wide shot', aspectRatio: '16:9 horizontal landscape format' },
-            fossil: { style: 'fossil reconstruction art, skeletal anatomy, museum display, scientific diagram', lighting: 'studio lighting', composition: 'portrait, centered', aspectRatio: '1:1 square format' },
-            coelacanth: { style: 'marine reptile paleoart, plesiosaur, ichthyosaur, ancient ocean, underwater scene', lighting: 'soft diffused lighting', composition: 'wide shot', aspectRatio: '16:9 horizontal landscape format' },
-            // Photo keywords
-            portrait: { style: 'photorealistic, 8K UHD, ultra-detailed, DSLR quality, shot on Canon EOS R5, 85mm f/1.4 lens, shallow depth of field, natural bokeh, detailed skin texture, visible pores', lighting: 'soft diffused lighting', composition: 'close-up portrait', aspectRatio: '3:4 portrait format' },
-            woman: { style: 'photorealistic, 8K UHD, ultra-detailed, DSLR quality, shot on Canon EOS R5, 85mm f/1.4 lens, shallow depth of field, natural bokeh, detailed skin texture, visible pores', lighting: 'golden hour lighting', composition: 'portrait, centered', aspectRatio: '3:4 portrait format' },
-            man: { style: 'photorealistic, 8K UHD, ultra-detailed, DSLR quality, shot on Canon EOS R5, 85mm f/1.4 lens, shallow depth of field, natural bokeh, detailed skin texture, visible pores', lighting: 'natural lighting', composition: 'portrait, centered', aspectRatio: '3:4 portrait format' },
-            landscape: { style: 'landscape photography, golden hour, dramatic sky, wide angle lens, 16K resolution, HDR, vibrant colors, sharp details from foreground to background', lighting: 'golden hour lighting', composition: 'wide shot', aspectRatio: '16:9 horizontal landscape format' },
-            street: { style: 'street photography, candid shot, natural lighting, urban environment, 35mm film, slight grain, authentic moment, shallow depth of field', lighting: 'natural lighting', composition: 'wide shot', aspectRatio: '3:2 classic photo format' },
-            product: { style: 'product photography, studio lighting, clean background, commercial quality, sharp focus, professional, 4K, ultra-detailed texture', lighting: 'studio lighting', composition: 'portrait, centered', aspectRatio: '1:1 square format' },
-            // Art keywords
-            anime: { style: 'anime style', lighting: 'soft diffused lighting', composition: 'portrait, centered', aspectRatio: '9:16 vertical portrait format' },
-            cyberpunk: { style: 'cyberpunk style', lighting: 'neon lights', composition: 'wide shot', aspectRatio: '16:9 horizontal landscape format' },
-            fantasy: { style: 'fantasy art', lighting: 'dramatic lighting', composition: 'wide shot', aspectRatio: '16:9 horizontal landscape format' },
-            ghibli: { style: 'Studio Ghibli style', lighting: 'soft diffused lighting', composition: 'wide shot', aspectRatio: '16:9 horizontal landscape format' },
-            '3d': { style: '3D render', lighting: 'studio lighting', composition: 'portrait, centered', aspectRatio: '1:1 square format' },
-            oil: { style: 'oil painting', lighting: 'natural lighting', composition: 'portrait, centered', aspectRatio: '4:3 landscape format' },
+            // ==================== STOCK PHOTOGRAPHY ====================
+            // Business/Corporate
+            business: { style: 'corporate stock photography, professional business setting, modern office, diverse team collaboration, clean composition, commercial license', lighting: 'soft window light, indirect sunlight', composition: 'medium shot, waist up', aspectRatio: '16:9 horizontal landscape format', mood: 'professional, corporate, clean, business-appropriate', color: 'cool color palette, blue tones, teal, cyan' },
+            corporate: { style: 'corporate stock photography, professional business setting, modern office, diverse team collaboration, clean composition, commercial license', lighting: 'soft window light, indirect sunlight', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'professional, corporate, clean, business-appropriate', color: 'cool color palette, blue tones, teal, cyan' },
+            office: { style: 'corporate stock photography, professional business setting, modern office, diverse team collaboration, clean composition, commercial license', lighting: 'natural lighting, soft daylight', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'professional, corporate, clean, business-appropriate', color: 'cool color palette, blue tones, teal, cyan' },
+            meeting: { style: 'corporate stock photography, professional business setting, modern office, diverse team collaboration, clean composition, commercial license', lighting: 'soft window light, indirect sunlight', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'professional, corporate, clean, business-appropriate', color: 'muted desaturated colors, film look, cinematic' },
+
+            // Lifestyle
+            lifestyle: { style: 'stock photography, authentic lifestyle, natural lighting, diverse subjects, commercial use, editorial quality, candid moment, genuine emotion', lighting: 'golden hour lighting, warm sun', composition: 'rule of thirds, off-center subject', aspectRatio: '4:3 landscape format', mood: 'authentic, candid, genuine emotion, real moment', color: 'warm color palette, golden tones, amber, orange' },
+            family: { style: 'stock photography, authentic lifestyle, natural lighting, diverse subjects, commercial use, editorial quality, candid moment, genuine emotion', lighting: 'natural lighting, soft daylight', composition: 'wide shot, full body, environment', aspectRatio: '4:3 landscape format', mood: 'authentic, candid, genuine emotion, real moment', color: 'warm color palette, golden tones, amber, orange' },
+            happy: { style: 'stock photography, authentic lifestyle, natural lighting, diverse subjects, commercial use, editorial quality, candid moment, genuine emotion', lighting: 'golden hour lighting, warm sun', composition: 'medium shot, waist up', aspectRatio: '3:4 portrait format', mood: 'playful, fun, cheerful, colorful', color: 'vibrant saturated colors, bold, vivid' },
+
+            // Food
+            food: { style: 'food photography, appetizing presentation, overhead flat lay, natural lighting, fresh ingredients, culinary art, food magazine style', lighting: 'soft window light, indirect sunlight', composition: 'overhead flat lay, product arrangement', aspectRatio: '1:1 square format', mood: 'playful, fun, cheerful, colorful', color: 'warm color palette, golden tones, amber, orange' },
+            restaurant: { style: 'food photography, appetizing presentation, overhead flat lay, natural lighting, fresh ingredients, culinary art, food magazine style', lighting: 'natural lighting, soft daylight', composition: 'close-up portrait, face detail', aspectRatio: '4:3 landscape format', mood: 'luxury, premium, elegant, high-end', color: 'warm color palette, golden tones, amber, orange' },
+            coffee: { style: 'food photography, appetizing presentation, overhead flat lay, natural lighting, fresh ingredients, culinary art, food magazine style', lighting: 'soft window light, indirect sunlight', composition: 'overhead flat lay, product arrangement', aspectRatio: '1:1 square format', mood: 'serene, peaceful, calm, tranquil', color: 'earth tones, natural colors, brown, green, beige' },
+
+            // Product
+            product: { style: 'product photography, clean white background, studio lighting, commercial quality, e-commerce ready, sharp focus, professional', lighting: 'high-key lighting, bright, minimal shadows, clean', composition: 'portrait composition, centered subject', aspectRatio: '1:1 square format', mood: 'minimalist, clean, simple, uncluttered', color: 'monochromatic, single color scheme, variations' },
+            ecommerce: { style: 'product photography, clean white background, studio lighting, commercial quality, e-commerce ready, sharp focus, professional', lighting: 'softbox lighting, diffused, professional portrait', composition: 'portrait composition, centered subject', aspectRatio: '1:1 square format', mood: 'minimalist, clean, simple, uncluttered', color: 'monochromatic, single color scheme, variations' },
+
+            // Travel
+            travel: { style: 'travel stock photography, destination scenery, wanderlust, vibrant colors, tourism, adventure, landscape, cultural', lighting: 'golden hour lighting, warm sun', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'bold, vibrant, energetic, dynamic', color: 'vibrant saturated colors, bold, vivid' },
+            adventure: { style: 'travel stock photography, destination scenery, wanderlust, vibrant colors, tourism, adventure, landscape, cultural', lighting: 'natural lighting, soft daylight', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'bold, vibrant, energetic, dynamic', color: 'vibrant saturated colors, bold, vivid' },
+
+            // Technology
+            tech: { style: 'technology stock, modern devices, startup environment, digital workspace, screens and gadgets, clean tech aesthetic', lighting: 'professional studio lighting, three-point setup', composition: 'close-up portrait, face detail', aspectRatio: '16:9 horizontal landscape format', mood: 'professional, corporate, clean, business-appropriate', color: 'cool color palette, blue tones, teal, cyan' },
+            startup: { style: 'technology stock, modern devices, startup environment, digital workspace, screens and gadgets, clean tech aesthetic', lighting: 'natural lighting, soft daylight', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'bold, vibrant, energetic, dynamic', color: 'cool color palette, blue tones, teal, cyan' },
+
+            // Healthcare
+            healthcare: { style: 'healthcare stock photography, medical professionals, patient care, hospital setting, clinical, compassionate, clean', lighting: 'high-key lighting, bright, minimal shadows, clean', composition: 'medium shot, waist up', aspectRatio: '16:9 horizontal landscape format', mood: 'professional, corporate, clean, business-appropriate', color: 'cool color palette, blue tones, teal, cyan' },
+            doctor: { style: 'healthcare stock photography, medical professionals, patient care, hospital setting, clinical, compassionate, clean', lighting: 'soft window light, indirect sunlight', composition: 'portrait composition, centered subject', aspectRatio: '3:4 portrait format', mood: 'serene, peaceful, calm, tranquil', color: 'cool color palette, blue tones, teal, cyan' },
+
+            // ==================== VECTOR/ILLUSTRATION ====================
+            vector: { style: 'flat vector illustration, clean geometric shapes, bold colors, minimalist design, 2D, scalable, consistent line weight, print-ready', lighting: '', composition: 'isometric view, 3D-like angle, vector style', aspectRatio: '1:1 square format', mood: 'minimalist, clean, simple, uncluttered', color: 'vibrant saturated colors, bold, vivid' },
+            flat: { style: 'flat vector illustration, clean geometric shapes, bold colors, minimalist design, 2D, scalable, consistent line weight, print-ready', lighting: '', composition: 'portrait composition, centered subject', aspectRatio: '1:1 square format', mood: 'minimalist, clean, simple, uncluttered', color: 'pastel colors, soft muted tones, gentle' },
+            isometric: { style: 'isometric vector illustration, 3D-like perspective, clean geometry, modern infographic style, technical precision, soft shadows', lighting: '', composition: 'isometric view, 3D-like angle, vector style', aspectRatio: '1:1 square format', mood: 'professional, corporate, clean, business-appropriate', color: 'cool color palette, blue tones, teal, cyan' },
+            icon: { style: 'icon design, flat vector icons, consistent style, UI/UX ready, simple shapes, scalable SVG, professional iconography', lighting: '', composition: 'portrait composition, centered subject', aspectRatio: '1:1 square format', mood: 'minimalist, clean, simple, uncluttered', color: 'monochromatic, single color scheme, variations' },
+            mascot: { style: 'character illustration, cartoon style, mascot design, friendly expression, vibrant colors, scalable vector', lighting: '', composition: 'portrait composition, centered subject', aspectRatio: '1:1 square format', mood: 'playful, fun, cheerful, colorful', color: 'vibrant saturated colors, bold, vivid' },
+            logo: { style: 'icon design, flat vector icons, consistent style, UI/UX ready, simple shapes, scalable SVG, professional iconography', lighting: '', composition: 'portrait composition, centered subject', aspectRatio: '1:1 square format', mood: 'minimalist, clean, simple, uncluttered', color: 'monochromatic, single color scheme, variations' },
+            infographic: { style: 'isometric vector illustration, 3D-like perspective, clean geometry, modern infographic style, technical precision, soft shadows', lighting: '', composition: 'isometric view, 3D-like angle, vector style', aspectRatio: '9:16 vertical portrait format', mood: 'professional, corporate, clean, business-appropriate', color: 'cool color palette, blue tones, teal, cyan' },
+            pattern: { style: 'seamless pattern design, repeating tile, textile print, geometric or floral, vector pattern, surface design', lighting: '', composition: '', aspectRatio: '1:1 square format', mood: 'bold, vibrant, energetic, dynamic', color: 'pastel colors, soft muted tones, gentle' },
+
+            // ==================== BACKGROUNDS ====================
+            background: { style: 'soft gradient background, smooth color transition, abstract, minimalist, suitable for text overlay, clean design', lighting: '', composition: '', aspectRatio: '16:9 horizontal landscape format', mood: 'dreamy, ethereal, soft focus, romantic', color: 'pastel colors, soft muted tones, gentle' },
+            gradient: { style: 'soft gradient background, smooth color transition, abstract, minimalist, suitable for text overlay, clean design', lighting: '', composition: '', aspectRatio: '16:9 horizontal landscape format', mood: 'dreamy, ethereal, soft focus, romantic', color: 'pastel colors, soft muted tones, gentle' },
+            texture: { style: 'marble texture background, elegant stone surface, white and gray veins, luxurious, high-resolution, product backdrop', lighting: '', composition: '', aspectRatio: '1:1 square format', mood: 'luxury, premium, elegant, high-end', color: 'monochromatic, single color scheme, variations' },
+            marble: { style: 'marble texture background, elegant stone surface, white and gray veins, luxurious, high-resolution, product backdrop', lighting: '', composition: '', aspectRatio: '1:1 square format', mood: 'luxury, premium, elegant, high-end', color: 'monochromatic, single color scheme, variations' },
+            bokeh: { style: 'blurred nature background, soft bokeh, green foliage, out of focus, dreamy atmosphere, natural light', lighting: 'golden hour lighting, warm sun', composition: '', aspectRatio: '16:9 horizontal landscape format', mood: 'dreamy, ethereal, soft focus, romantic', color: 'earth tones, natural colors, brown, green, beige' },
+            nature: { style: 'blurred nature background, soft bokeh, green foliage, out of focus, dreamy atmosphere, natural light', lighting: 'natural lighting, soft daylight', composition: '', aspectRatio: '16:9 horizontal landscape format', mood: 'serene, peaceful, calm, tranquil', color: 'earth tones, natural colors, brown, green, beige' },
+            cyber: { style: 'futuristic tech background, neon lights, cyber grid, dark atmosphere, sci-fi aesthetic, digital matrix', lighting: 'neon lights, colorful glow, cyberpunk', composition: '', aspectRatio: '16:9 horizontal landscape format', mood: 'mysterious, moody, dark, atmospheric', color: 'neon colors, cyberpunk palette, electric' },
+            futuristic: { style: 'futuristic tech background, neon lights, cyber grid, dark atmosphere, sci-fi aesthetic, digital matrix', lighting: 'neon lights, colorful glow, cyberpunk', composition: '', aspectRatio: '16:9 horizontal landscape format', mood: 'mysterious, moody, dark, atmospheric', color: 'neon colors, cyberpunk palette, electric' },
+            abstract: { style: 'abstract geometric background, modern shapes, overlapping forms, bold colors, dynamic composition, contemporary art', lighting: '', composition: '', aspectRatio: '16:9 horizontal landscape format', mood: 'bold, vibrant, energetic, dynamic', color: 'complementary colors, color contrast, dynamic' },
+
+            // ==================== TRENDING 2025-2026 ====================
+            authentic: { style: 'authentic human storytelling, genuine emotion, candid documentary style, diverse representation, real moments, unposed, natural imperfections', lighting: 'natural lighting, soft daylight', composition: 'rule of thirds, off-center subject', aspectRatio: '4:3 landscape format', mood: 'authentic, candid, genuine emotion, real moment', color: 'muted desaturated colors, film look, cinematic' },
+            hyperreal: { style: 'hyperreal AI photography, surreal details, impossible perfection combined with reality, dreamlike quality, cutting-edge visual', lighting: 'cinematic lighting, movie quality, depth', composition: 'close-up portrait, face detail', aspectRatio: '3:4 portrait format', mood: 'dreamy, ethereal, soft focus, romantic', color: 'vibrant saturated colors, bold, vivid' },
+            y2k: { style: 'Y2K aesthetic, early 2000s nostalgia, chrome effects, bubble fonts, digital glitch, retro-futuristic', lighting: 'neon lights, colorful glow, cyberpunk', composition: 'portrait composition, centered subject', aspectRatio: '1:1 square format', mood: 'nostalgic, vintage, retro, film grain', color: 'neon colors, cyberpunk palette, electric' },
+            retro: { style: 'Y2K aesthetic, early 2000s nostalgia, chrome effects, bubble fonts, digital glitch, retro-futuristic', lighting: 'neon lights, colorful glow, cyberpunk', composition: 'portrait composition, centered subject', aspectRatio: '1:1 square format', mood: 'nostalgic, vintage, retro, film grain', color: 'neon colors, cyberpunk palette, electric' },
+            'mixed media': { style: 'mixed media collage, layered textures, scanned materials, digital meets analog, experimental composition, artistic fusion', lighting: 'dramatic lighting, strong contrast', composition: '', aspectRatio: '1:1 square format', mood: 'bold, vibrant, energetic, dynamic', color: 'complementary colors, color contrast, dynamic' },
+            collage: { style: 'mixed media collage, layered textures, scanned materials, digital meets analog, experimental composition, artistic fusion', lighting: '', composition: '', aspectRatio: '1:1 square format', mood: 'bold, vibrant, energetic, dynamic', color: 'complementary colors, color contrast, dynamic' },
+            maximalist: { style: 'maximalist psychedelia, hyper-colorful, intricate patterns, 70s retrofuturism, bold and vibrant, surreal dreamscape', lighting: 'dramatic lighting, strong contrast', composition: 'wide shot, full body, environment', aspectRatio: '1:1 square format', mood: 'bold, vibrant, energetic, dynamic', color: 'vibrant saturated colors, bold, vivid' },
+
+            // ==================== PALEOART (existing enhanced) ====================
+            dinosaur: { style: 'dinosaur art, detailed scales and feathers, Mesozoic era, lush prehistoric jungle', lighting: 'natural lighting, soft daylight', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'mysterious, moody, dark, atmospheric', color: 'earth tones, natural colors, brown, green, beige' },
+            'trex': { style: 'dinosaur art, detailed scales and feathers, Mesozoic era, lush prehistoric jungle', lighting: 'dramatic lighting, strong contrast', composition: 'low angle shot, heroic perspective', aspectRatio: '16:9 horizontal landscape format', mood: 'bold, vibrant, energetic, dynamic', color: 'earth tones, natural colors, brown, green, beige' },
+            prehistoric: { style: 'ecological paleoart, ancient ecosystem, prehistoric environment, flora and fauna coexisting', lighting: 'golden hour lighting, warm sun', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'serene, peaceful, calm, tranquil', color: 'earth tones, natural colors, brown, green, beige' },
+            mammoth: { style: 'prehistoric mammal art, Ice Age, mammoth, saber-tooth, megafauna, tundra landscape', lighting: 'overcast lighting, soft diffused, no harsh shadows', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'mysterious, moody, dark, atmospheric', color: 'cool color palette, blue tones, teal, cyan' },
+            fossil: { style: 'fossil reconstruction art, skeletal anatomy, museum display, scientific diagram', lighting: 'professional studio lighting, three-point setup', composition: 'portrait composition, centered subject', aspectRatio: '1:1 square format', mood: 'professional, corporate, clean, business-appropriate', color: 'earth tones, natural colors, brown, green, beige' },
+
+            // ==================== PORTRAIT/PEOPLE (enhanced) ====================
+            portrait: { style: 'photorealistic, 8K UHD, ultra-detailed, DSLR quality, shot on Canon EOS R5, 85mm f/1.4 lens, shallow depth of field, natural bokeh, detailed skin texture, visible pores', lighting: 'ring light, beauty lighting, even illumination', composition: 'close-up portrait, face detail', aspectRatio: '3:4 portrait format', mood: 'authentic, candid, genuine emotion, real moment', color: 'warm color palette, golden tones, amber, orange' },
+            woman: { style: 'photorealistic, 8K UHD, ultra-detailed, DSLR quality, shot on Canon EOS R5, 85mm f/1.4 lens, shallow depth of field, natural bokeh, detailed skin texture, visible pores', lighting: 'golden hour lighting, warm sun', composition: 'portrait composition, centered subject', aspectRatio: '3:4 portrait format', mood: 'dreamy, ethereal, soft focus, romantic', color: 'warm color palette, golden tones, amber, orange' },
+            man: { style: 'photorealistic, 8K UHD, ultra-detailed, DSLR quality, shot on Canon EOS R5, 85mm f/1.4 lens, shallow depth of field, natural bokeh, detailed skin texture, visible pores', lighting: 'natural lighting, soft daylight', composition: 'portrait composition, centered subject', aspectRatio: '3:4 portrait format', mood: 'professional, corporate, clean, business-appropriate', color: 'muted desaturated colors, film look, cinematic' },
+            beauty: { style: 'photorealistic, 8K UHD, ultra-detailed, DSLR quality, shot on Canon EOS R5, 85mm f/1.4 lens, shallow depth of field, natural bokeh, detailed skin texture, visible pores', lighting: 'ring light, beauty lighting, even illumination', composition: 'close-up portrait, face detail', aspectRatio: '3:4 portrait format', mood: 'luxury, premium, elegant, high-end', color: 'pastel colors, soft muted tones, gentle' },
+            fashion: { style: 'photorealistic, 8K UHD, ultra-detailed, DSLR quality, shot on Canon EOS R5, 85mm f/1.4 lens, shallow depth of field, natural bokeh, detailed skin texture, visible pores', lighting: 'professional studio lighting, three-point setup', composition: 'medium shot, waist up', aspectRatio: '3:4 portrait format', mood: 'bold, vibrant, energetic, dynamic', color: 'complementary colors, color contrast, dynamic' },
+
+            // ==================== LANDSCAPE/NATURE ====================
+            landscape: { style: 'landscape photography, golden hour, dramatic sky, wide angle lens, 16K resolution, HDR, vibrant colors, sharp details from foreground to background', lighting: 'golden hour lighting, warm sun', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'serene, peaceful, calm, tranquil', color: 'warm color palette, golden tones, amber, orange' },
+            sunset: { style: 'landscape photography, golden hour, dramatic sky, wide angle lens, 16K resolution, HDR, vibrant colors, sharp details from foreground to background', lighting: 'golden hour lighting, warm sun', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'dreamy, ethereal, soft focus, romantic', color: 'warm color palette, golden tones, amber, orange' },
+            ocean: { style: 'landscape photography, golden hour, dramatic sky, wide angle lens, 16K resolution, HDR, vibrant colors, sharp details from foreground to background', lighting: 'blue hour lighting, twilight, cool tones', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'serene, peaceful, calm, tranquil', color: 'cool color palette, blue tones, teal, cyan' },
+            mountain: { style: 'landscape photography, golden hour, dramatic sky, wide angle lens, 16K resolution, HDR, vibrant colors, sharp details from foreground to background', lighting: 'natural lighting, soft daylight', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'bold, vibrant, energetic, dynamic', color: 'cool color palette, blue tones, teal, cyan' },
+
+            // ==================== ART STYLES (enhanced) ====================
+            anime: { style: 'anime style', lighting: 'high-key lighting, bright, minimal shadows, clean', composition: 'portrait composition, centered subject', aspectRatio: '9:16 vertical portrait format', mood: 'playful, fun, cheerful, colorful', color: 'vibrant saturated colors, bold, vivid' },
+            cyberpunk: { style: 'cyberpunk style', lighting: 'neon lights, colorful glow, cyberpunk', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'mysterious, moody, dark, atmospheric', color: 'neon colors, cyberpunk palette, electric' },
+            fantasy: { style: 'fantasy art', lighting: 'dramatic lighting, strong contrast', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'dreamy, ethereal, soft focus, romantic', color: 'vibrant saturated colors, bold, vivid' },
+            ghibli: { style: 'Studio Ghibli style', lighting: 'overcast lighting, soft diffused, no harsh shadows', composition: 'wide shot, full body, environment', aspectRatio: '16:9 horizontal landscape format', mood: 'serene, peaceful, calm, tranquil', color: 'pastel colors, soft muted tones, gentle' },
+            '3d': { style: '3D render', lighting: 'professional studio lighting, three-point setup', composition: 'portrait composition, centered subject', aspectRatio: '1:1 square format', mood: 'minimalist, clean, simple, uncluttered', color: 'cool color palette, blue tones, teal, cyan' },
+            oil: { style: 'oil painting', lighting: 'natural lighting, soft daylight', composition: 'portrait composition, centered subject', aspectRatio: '4:3 landscape format', mood: 'nostalgic, vintage, retro, film grain', color: 'warm color palette, golden tones, amber, orange' },
+            watercolor: { style: 'watercolor', lighting: 'overcast lighting, soft diffused, no harsh shadows', composition: 'portrait composition, centered subject', aspectRatio: '4:3 landscape format', mood: 'dreamy, ethereal, soft focus, romantic', color: 'pastel colors, soft muted tones, gentle' },
+
+            // ==================== ANIMALS ====================
+            animal: { style: 'wildlife photography, National Geographic style, sharp focus, natural habitat, authentic behavior', lighting: 'natural lighting, soft daylight', composition: 'rule of thirds, off-center subject', aspectRatio: '16:9 horizontal landscape format', mood: 'authentic, candid, genuine emotion, real moment', color: 'earth tones, natural colors, brown, green, beige' },
+            wildlife: { style: 'wildlife photography, National Geographic style, sharp focus, natural habitat, authentic behavior', lighting: 'golden hour lighting, warm sun', composition: 'rule of thirds, off-center subject', aspectRatio: '16:9 horizontal landscape format', mood: 'bold, vibrant, energetic, dynamic', color: 'earth tones, natural colors, brown, green, beige' },
+            pet: { style: 'pet photography, cute, adorable, studio or outdoor, sharp focus, playful', lighting: 'natural lighting, soft daylight', composition: 'close-up portrait, face detail', aspectRatio: '1:1 square format', mood: 'playful, fun, cheerful, colorful', color: 'warm color palette, golden tones, amber, orange' },
+            cat: { style: 'pet photography, cute, adorable, studio or outdoor, sharp focus, playful', lighting: 'soft window light, indirect sunlight', composition: 'close-up portrait, face detail', aspectRatio: '1:1 square format', mood: 'serene, peaceful, calm, tranquil', color: 'warm color palette, golden tones, amber, orange' },
+            dog: { style: 'pet photography, cute, adorable, studio or outdoor, sharp focus, playful', lighting: 'natural lighting, soft daylight', composition: 'medium shot, waist up', aspectRatio: '1:1 square format', mood: 'playful, fun, cheerful, colorful', color: 'warm color palette, golden tones, amber, orange' },
         };
+
 
         async function aiAssistFill() {
             const subject = document.getElementById('pbSubject').value.trim().toLowerCase();
             const btn = document.querySelector('.ai-assist-btn');
 
             if (!subject) {
-                showToast('⚠️ Vui lòng nhập chủ thể trước!');
+                toast('⚠️ Vui lòng nhập chủ thể trước!');
                 return;
             }
 
             btn.disabled = true;
             btn.textContent = '⏳...';
 
+            // Variation arrays for attractive combinations
+            const LIGHTING_VARIATIONS = [
+                'golden hour lighting, warm sun',
+                'natural lighting, soft daylight',
+                'soft window light, indirect sunlight',
+                'cinematic lighting, movie quality, depth',
+                'dramatic lighting, strong contrast',
+                'professional studio lighting, three-point setup',
+                'ring light, beauty lighting, even illumination',
+                'blue hour lighting, twilight, cool tones'
+            ];
+
+            const MOOD_VARIATIONS = [
+                'professional, corporate, clean, business-appropriate',
+                'authentic, candid, genuine emotion, real moment',
+                'dreamy, ethereal, soft focus, romantic',
+                'bold, vibrant, energetic, dynamic',
+                'serene, peaceful, calm, tranquil',
+                'playful, fun, cheerful, colorful',
+                'luxury, premium, elegant, high-end',
+                'mysterious, moody, dark, atmospheric'
+            ];
+
+            const COLOR_VARIATIONS = [
+                'warm color palette, golden tones, amber, orange',
+                'cool color palette, blue tones, teal, cyan',
+                'pastel colors, soft muted tones, gentle',
+                'vibrant saturated colors, bold, vivid',
+                'muted desaturated colors, film look, cinematic',
+                'earth tones, natural colors, brown, green, beige',
+                'complementary colors, color contrast, dynamic',
+                'monochromatic, single color scheme, variations'
+            ];
+
+            const COMPOSITION_VARIATIONS = [
+                'portrait composition, centered subject',
+                'rule of thirds, off-center subject',
+                'close-up portrait, face detail',
+                'medium shot, waist up',
+                'wide shot, full body, environment',
+                'overhead flat lay, product arrangement',
+                'low angle shot, heroic perspective',
+                'isometric view, 3D-like angle, vector style'
+            ];
+
+            // Random picker
+            const randomPick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
             // First try smart presets
             let preset = null;
             for (const [keyword, settings] of Object.entries(SMART_PRESETS)) {
                 if (subject.includes(keyword)) {
-                    preset = settings;
+                    preset = { ...settings }; // Clone to avoid modifying original
                     break;
                 }
             }
 
             // Check if Gemini API key is saved
             const geminiApiKey = localStorage.getItem('geminiApiKey');
+            const intent = document.getElementById('pbIntent').value.trim();
 
             if (geminiApiKey) {
                 // Try Gemini API
                 try {
-                    const suggestion = await callGeminiForSuggestion(subject, geminiApiKey);
+                    const suggestion = await callGeminiForSuggestion(subject, intent, geminiApiKey);
                     if (suggestion) {
                         applyAISuggestion(suggestion);
                         btn.disabled = false;
                         btn.textContent = '🔄 Khác';
-                        btn.title = 'Thử hướng sáng tạo khác';
+                        btn.title = 'Thử kết hợp khác';
                         return;
                     }
                 } catch (e) {
@@ -9103,23 +10006,40 @@ Trả về JSON (chỉ JSON, không text khác):
                 }
             }
 
-            // Fallback to smart presets
+            // Fallback to smart presets with variations
             if (preset) {
+                // Check if this is a re-click (button already shows 🔄)
+                const isVariation = btn.title && btn.title.includes('kết hợp');
+
+                if (isVariation) {
+                    // Apply random variations for attractive combinations
+                    preset.lighting = randomPick(LIGHTING_VARIATIONS);
+                    preset.mood = randomPick(MOOD_VARIATIONS);
+                    preset.color = randomPick(COLOR_VARIATIONS);
+                    // Sometimes vary composition too (50% chance)
+                    if (Math.random() > 0.5) {
+                        preset.composition = randomPick(COMPOSITION_VARIATIONS);
+                    }
+                }
+
                 applyPreset(preset);
-                showToast('💡 Đã áp dụng gợi ý thông minh!');
+                toast(isVariation ? '🎲 Đã tạo kết hợp mới!' : '💡 Đã áp dụng gợi ý thông minh!');
             } else {
-                // Default preset
+                // Default preset with random elements for attractive results
                 applyPreset({
-                    style: 'digital art',
-                    lighting: 'natural lighting',
-                    composition: 'portrait, centered',
-                    aspectRatio: '1:1 square format'
+                    style: 'digital art, high quality, detailed',
+                    lighting: randomPick(LIGHTING_VARIATIONS),
+                    composition: randomPick(COMPOSITION_VARIATIONS),
+                    aspectRatio: '1:1 square format',
+                    mood: randomPick(MOOD_VARIATIONS),
+                    color: randomPick(COLOR_VARIATIONS)
                 });
-                showToast('💡 Đã áp dụng gợi ý mặc định!');
+                toast('🎲 Đã tạo kết hợp ngẫu nhiên!');
             }
 
             btn.disabled = false;
-            btn.textContent = '🤖 AI';
+            btn.textContent = '🔄 Khác';
+            btn.title = 'Thử kết hợp khác';
         }
 
         function applyPreset(preset) {
@@ -9127,6 +10047,8 @@ Trả về JSON (chỉ JSON, không text khác):
             if (preset.lighting) setSelectByValue('pbLighting', preset.lighting);
             if (preset.composition) setSelectByValue('pbComposition', preset.composition);
             if (preset.aspectRatio) setSelectByValue('pbAspectRatio', preset.aspectRatio);
+            if (preset.mood) setSelectByValue('pbMood', preset.mood);
+            if (preset.color) setSelectByValue('pbColorPalette', preset.color);
             updateFinalPrompt();
         }
 
@@ -9147,16 +10069,21 @@ Trả về JSON (chỉ JSON, không text khác):
             if (suggestion.lighting) setSelectByValue('pbLighting', suggestion.lighting);
             if (suggestion.composition) setSelectByValue('pbComposition', suggestion.composition);
             if (suggestion.aspectRatio) setSelectByValue('pbAspectRatio', suggestion.aspectRatio);
+            if (suggestion.mood) setSelectByValue('pbMood', suggestion.mood);
+            if (suggestion.color) setSelectByValue('pbColorPalette', suggestion.color);
             updateFinalPrompt();
 
-            // Show mood info
-            if (suggestion.mood) {
-                showToast(`🎭 Mood: ${suggestion.mood}`);
-            }
+            // Show confirmation
+            toast(`✨ AI đã gợi ý bố cục hình ảnh thu hút!`);
         }
 
-        async function callGeminiForSuggestion(subject, apiKey) {
-            const prompt = `Bạn là một đạo diễn hình ảnh chuyên nghiệp. Hãy phân tích chủ thể và tư duy theo MOOD để tạo ra 1 bức ảnh chất lượng.
+        async function callGeminiForSuggestion(subject, intent, apiKey) {
+            let contextPrompt = "";
+            if (intent) {
+                contextPrompt = `\nMỤC ĐÍCH & Ý TƯỞNG CỦA NGƯỜI DÙNG: "${intent}"\nBạn hãy đóng vai trò là một Creative Director/Art Director chuyên nghiệp. Hãy phân tích kỹ mục đích này để đưa ra định hướng nghệ thuật tối ưu nhất (ví dụ: thumbnail phải nổi bật, banner phải hài hòa, ảnh minh họa phải rõ ràng...).`;
+            }
+
+            const prompt = `Bạn là một đạo diễn hình ảnh chuyên nghiệp. Hãy phân tích chủ thể và tư duy theo MOOD để tạo ra 1 bức ảnh chất lượng.${contextPrompt}
 
 CHỦ THỂ: "${subject}"
 
@@ -9199,10 +10126,10 @@ Trả về JSON duy nhất, không giải thích:
         function saveGeminiApiKey(key) {
             if (key && key.trim()) {
                 localStorage.setItem('geminiApiKey', key.trim());
-                showToast('✅ API key đã lưu!');
+                toast('✅ API key đã lưu!');
             } else {
                 localStorage.removeItem('geminiApiKey');
-                showToast('🗑️ API key đã xóa!');
+                toast('🗑️ API key đã xóa!');
             }
             autoSyncToDrive();
         }
@@ -9260,9 +10187,9 @@ Trả về JSON duy nhất, không giải thích:
                 autoSyncToDrive();
                 updateApiStatusBadge(true);
                 hideApiKeyModal();
-                showToast('✅ API key đã lưu!');
+                toast('✅ API key đã lưu!');
             } else {
-                showToast('⚠️ Vui lòng nhập API key!');
+                toast('⚠️ Vui lòng nhập API key!');
             }
         }
 
@@ -9271,7 +10198,7 @@ Trả về JSON duy nhất, không giải thích:
             document.getElementById('modalApiKeyInput').value = '';
             updateApiStatusBadge(false);
             hideApiKeyModal();
-            showToast('🗑️ API key đã xóa!');
+            toast('🗑️ API key đã xóa!');
         }
 
         function updateApiStatusBadge(connected) {
@@ -9353,7 +10280,7 @@ Trả về JSON duy nhất, không giải thích:
             delete customHomepages[selectedPlatformKey];
             localStorage.setItem('customHomepages', JSON.stringify(customHomepages));
             autoSyncToDrive();
-            showToast('🔄 Đã đặt lại mặc định cho ' + selectedPlatformKey);
+            toast('🔄 Đã đặt lại mặc định cho ' + selectedPlatformKey);
         }
 
         function closeEditHomepageModal() {
@@ -9363,7 +10290,7 @@ Trả về JSON duy nhất, không giải thích:
         function saveHomepageUrl() {
             const url = document.getElementById('editHomepageUrl').value.trim();
             if (!url) {
-                showToast('⚠️ Vui lòng nhập URL!');
+                toast('⚠️ Vui lòng nhập URL!');
                 return;
             }
 
@@ -9375,7 +10302,7 @@ Trả về JSON duy nhất, không giải thích:
             HOMEPAGE_URLS[selectedPlatformKey] = url;
 
             closeEditHomepageModal();
-            showToast('✅ Đã lưu homepage cho ' + selectedPlatformKey);
+            toast('✅ Đã lưu homepage cho ' + selectedPlatformKey);
         }
 
         // Load custom homepages on startup
