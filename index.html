@@ -221,8 +221,39 @@
             right: 0 !important;
             bottom: 0 !important;
             z-index: 99999 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: rgba(0, 0, 0, 0.5) !important;
         }
 
+        .api-modal-overlay .api-modal,
+        .style-modal .style-modal-content,
+        .guide-modal-overlay .guide-modal {
+            position: relative !important;
+            z-index: 100000 !important;
+            pointer-events: auto !important;
+        }
+
+        .api-modal-overlay .modal-btn,
+        .api-modal-overlay button {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+
+        /* Dropdown z-index fix */
+        .country-dropdown,
+        .language-dropdown,
+        select,
+        .dropdown-menu {
+            z-index: 100 !important;
+        }
+
+        /* Ensure mac-content doesn't create stacking context issues */
+        .mac-content {
+            position: relative;
+            z-index: 1;
+        }
 
 
         /* Google Header */
@@ -4395,7 +4426,8 @@
                     </div>
 
                     <!-- Tab content containers are hidden by CSS, shown via JS -->
-                    <div class="tabs-wrapper" id="tabsWrapper" style="display: none;">
+                    <div class="tabs-wrapper" id="tabsWrapper"
+                        style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;">
                         <button class="tab active" data-tab="video" data-category="media" draggable="true"><svg
                                 width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                 <path
@@ -12533,14 +12565,42 @@ Return ONLY a valid JSON object:
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.target.closest('.sidebar-item').classList.add('active');
+            if (event && event.target) {
+                const clickedItem = event.target.closest('.sidebar-item');
+                if (clickedItem) clickedItem.classList.add('active');
+            }
 
-            // Find and click the corresponding hidden tab button
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                content.style.display = 'none';
+            });
+
+            // Show the selected tab content
+            const tabContent = document.getElementById(tabName + 'Tab');
+            if (tabContent) {
+                tabContent.classList.add('active');
+                tabContent.style.display = 'block';
+            }
+
+            // Also update the hidden tab buttons for consistency
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
             const tabBtn = document.querySelector(`.tab[data-tab="${tabName}"]`);
             if (tabBtn) {
-                tabBtn.click();
+                tabBtn.classList.add('active');
             }
         }
+
+        // Initialize: show video tab by default
+        document.addEventListener('DOMContentLoaded', function () {
+            const videoTab = document.getElementById('videoTab');
+            if (videoTab) {
+                videoTab.style.display = 'block';
+                videoTab.classList.add('active');
+            }
+        });
     </script>
 
 </body>
