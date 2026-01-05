@@ -848,7 +848,115 @@
 
         .formula-legend .legend-item:nth-of-type(4) {
             background: #fce8e6;
-            color: #c5221f;
+        }
+
+        .copy-style-btn {
+            padding: 0 16px;
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(245, 124, 0, 0.2);
+        }
+
+        .copy-style-btn:hover {
+            opacity: 0.9;
+            box-shadow: 0 4px 8px rgba(245, 124, 0, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Style Transfer Modal */
+        .style-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .style-modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .style-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f1f3f4;
+            padding-bottom: 0;
+        }
+
+        .style-tab-btn {
+            padding: 10px 15px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: #5f6368;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            font-size: 14px;
+        }
+
+        .style-tab-btn.active {
+            color: #1a73e8;
+            border-bottom-color: #1a73e8;
+        }
+
+        .upload-area {
+            border: 2px dashed #dadce0;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f8f9fa;
+        }
+
+        .upload-area:hover {
+            border-color: #1a73e8;
+            background: #f1f8ff;
+        }
+
+        .analyze-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .analyze-btn:hover {
+            opacity: 0.9;
+        }
+
+        color: #c5221f;
         }
 
         .formula-legend .legend-item:nth-of-type(5) {
@@ -5007,6 +5115,10 @@
                             <button type="button" class="ai-assist-btn" onclick="aiAssistFill()"
                                 title="AI gợi ý tự động">
                                 🤖 AI
+                            </button>
+                            <button type="button" class="copy-style-btn" onclick="openCopyStyleModal()"
+                                title="Copy Style từ Ảnh/Prompt">
+                                🎨 Style
                             </button>
                         </div>
                     </div>
@@ -9990,6 +10102,10 @@ Trả về JSON (chỉ JSON, không text khác):
             const geminiApiKey = localStorage.getItem('geminiApiKey');
             const intent = document.getElementById('pbIntent').value.trim();
 
+            if (intent && !geminiApiKey) {
+                toast('⚠️ Để AI phân tích "Ý tưởng", bạn cần nhập API Key (⚙️)!');
+            }
+
             if (geminiApiKey) {
                 // Try Gemini API
                 try {
@@ -10121,6 +10237,159 @@ Trả về JSON duy nhất, không giải thích:
             }
             return null;
         }
+
+        // --- Style Transfer Logic ---
+        function openCopyStyleModal() {
+            document.getElementById('copyStyleModal').style.display = 'flex';
+        }
+
+        function closeCopyStyleModal() {
+            document.getElementById('copyStyleModal').style.display = 'none';
+        }
+
+        function switchStyleTab(type) {
+            document.querySelectorAll('.style-tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (type === 'image') {
+                document.getElementById('styleInputImage').style.display = 'block';
+                document.getElementById('styleInputText').style.display = 'none';
+            } else {
+                document.getElementById('styleInputImage').style.display = 'none';
+                document.getElementById('styleInputText').style.display = 'block';
+            }
+        }
+
+        function previewStyleImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('styleImagePreview').src = e.target.result;
+                    document.getElementById('styleImagePreview').style.display = 'block';
+                    document.getElementById('uploadPlaceholder').style.display = 'none';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        async function analyzeAndApplyStyle() {
+            const apiKey = localStorage.getItem('geminiApiKey');
+            if (!apiKey) {
+                toast('⚠️ Vui lòng lưu API Key trước (trong icon ⚙️ góc phải)');
+                return;
+            }
+
+            const btn = document.getElementById('analyzeBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Đang phân tích style...';
+            btn.disabled = true;
+
+            try {
+                const isImageTab = document.getElementById('styleInputImage').style.display !== 'none';
+                let prompt = "";
+                let imagePart = null;
+
+                if (isImageTab) {
+                    const fileInput = document.getElementById('styleImageInput');
+                    if (!fileInput.files[0]) {
+                        toast('⚠️ Vui lòng chọn ảnh!');
+                        throw new Error("No image selected");
+                    }
+
+                    // Convert file to base64
+                    const base64 = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                        reader.readAsDataURL(fileInput.files[0]);
+                    });
+
+                    imagePart = {
+                        inlineData: {
+                            data: base64,
+                            mimeType: fileInput.files[0].type
+                        }
+                    };
+
+                    prompt = `Analyze this image to deeply understand its artistic style and aesthetic. I need to replicate this style.
+Extract the following elements and return ONLY a JSON object:
+{
+  "style": "Specific art style (e.g. Cinematic Portrait, 3D Render, Oil Painting, Anime, Minimalist Vector, etc.)",
+  "lighting": "Lighting type (e.g. Golden Hour, Neon, Studio Softbox, Dramatic Rim Light)",
+  "composition": "Composition type (e.g. Close-up, Wide Angle, Rule of Thirds, Symmetrical)",
+  "aspectRatio": "Estimated aspect ratio (e.g. 16:9 horizontal landscape format, 1:1 square format, 9:16 vertical portrait format)",
+  "mood": "Emotional mood (e.g. Dreamy, Professional, Dark & Moody, Cheerful)",
+  "color": "Color palette description (e.g. Warm pastel tones, Cyberpunk neon, Monochromatic blue)",
+  "details": "Brief visual details about texture/clothing/objects to match style",
+  "setting": "Brief setting description to match style"
+}`;
+
+                } else {
+                    const textInput = document.getElementById('stylePromptInput').value.trim();
+                    if (!textInput) {
+                        toast('⚠️ Vui lòng nhập prompt!');
+                        throw new Error("No prompt entered");
+                    }
+
+                    prompt = `Analyze this image prompt to extract its artistic style:
+"${textInput}"
+
+Extract the elements and return ONLY a JSON object:
+{
+  "style": "...",
+  "lighting": "...",
+  "composition": "...",
+  "aspectRatio": "...",
+  "mood": "...",
+  "color": "...",
+  "details": "...",
+  "setting": "..."
+}`;
+                }
+
+                // Call Gemini (using 1.5-flash for vision/speed context window)
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+                const parts = [{ text: prompt }];
+                if (imagePart) parts.push(imagePart);
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: parts }],
+                        generationConfig: { temperature: 0.4 } // Low temperature for factual extraction
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) throw new Error(data.error.message);
+
+                let resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!resultText) throw new Error("No response from AI");
+
+                // Clean markdown if present
+                resultText = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
+                const jsonMatch = resultText.match(/\{[\s\S]*\}/);
+                const analysis = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(resultText);
+
+                // Apply results
+                applyAISuggestion(analysis);
+
+                closeCopyStyleModal();
+                toast('✅ Đã Copy Style thành công!');
+                // Auto scroll to prompt builder
+                document.querySelector('.prompt-builder').scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                console.error("Analysis Error:", error);
+                toast('❌ Lỗi: ' + error.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
 
         // 8. Gemini API Key Management
         function saveGeminiApiKey(key) {
@@ -11464,6 +11733,46 @@ Trả về JSON duy nhất, không giải thích:
             </div>
         </div>
     </div>
+    <!-- Copy Style Modal -->
+    <div id="copyStyleModal" class="style-modal" style="display: none;">
+        <div class="style-modal-content">
+            <span class="close-modal" onclick="closeCopyStyleModal()"
+                style="position:absolute; right:20px; top:20px; font-size:24px; cursor:pointer;">&times;</span>
+            <h3 style="margin-top:0">🎨 Copy Style & Reverse Prompt</h3>
+            <p style="color:#5f6368; font-size:13px; margin-bottom:20px;">AI sẽ phân tích ảnh hoặc prompt mẫu để tự động
+                điền các thông số style cho bạn.</p>
+
+            <div class="style-tabs">
+                <button class="style-tab-btn active" onclick="switchStyleTab('image')">🖼️ Từ Ảnh (Vision)</button>
+                <button class="style-tab-btn" onclick="switchStyleTab('text')">📝 Từ Prompt (Text)</button>
+            </div>
+
+            <div id="styleInputImage" class="style-input-section">
+                <div class="upload-area" id="styleUploadArea"
+                    onclick="document.getElementById('styleImageInput').click()">
+                    <input type="file" id="styleImageInput" accept="image/*" style="display:none"
+                        onchange="previewStyleImage(this)">
+                    <div class="upload-placeholder" id="uploadPlaceholder">
+                        <div style="font-size:32px; margin-bottom:10px;">📤</div>
+                        <span>Click để tải ảnh lên<br><small style="color:#9aa0a6">(JPG, PNG, WebP)</small></span>
+                    </div>
+                    <img id="styleImagePreview"
+                        style="display:none; max-height: 200px; margin:0 auto; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                </div>
+            </div>
+
+            <div id="styleInputText" class="style-input-section" style="display:none;">
+                <textarea id="stylePromptInput" class="pb-textarea" rows="5"
+                    placeholder="Paste prompt mẫu (English/Vietnamese) vào đây để AI phân tích style..."
+                    style="width:100%; resize:vertical; background:#f8f9fa;"></textarea>
+            </div>
+
+            <button class="analyze-btn" id="analyzeBtn" onclick="analyzeAndApplyStyle()">
+                <span>✨ Phân tích & Áp dụng Style</span>
+            </button>
+        </div>
+    </div>
+
 </body>
 
 </html>
