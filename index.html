@@ -10936,7 +10936,10 @@ Trả về JSON (chỉ JSON, không text khác):
                 }
             }
 
-            function applyAISuggestion(suggestion) {
+            function applyAISuggestion(data) {
+                // Support both new (Creative Director) and old formats
+                const suggestion = data.technical_params || data;
+
                 if (suggestion.details) document.getElementById('pbDetails').value = suggestion.details;
                 if (suggestion.setting) document.getElementById('pbSetting').value = suggestion.setting;
                 if (suggestion.style) setSelectByValue('pbStyle', suggestion.style);
@@ -10945,10 +10948,26 @@ Trả về JSON (chỉ JSON, không text khác):
                 if (suggestion.aspectRatio) setSelectByValue('pbAspectRatio', suggestion.aspectRatio);
                 if (suggestion.mood) setSelectByValue('pbMood', suggestion.mood);
                 if (suggestion.color) setSelectByValue('pbColorPalette', suggestion.color);
+
                 updateFinalPrompt();
 
-                // Show confirmation
-                toast(`✨ AI đã gợi ý bố cục hình ảnh thu hút!`);
+                // Handle Creative Director Features (Analysis & Template)
+                if (data.analysis && data.template) {
+                    // Copy template to clipboard
+                    navigator.clipboard.writeText(data.template).then(() => {
+                        toast('📋 Đã copy Template mẫu vào Clipboard!');
+                    });
+
+                    // Show Analysis Modal/Alert (Simple formatted string for now)
+                    const analysisMsg = `🧠 AI STYLE ANALYSIS:\n\n` +
+                        `🎨 Style: ${data.style_name}\n` +
+                        `🔎 Phân tích: ${data.analysis}\n\n` +
+                        `👉 Template đã được copy! Bạn có thể paste và thay đổi {{subject}} ngay.`;
+
+                    alert(analysisMsg);
+                } else {
+                    toast(`✨ AI đã gợi ý bố cục hình ảnh thu hút!`);
+                }
             }
 
             async function callGeminiForSuggestion(subject, intent, apiKey) {
@@ -11095,28 +11114,29 @@ Trả về JSON duy nhất, không giải thích:
                             }
                         };
 
-                        prompt = `ACT AS AN EXPERT AI PROMPT ENGINEER.
-YOUR GOAL: Reverse Engineer the artistic style of this image to creating a "Style Transfer" prompt.
-DO NOT DESCRIBE THE CONTENT (Subject, People, Objects). FOCUS ONLY ON THE VISUAL STYLE/AESTHETIC.
+                        prompt = `ACT AS A WORLD-CLASS AI ART DIRECTOR \u0026 PROMPT ENGINEER.
+Your goal is to reverse-engineer the "Style DNA" of this visual concept so a user can recreate it with DIFFERENT subjects.
 
-Analyze and Extract these TECHNICAL parameters to recreate this EXACT look for ANY subject:
-1. **Art Style/Medium**: (e.g. Oil Painting, 3D Render, Unsplash Photography, Flat Vector, Anime, Blueprint...)
-2. **Lighting Setup**: (e.g. Volumetric, Rembrant, Golden Hour, Neon, Flat lighting...)
-3. **Camera/Composition**: (e.g. Macro, Wide Angle, Isometric, Bokeh, Drone shot...)
-4. **Color Palette**: (e.g. Pastel, Cyberpunk, Monochromatic, Vibrant...)
-5. **Mood/Atmosphere**: (e.g. Dreamy, Professional, Dark, Ethereal...)
-6. **Tech Specs**: (e.g. Unreal Engine 5, Octane Render, 8k, V-Ray, Canon EOS R5...)
+Analyze the input deeply. Think about:
+1. **The "Vibe"**: Is it whimsical, dark, corporate, retro, cinematic?
+2. **The Technique**: Is it 3D render, watercolor, vector, thick oil impasto?
+3. **The Light**: How does light interact with the subject?
+4. **The User's Goal**: They want to make *other* things look like this.
 
-Return ONLY a valid JSON object matching this structure (use standard AI prompting keywords):
+RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 {
-  "style": "best matching style keyword",
-  "lighting": "best matching lighting keyword",
-  "composition": "best matching composition keyword",
-  "aspectRatio": "estimated aspect ratio (e.g. 16:9, 1:1, 9:16)",
-  "mood": "best matching mood keyword",
-  "color": "best matching color keyword",
-  "details": "comma separated list of technical keywords (e.g. 8k, detailed texture, octane render)",
-  "setting": "brief atmosphere description (e.g. in a futuristic nebula, studio background)"
+  "style_name": "A short, catchy name for this style (e.g. 'Neon Cyberpunk 3D', 'Vintage Ghibli Watercolor')",
+  "analysis": "A concise (2-3 sentences) explanation of what makes this style unique. Explain the key visual elements clearly to the user.",
+  "template": "A high-quality, reusable prompt template. Use {{subject}} as a placeholder. Example: 'A cute {{subject}} in the style of 3D Pixar, soft volumetric lighting...'",
+  "technical_params": {
+      "style": "best matching keyword for Style dropdown (e.g. 3D Render, Anime, Oil Painting...)",
+      "lighting": "best matching keyword for Lighting dropdown",
+      "composition": "best matching keyword for Composition dropdown",
+      "aspectRatio": "estimated aspect ratio (e.g. 16:9, 1:1)",
+      "mood": "best matching keyword for Mood dropdown",
+      "color": "best matching keyword for Color Palette dropdown",
+      "details": "comma separated list of critical technical keywords (e.g. octane render, 8k, bokeh, thick brushstrokes)"
+  }
 }`;
 
                     } else {
@@ -11129,21 +11149,29 @@ Return ONLY a valid JSON object matching this structure (use standard AI prompti
 
                         showProcessing('Đang phân tích text...');
 
-                        prompt = `ACT AS AN EXPERT AI PROMPT ENGINEER.
-Analyze this text prompt to extract its TECHNICAL STYLE parameters.
-Input: "${textInput}"
+                        prompt = `ACT AS A WORLD-CLASS AI ART DIRECTOR \u0026 PROMPT ENGINEER.
+Your goal is to reverse-engineer the "Style DNA" of this visual concept so a user can recreate it with DIFFERENT subjects.
 
-Extract ONLY the style/visual keywords (Ignore the subject).
-Return ONLY a valid JSON object:
+Analyze the input deeply. Think about:
+1. **The "Vibe"**: Is it whimsical, dark, corporate, retro, cinematic?
+2. **The Technique**: Is it 3D render, watercolor, vector, thick oil impasto?
+3. **The Light**: How does light interact with the subject?
+4. **The User's Goal**: They want to make *other* things look like this.
+
+RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 {
-  "style": "best matching style keyword",
-  "lighting": "best matching lighting keyword",
-  "composition": "best matching composition keyword",
-  "aspectRatio": "estimated aspect ratio",
-  "mood": "best matching mood keyword",
-  "color": "best matching color keyword",
-  "details": "comma separated technical keywords",
-  "setting": "brief atmosphere description"
+  "style_name": "A short, catchy name for this style (e.g. 'Neon Cyberpunk 3D', 'Vintage Ghibli Watercolor')",
+  "analysis": "A concise (2-3 sentences) explanation of what makes this style unique. Explain the key visual elements clearly to the user.",
+  "template": "A high-quality, reusable prompt template. Use {{subject}} as a placeholder. Example: 'A cute {{subject}} in the style of 3D Pixar, soft volumetric lighting...'",
+  "technical_params": {
+      "style": "best matching keyword for Style dropdown (e.g. 3D Render, Anime, Oil Painting...)",
+      "lighting": "best matching keyword for Lighting dropdown",
+      "composition": "best matching keyword for Composition dropdown",
+      "aspectRatio": "estimated aspect ratio (e.g. 16:9, 1:1)",
+      "mood": "best matching keyword for Mood dropdown",
+      "color": "best matching keyword for Color Palette dropdown",
+      "details": "comma separated list of critical technical keywords (e.g. octane render, 8k, bokeh, thick brushstrokes)"
+  }
 }`;
                     }
 
