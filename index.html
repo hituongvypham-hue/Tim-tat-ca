@@ -639,6 +639,71 @@
             width: 100%;
         }
 
+        /* Compact AI Icon Grid */
+        .ai-icon-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: flex-start;
+        }
+
+        .ai-icon-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #e0e0e0;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .ai-icon-btn:hover {
+            border-color: #1a73e8;
+            transform: scale(1.1);
+        }
+
+        .ai-icon-btn.selected {
+            border-color: #1a73e8;
+            background: #e8f0fe;
+            box-shadow: 0 0 12px rgba(26, 115, 232, 0.4);
+        }
+
+        .ai-icon-btn img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .ai-icon-btn[title]::after {
+            content: attr(title);
+            position: absolute;
+            bottom: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            white-space: nowrap;
+            color: #5f6368;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .ai-icon-btn:hover[title]::after {
+            opacity: 1;
+        }
+
+        .ai-section-label {
+            font-size: 11px;
+            color: #9aa0a6;
+            margin-bottom: 6px;
+            display: block;
+        }
+
         /* Prompt Builder Styles */
         .prompt-builder {
             display: flex;
@@ -5550,56 +5615,48 @@
                 </div>
 
                 <div class="section">
-                    <div class="section-title">🌍 Chọn AI (có thể chọn nhiều)</div>
-                    <div class="ai-checkbox-grid">
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="chatgpt-dalle"
-                                checked><span>🎨 DALL-E 3</span><small>Hiểu prompt phức tạp</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate"
-                                value="midjourney"><span>🖼️
-                                Midjourney</span><small>Nghệ thuật đẹp nhất</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="flux"><span>⚡
-                                Flux AI</span><small>Photorealistic, open</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="ideogram"><span>✏️
-                                Ideogram</span><small>Text chuẩn</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="leonardo"><span>🎭
-                                Leonardo AI</span><small>Game art, 3D</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="firefly"><span>🔥
-                                Firefly</span><small>Adobe, bản quyền</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate"
-                                value="gemini-image"><span>✨
-                                Gemini</span><small>Google, multimodal</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate"
-                                value="stable-diffusion"><span>🌀
-                                Stable Diffusion</span><small>Open-source, local</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="aistudio"><span>🧪
-                                AI Studio</span><small>Google, Nano Banana Pro</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="kittl"><span>✂️
-                                Kittl AI</span><small>Vector, logo chuyên nghiệp</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="recraft"><span>📐
-                                Recraft</span><small>SVG native, icons</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="reve"><span>🌟
-                                Reve Image</span><small>Photorealistic mới</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate"
-                                value="freepik-ai"><span>🎨
-                                Freepik AI</span><small>Stock có license</small></label>
+                    <div class="section-title">🌍 Chọn AI</div>
+                    <span class="ai-section-label">🌐 International</span>
+                    <div class="ai-icon-grid" id="aiIconGrid">
+                        <button type="button" class="ai-icon-btn selected" data-ai="chatgpt-dalle" title="DALL-E 3"
+                            onclick="toggleAiIcon(this)">🎨</button>
+                        <button type="button" class="ai-icon-btn" data-ai="midjourney" title="Midjourney"
+                            onclick="toggleAiIcon(this)">🖼️</button>
+                        <button type="button" class="ai-icon-btn" data-ai="flux" title="Flux AI"
+                            onclick="toggleAiIcon(this)">⚡</button>
+                        <button type="button" class="ai-icon-btn" data-ai="ideogram" title="Ideogram"
+                            onclick="toggleAiIcon(this)">✏️</button>
+                        <button type="button" class="ai-icon-btn" data-ai="leonardo" title="Leonardo"
+                            onclick="toggleAiIcon(this)">🎭</button>
+                        <button type="button" class="ai-icon-btn" data-ai="firefly" title="Firefly"
+                            onclick="toggleAiIcon(this)">🔥</button>
+                        <button type="button" class="ai-icon-btn selected" data-ai="gemini-image" title="Gemini"
+                            onclick="toggleAiIcon(this)">✨</button>
+                        <button type="button" class="ai-icon-btn" data-ai="stable-diffusion" title="Stable Diffusion"
+                            onclick="toggleAiIcon(this)">🌀</button>
+                        <button type="button" class="ai-icon-btn" data-ai="aistudio" title="AI Studio"
+                            onclick="toggleAiIcon(this)">🧪</button>
+                        <button type="button" class="ai-icon-btn" data-ai="kittl" title="Kittl"
+                            onclick="toggleAiIcon(this)">✂️</button>
+                        <button type="button" class="ai-icon-btn" data-ai="recraft" title="Recraft"
+                            onclick="toggleAiIcon(this)">📐</button>
+                        <button type="button" class="ai-icon-btn" data-ai="reve" title="Reve"
+                            onclick="toggleAiIcon(this)">🌟</button>
+                        <button type="button" class="ai-icon-btn" data-ai="freepik-ai" title="Freepik"
+                            onclick="toggleAiIcon(this)">🎨</button>
                     </div>
-                </div>
-
-                <div class="section">
-                    <div class="section-title">🇨🇳 Trung Quốc</div>
-                    <div class="ai-checkbox-grid">
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="keling"><span>🌟
-                                Keling AI</span><small>Văn hóa TQ</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="jimeng"><span>💭
-                                Jimeng AI</span><small>Miễn phí</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate"
-                                value="doubao-image"><span>🎁
-                                Doubao</span><small>ByteDance</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate" value="tongyi"><span>☁️
-                                Tongyi</span><small>Alibaba</small></label>
-                        <label class="ai-checkbox"><input type="checkbox" name="aiModelCreate"
-                                value="ernie-vilg"><span>🐼
-                                ERNIE-ViLG</span><small>Baidu, miễn phí</small></label>
+                    <span class="ai-section-label" style="margin-top: 12px;">🇨🇳 Trung Quốc</span>
+                    <div class="ai-icon-grid">
+                        <button type="button" class="ai-icon-btn" data-ai="keling" title="Keling"
+                            onclick="toggleAiIcon(this)">🌟</button>
+                        <button type="button" class="ai-icon-btn" data-ai="jimeng" title="Jimeng"
+                            onclick="toggleAiIcon(this)">💭</button>
+                        <button type="button" class="ai-icon-btn" data-ai="doubao-image" title="Doubao"
+                            onclick="toggleAiIcon(this)">🎁</button>
+                        <button type="button" class="ai-icon-btn" data-ai="tongyi" title="Tongyi"
+                            onclick="toggleAiIcon(this)">☁️</button>
+                        <button type="button" class="ai-icon-btn" data-ai="ernie-vilg" title="ERNIE"
+                            onclick="toggleAiIcon(this)">🐼</button>
                     </div>
                 </div>
 
@@ -10189,6 +10246,24 @@ Trả về JSON (chỉ JSON, không text khác):
                 } else if (tabName === 'templates') {
                     document.getElementById('subTabTemplates').classList.add('active');
                 }
+            }
+
+
+            // ========== AI ICON BUTTONS ==========
+            function toggleAiIcon(btn) {
+                btn.classList.toggle('selected');
+                updateCreateCount();
+            }
+
+            function getSelectedAiModels() {
+                const selectedBtns = document.querySelectorAll('.ai-icon-btn.selected');
+                return Array.from(selectedBtns).map(btn => btn.dataset.ai);
+            }
+
+            function updateCreateCount() {
+                const count = document.querySelectorAll('.ai-icon-btn.selected').length;
+                const countEl = document.getElementById('createCount');
+                if (countEl) countEl.textContent = count || 1;
             }
 
 
