@@ -10214,11 +10214,38 @@ Trả về JSON (chỉ JSON, không text khác):
 
         function setSelectByValue(selectId, value) {
             const select = document.getElementById(selectId);
+            if (!value) return;
+            const cleanValue = value.toLowerCase().trim();
+
+            // 1. Try exact match first
             for (let i = 0; i < select.options.length; i++) {
-                if (select.options[i].value === value) {
+                if (select.options[i].value.toLowerCase() === cleanValue) {
                     select.selectedIndex = i;
                     return;
                 }
+            }
+
+            // 2. Try fuzzy match (contains)
+            let bestMatchIndex = -1;
+            let maxOverlap = 0;
+
+            for (let i = 0; i < select.options.length; i++) {
+                const optionVal = select.options[i].value.toLowerCase();
+                // Skip placeholder options
+                if (!optionVal || optionVal.includes('chọn')) continue;
+
+                if (optionVal.includes(cleanValue) || cleanValue.includes(optionVal)) {
+                    // Simple length check for "best" overlap
+                    const overlap = Math.min(optionVal.length, cleanValue.length);
+                    if (overlap > maxOverlap) {
+                        maxOverlap = overlap;
+                        bestMatchIndex = i;
+                    }
+                }
+            }
+
+            if (bestMatchIndex !== -1) {
+                select.selectedIndex = bestMatchIndex;
             }
         }
 
