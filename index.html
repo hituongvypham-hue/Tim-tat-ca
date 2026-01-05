@@ -8896,7 +8896,7 @@ Trả về JSON (chỉ JSON, không text khác):
             });
 
             // ========== DRAGGABLE TABS ==========
-            const tabsContainer = document.getElementById('tabsContainer');
+            const tabsContainer = document.getElementById('tabsWrapper');
             let draggedTab = null;
 
             tabsContainer.querySelectorAll('.tab').forEach(tab => {
@@ -9842,6 +9842,7 @@ Trả về JSON (chỉ JSON, không text khác):
             // Configuration - all in window scope for global access
             (function () {
                 'use strict';
+                console.log('[GDrive] IIFE starting...');
 
                 // Config constants
                 const CONFIG = {
@@ -9930,7 +9931,7 @@ Trả về JSON (chỉ JSON, không text khác):
                             headers: { 'Authorization': 'Bearer ' + accessToken }
                         });
                         return res.ok;
-                    } catch {
+                    } catch (e) {
                         return false;
                     }
                 }
