@@ -43,8 +43,12 @@
             --mac-green: #28c840;
             --mac-text: #1d1d1f;
             --mac-text-secondary: #86868b;
-            --mac-border: rgba(0, 0, 0, 0.1);
-            --mac-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+            --mac-border: #d1d1d6;
+            --mac-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+            /* Missing variables mapped to Mac theme */
+            --google-blue: var(--mac-accent);
+            --google-blue-hover: var(--mac-accent-hover);
             --mac-radius: 12px;
             --mac-radius-lg: 16px;
         }
@@ -4372,6 +4376,18 @@
                     </div>
                     <div class="sidebar-item" onclick="switchMacTab('knowledge')">
                         <span class="icon">📖</span>Knowledge
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Your Tools</div>
+                    <div class="sidebar-item" onclick="switchMacTab('prompt')">
+                        <span class="icon">📝</span>Prompt
+                    </div>
+                    <div class="sidebar-item" onclick="switchMacTab('mytool')">
+                        <span class="icon">🧰</span>My Tools
+                    </div>
+                    <div class="sidebar-item" onclick="switchMacTab('wiki')">
+                        <span class="icon">🌐</span>Wiki
                     </div>
                 </div>
             </nav>
@@ -10534,7 +10550,7 @@ Trả về JSON (chỉ JSON, không text khác):
 
             function generateAIImage() {
                 const prompt = document.getElementById('finalPrompt').value.trim();
-                const selectedModels = document.querySelectorAll('input[name="aiModelCreate"]:checked');
+                const selectedModels = document.querySelectorAll('.ai-icon-btn.selected');
 
                 if (!prompt) {
                     alert('Vui lòng điền thông tin để tạo prompt!');
