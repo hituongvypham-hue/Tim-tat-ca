@@ -9840,10 +9840,11 @@ Trả về JSON (chỉ JSON, không text khác):
 
             // ========== GOOGLE DRIVE SYNC ==========
             // Google OAuth Client ID - Replace with your own from Google Cloud Console
-            const GOOGLE_CLIENT_ID = '676557816670-38kek48cab0ge88hmsvbo8lcpslp82fv.apps.googleusercontent.com';
+            // Use window scope for accessibility from onclick handlers
+            window.GOOGLE_CLIENT_ID = '676557816670-38kek48cab0ge88hmsvbo8lcpslp82fv.apps.googleusercontent.com';
             // Using full drive scope to allow cross-browser sync (drive.file only works within same session)
-            const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
-            const DRIVE_FILE_NAME = 'media-search-pro-settings.json';
+            window.DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
+            window.DRIVE_FILE_NAME = 'media-search-pro-settings.json';
 
             // Auto sync with debounce (3 seconds)
             let autoSyncTimeout = null;
@@ -9859,7 +9860,7 @@ Trả về JSON (chỉ JSON, không text khác):
 
                         // Search for existing file
                         const searchRes = await fetch(
-                            `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FILE_NAME}'`,
+                            `https://www.googleapis.com/drive/v3/files?q=name='${window.DRIVE_FILE_NAME}'`,
                             { headers: { 'Authorization': 'Bearer ' + window.googleAccessToken } }
                         );
 
@@ -9869,7 +9870,7 @@ Trả về JSON (chỉ JSON, không text khác):
                         let fileId = searchResult.files && searchResult.files[0] ? searchResult.files[0].id : null;
 
                         const metadata = {
-                            name: DRIVE_FILE_NAME,
+                            name: window.DRIVE_FILE_NAME,
                             mimeType: 'application/json'
                         };
 
@@ -9958,8 +9959,8 @@ Trả về JSON (chỉ JSON, không text khác):
 
                 try {
                     window.tokenClient = google.accounts.oauth2.initTokenClient({
-                        client_id: GOOGLE_CLIENT_ID,
-                        scope: DRIVE_SCOPE,
+                        client_id: window.GOOGLE_CLIENT_ID,
+                        scope: window.DRIVE_SCOPE,
                         callback: handleGoogleCallback
                     });
                     window.googleAuthInitialized = true;
@@ -10148,7 +10149,7 @@ Trả về JSON (chỉ JSON, không text khác):
 
                     // First, search for existing file
                     const searchRes = await fetch(
-                        `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FILE_NAME}'`,
+                        `https://www.googleapis.com/drive/v3/files?q=name='${window.DRIVE_FILE_NAME}'`,
                         { headers: { 'Authorization': 'Bearer ' + window.googleAccessToken } }
                     );
 
@@ -10166,7 +10167,7 @@ Trả về JSON (chỉ JSON, không text khác):
                     let fileId = searchResult.files && searchResult.files[0] ? searchResult.files[0].id : null;
 
                     const metadata = {
-                        name: DRIVE_FILE_NAME,
+                        name: window.DRIVE_FILE_NAME,
                         mimeType: 'application/json'
                     };
 
@@ -10210,11 +10211,11 @@ Trả về JSON (chỉ JSON, không text khác):
                 statusEl.className = 'sync-status';
 
                 try {
-                    console.log('🔍 Searching for file:', DRIVE_FILE_NAME);
+                    console.log('🔍 Searching for file:', window.DRIVE_FILE_NAME);
 
                     // Search for file
                     const searchRes = await fetch(
-                        `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FILE_NAME}'`,
+                        `https://www.googleapis.com/drive/v3/files?q=name='${window.DRIVE_FILE_NAME}'`,
                         { headers: { 'Authorization': 'Bearer ' + window.googleAccessToken } }
                     );
 
