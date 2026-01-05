@@ -10381,17 +10381,28 @@ Trả về JSON duy nhất, không giải thích:
                         }
                     };
 
-                    prompt = `Analyze this image to deeply understand its artistic style and aesthetic. I need to replicate this style.
-Extract the following elements and return ONLY a JSON object:
+                    prompt = `ACT AS AN EXPERT AI PROMPT ENGINEER.
+YOUR GOAL: Reverse Engineer the artistic style of this image to creating a "Style Transfer" prompt.
+DO NOT DESCRIBE THE CONTENT (Subject, People, Objects). FOCUS ONLY ON THE VISUAL STYLE/AESTHETIC.
+
+Analyze and Extract these TECHNICAL parameters to recreate this EXACT look for ANY subject:
+1. **Art Style/Medium**: (e.g. Oil Painting, 3D Render, Unsplash Photography, Flat Vector, Anime, Blueprint...)
+2. **Lighting Setup**: (e.g. Volumetric, Rembrant, Golden Hour, Neon, Flat lighting...)
+3. **Camera/Composition**: (e.g. Macro, Wide Angle, Isometric, Bokeh, Drone shot...)
+4. **Color Palette**: (e.g. Pastel, Cyberpunk, Monochromatic, Vibrant...)
+5. **Mood/Atmosphere**: (e.g. Dreamy, Professional, Dark, Ethereal...)
+6. **Tech Specs**: (e.g. Unreal Engine 5, Octane Render, 8k, V-Ray, Canon EOS R5...)
+
+Return ONLY a valid JSON object matching this structure (use standard AI prompting keywords):
 {
-  "style": "Specific art style (e.g. Cinematic Portrait, 3D Render, Oil Painting, Anime, Minimalist Vector, etc.)",
-  "lighting": "Lighting type (e.g. Golden Hour, Neon, Studio Softbox, Dramatic Rim Light)",
-  "composition": "Composition type (e.g. Close-up, Wide Angle, Rule of Thirds, Symmetrical)",
-  "aspectRatio": "Estimated aspect ratio (e.g. 16:9 horizontal landscape format, 1:1 square format, 9:16 vertical portrait format)",
-  "mood": "Emotional mood (e.g. Dreamy, Professional, Dark & Moody, Cheerful)",
-  "color": "Color palette description (e.g. Warm pastel tones, Cyberpunk neon, Monochromatic blue)",
-  "details": "Brief visual details about texture/clothing/objects to match style",
-  "setting": "Brief setting description to match style"
+  "style": "best matching style keyword",
+  "lighting": "best matching lighting keyword",
+  "composition": "best matching composition keyword",
+  "aspectRatio": "estimated aspect ratio (e.g. 16:9, 1:1, 9:16)",
+  "mood": "best matching mood keyword",
+  "color": "best matching color keyword",
+  "details": "comma separated list of technical keywords (e.g. 8k, detailed texture, octane render)",
+  "setting": "brief atmosphere description (e.g. in a futuristic nebula, studio background)"
 }`;
 
                 } else {
@@ -10404,19 +10415,21 @@ Extract the following elements and return ONLY a JSON object:
 
                     showProcessing('Đang phân tích text...');
 
-                    prompt = `Analyze this image prompt to extract its artistic style:
-"${textInput}"
+                    prompt = `ACT AS AN EXPERT AI PROMPT ENGINEER.
+Analyze this text prompt to extract its TECHNICAL STYLE parameters.
+Input: "${textInput}"
 
-Extract the elements and return ONLY a JSON object:
+Extract ONLY the style/visual keywords (Ignore the subject).
+Return ONLY a valid JSON object:
 {
-  "style": "...",
-  "lighting": "...",
-  "composition": "...",
-  "aspectRatio": "...",
-  "mood": "...",
-  "color": "...",
-  "details": "...",
-  "setting": "..."
+  "style": "best matching style keyword",
+  "lighting": "best matching lighting keyword",
+  "composition": "best matching composition keyword",
+  "aspectRatio": "estimated aspect ratio",
+  "mood": "best matching mood keyword",
+  "color": "best matching color keyword",
+  "details": "comma separated technical keywords",
+  "setting": "brief atmosphere description"
 }`;
                 }
 
