@@ -54,7 +54,8 @@
 
             /* Legacy Variable Mappings (Fix for broken UI) */
             --bg: var(--mac-bg);
-            --card: #ffffff; /* Use solid white for card to avoid transparency issues without blur */
+            --card: #ffffff;
+            /* Use solid white for card to avoid transparency issues without blur */
             --text: var(--mac-text);
             --text-light: var(--mac-text-secondary);
             --border: var(--mac-border);
@@ -12651,6 +12652,9 @@ Return ONLY a valid JSON object:
             if (tabBtn) {
                 tabBtn.classList.add('active');
             }
+
+            // Fix: Update global currentTab variable so search logic works
+            currentTab = tabName;
         }
 
         // Initialize: show video tab by default
