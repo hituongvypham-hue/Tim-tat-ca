@@ -211,6 +211,18 @@
             padding: 0;
         }
 
+        /* Modal Z-index Fix for macOS layout */
+        .api-modal-overlay,
+        .style-modal,
+        .guide-modal-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            z-index: 99999 !important;
+        }
+
 
 
         /* Google Header */
