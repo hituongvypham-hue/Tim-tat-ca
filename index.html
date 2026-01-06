@@ -13606,6 +13606,10 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         var ytPlayer;
         var ytAudioHistory = JSON.parse(localStorage.getItem('ytAudioHistory') || '[]');
         var ytApiKey = localStorage.getItem('ytApiKey') || '';
+        var currentVideoTitle = '';
+        var currentVideoId = '';
+        var silentAudio = null;
+        var wakeLock = null;
 
         // Load YouTube IFrame API
         var tag = document.createElement('script');
@@ -13615,7 +13619,140 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
         function onYouTubeIframeAPIReady() {
             console.log('YouTube IFrame API Ready');
+            initBackgroundAudioSupport();
         }
+
+        // ==========================================
+        // BACKGROUND AUDIO TRICKS
+        // ==========================================
+
+        // 1. Silent Audio Trick - Keep browser active in background
+        function initSilentAudio() {
+            if (silentAudio) return;
+
+            // Create a silent audio element (base64 encoded silent MP3)
+            silentAudio = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo//MUZAAAAAGkAAAAAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MUZDsAAAGkAAAAAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV');
+            silentAudio.loop = true;
+            silentAudio.volume = 0.01;
+            console.log('[Background Audio] Silent audio initialized');
+        }
+
+        function startSilentAudio() {
+            if (!silentAudio) initSilentAudio();
+            silentAudio.play().catch(e => console.log('[Background Audio] Silent audio play failed:', e));
+        }
+
+        function stopSilentAudio() {
+            if (silentAudio) {
+                silentAudio.pause();
+            }
+        }
+
+        // 2. Media Session API - Lock screen controls
+        function updateMediaSession(title, artist, thumbnail) {
+            if (!('mediaSession' in navigator)) {
+                console.log('[Background Audio] Media Session API not supported');
+                return;
+            }
+
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: title || 'YouTube Audio',
+                artist: artist || 'Media Search Pro',
+                album: 'YouTube',
+                artwork: thumbnail ? [
+                    { src: thumbnail, sizes: '96x96', type: 'image/jpeg' },
+                    { src: thumbnail.replace('default', 'mqdefault'), sizes: '320x180', type: 'image/jpeg' },
+                    { src: thumbnail.replace('default', 'hqdefault'), sizes: '480x360', type: 'image/jpeg' }
+                ] : []
+            });
+
+            // Media Session action handlers
+            navigator.mediaSession.setActionHandler('play', () => {
+                if (ytPlayer && ytPlayer.playVideo) ytPlayer.playVideo();
+            });
+
+            navigator.mediaSession.setActionHandler('pause', () => {
+                if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
+            });
+
+            navigator.mediaSession.setActionHandler('previoustrack', () => {
+                // Play previous from history
+                if (ytAudioHistory.length > 1) {
+                    const prev = ytAudioHistory[1];
+                    if (prev) loadYTAudio(prev.id || prev, prev.title || '');
+                }
+            });
+
+            navigator.mediaSession.setActionHandler('nexttrack', () => {
+                // Could implement playlist functionality here
+                toast('Chức năng Next chưa khả dụng');
+            });
+
+            console.log('[Background Audio] Media Session updated:', title);
+        }
+
+        // 3. Wake Lock API - Prevent screen from turning off (optional)
+        async function requestWakeLock() {
+            if (!('wakeLock' in navigator)) {
+                console.log('[Background Audio] Wake Lock API not supported');
+                return;
+            }
+
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+                console.log('[Background Audio] Wake Lock acquired');
+
+                wakeLock.addEventListener('release', () => {
+                    console.log('[Background Audio] Wake Lock released');
+                });
+            } catch (err) {
+                console.log('[Background Audio] Wake Lock error:', err.message);
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLock) {
+                wakeLock.release();
+                wakeLock = null;
+            }
+        }
+
+        // Re-acquire wake lock on visibility change
+        document.addEventListener('visibilitychange', async () => {
+            if (document.visibilityState === 'visible' && ytPlayer && ytPlayer.getPlayerState && ytPlayer.getPlayerState() === 1) {
+                await requestWakeLock();
+            }
+        });
+
+        // Initialize background audio support
+        function initBackgroundAudioSupport() {
+            initSilentAudio();
+            console.log('[Background Audio] Support initialized');
+        }
+
+        // Start all background audio tricks when playing
+        function enableBackgroundPlayback(title, videoId) {
+            startSilentAudio();
+            const thumbnail = `https://img.youtube.com/vi/${videoId}/default.jpg`;
+            updateMediaSession(title, 'YouTube', thumbnail);
+            requestWakeLock();
+
+            // Update playback state
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.playbackState = 'playing';
+            }
+        }
+
+        // Stop all background audio tricks when paused/stopped
+        function disableBackgroundPlayback() {
+            stopSilentAudio();
+            releaseWakeLock();
+
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.playbackState = 'paused';
+            }
+        }
+
 
         function saveYTApiKey() {
             const key = document.getElementById('ytApiKey').value.trim();
@@ -13743,13 +13880,20 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                     }
                 });
             }
+            // Store current video info for background audio
+            currentVideoId = videoId;
+            currentVideoTitle = title || videoId;
 
             addToYTHistory(videoId, title);
+
+            // Enable background playback
+            enableBackgroundPlayback(currentVideoTitle, currentVideoId);
         }
 
         function closeYtPlayer() {
             if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
             document.getElementById('ytPlayerContainer').style.display = 'none';
+            disableBackgroundPlayback();
         }
 
         function onYTPlayerReady(event) {
@@ -13766,7 +13910,18 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
         function onYTPlayerStateChange(event) {
-            // Handle state changes if needed
+            // YT.PlayerState: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
+            const state = event.data;
+
+            if (state === 1) {
+                // Playing - enable background audio
+                enableBackgroundPlayback(currentVideoTitle, currentVideoId);
+                console.log('[YT Player] Playing');
+            } else if (state === 2 || state === 0) {
+                // Paused or Ended - disable background audio
+                disableBackgroundPlayback();
+                console.log('[YT Player] Paused/Ended');
+            }
         }
 
         function addToYTHistory(videoId, title = '') {
