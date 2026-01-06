@@ -4518,6 +4518,9 @@
                     <div class="sidebar-item" onclick="switchMacTab('wiki')">
                         <span class="icon">🌐</span>Wiki
                     </div>
+                    <div class="sidebar-item" onclick="switchMacTab('director')">
+                        <span class="icon">🎬</span>Director
+                    </div>
                 </div>
 
                 <div class="sidebar-section">
@@ -5314,53 +5317,86 @@
                 <!-- YOUTUBE AUDIO TAB -->
                 <div class="tab-content" id="ytaudio-tab">
 
-                    <div style="margin-bottom: 20px;">
-                        <div class="collapsible-header"
-                            onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
-                            <span>⚙️ Cấu hình API Key (để sử dụng Tìm kiếm)</span>
-                            <span style="font-size:12px;">▼</span>
+                    <div class="search-section"
+                        style="margin-bottom: 20px; background: var(--mac-card); padding: 16px; border-radius: 12px; border: 1px solid var(--mac-folder-border);">
+                        <!-- API Key Config -->
+                        <div style="margin-bottom: 15px;">
+                            <div class="collapsible-header"
+                                onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'"
+                                style="cursor:pointer; user-select:none; display:flex; align-items:center; gap:8px;">
+                                <span style="color:var(--mac-text-secondary);">⚙️ Cấu hình API Key</span>
+                                <span style="font-size:10px; opacity:0.7">▼</span>
+                            </div>
+                            <div
+                                style="display:none; margin-top:10px; padding:10px; background:var(--mac-bg); border-radius:8px;">
+                                <div style="display:flex; gap:10px;">
+                                    <input type="text" id="ytApiKey" class="search-input"
+                                        placeholder="Paste YouTube Data API Key here..."
+                                        style="flex:1; padding:8px; border-radius:6px; border:1px solid var(--mac-border); background:var(--mac-input-bg); color:var(--mac-text);">
+                                    <button onclick="saveYTApiKey()"
+                                        style="padding:8px 16px; background:var(--mac-button); color:var(--mac-text); border:1px solid var(--mac-border); border-radius:6px; cursor:pointer;">Lưu</button>
+                                </div>
+                                <p style="font-size:12px; color:var(--mac-text-secondary); margin-top:5px;">* Cần thiết
+                                    để sử dụng tính năng Tìm kiếm từ khóa.</p>
+                            </div>
                         </div>
-                        <div
-                            style="display:none; margin-top:10px; padding:10px; background:var(--mac-bg); border-radius:8px;">
-                            <input type="text" id="ytApiKey" class="search-input"
-                                placeholder="Nhập YouTube Data API Key..." style="margin-bottom:10px;">
-                            <button class="analyze-btn" onclick="saveYTApiKey()">💾 Lưu API Key</button>
-                            <p style="font-size:12px; color:var(--mac-text-secondary); margin-top:5px;">
-                                * Nếu không có API Key, bạn chỉ có thể nhập URL/ID trực tiếp.
-                            </p>
-                        </div>
-                    </div>
 
-                    <div class="script-section">
-                        <div class="script-header">
-                            <span class="script-title">Video ID / URL / Từ khóa</span>
+                        <!-- Main Search Bar -->
+                        <div class="script-header" style="margin-bottom:8px;">
+                            <span class="script-title" style="font-weight:600; font-size:1.1rem;">YouTube Audio
+                                Player</span>
                         </div>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="ytAudioInput" class="search-input" style="flex:1"
+                        <div style="display: flex; gap: 10px; width: 100%;">
+                            <input type="text" id="ytAudioInput"
+                                style="flex-grow:1; width: 100%; min-width: 0; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--mac-border); background: var(--mac-input-bg); color: var(--mac-text); font-size: 14px;"
                                 placeholder="Nhập từ khóa tìm kiếm hoặc dán link YouTube..."
                                 onkeypress="if(event.key === 'Enter') handleYTSearch()">
-                            <button class="analyze-btn" onclick="handleYTSearch()">🔍 Tìm / Phát</button>
+                            <button onclick="handleYTSearch()"
+                                style="flex-shrink:0; padding: 0 20px; background: var(--mac-accent); color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer;">
+                                🔍 Tìm / Phát
+                            </button>
                         </div>
                     </div>
 
+                    <!-- Search Results -->
                     <div id="ytSearchResults" style="margin-bottom: 20px;"></div>
 
-                    <div class="yt-audio-player-wrapper">
+                    <!-- Player Container -->
+                    <div class="yt-audio-player-wrapper" style="display:none;" id="ytPlayerContainer">
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <div id="ytCurrentTitle"
+                                style="font-weight:600; color:var(--mac-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80%;">
+                            </div>
+                            <button onclick="closeYtPlayer()"
+                                style="background:transparent; border:none; cursor:pointer; font-size:18px;">❌</button>
+                        </div>
                         <div id="ytAudioPlayer"></div>
                         <div class="yt-audio-controls" id="ytAudioControls" style="display: none;">
-                            <button onclick="ytPlayer.playVideo()">▶️ Play</button>
-                            <button onclick="ytPlayer.pauseVideo()">⏸️ Pause</button>
-                            <button onclick="ytPlayer.stopVideo()">⏹️ Stop</button>
-                            <input type="range" id="ytVolumeSlider" min="0" max="100" value="100"
-                                onchange="if(ytPlayer) ytPlayer.setVolume(this.value)">
-                            <span id="ytVolumeLabel">🔊 100%</span>
+                            <button onclick="ytPlayer.playVideo()">▶️</button>
+                            <button onclick="ytPlayer.pauseVideo()">⏸️</button>
+                            <div style="flex:1; display:flex; align-items:center; gap:10px; margin-left:10px;">
+                                <span>🔊</span>
+                                <input type="range" id="ytVolumeSlider" min="0" max="100" value="100"
+                                    style="flex:1; cursor:pointer;"
+                                    onchange="if(ytPlayer) ytPlayer.setVolume(this.value)">
+                                <span id="ytVolumeLabel"
+                                    style="width:40px; text-align:right; font-size:12px; color:var(--mac-text-secondary);">100%</span>
+                            </div>
                         </div>
-                        <div id="ytCurrentTitle" style="margin-top:10px; font-weight:500; color:var(--mac-text);"></div>
                     </div>
 
-                    <div class="section">
-                        <div class="section-title">📋 Lịch sử phát</div>
-                        <div id="ytAudioHistory" class="platforms"></div>
+                    <!-- History -->
+                    <div class="section" style="margin-top:30px;">
+                        <div class="section-title"
+                            style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>📋 Lịch sử phát gần đây</span>
+                            <button onclick="clearYtHistory()"
+                                style="font-size:12px; padding:4px 8px; border-radius:4px; background:var(--mac-bg); border:1px solid var(--mac-border); cursor:pointer; color:var(--mac-text-secondary);">Xóa
+                                lịch sử</button>
+                        </div>
+                        <div id="ytAudioHistory" class="platforms"
+                            style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
                     </div>
                 </div>
 
@@ -6621,6 +6657,29 @@
 
                 <!-- VISION TAB -->
                 <div class="tab-content" id="vision-tab">
+
+                    <!-- Upload Section for Vision -->
+                    <div class="upload-section" id="visionUploadSection">
+                        <div class="upload-area" id="visionUploadArea">
+                            <input type="file" id="visionImageFile" accept="image/*" style="display: none;">
+                            <div class="upload-icon">📸</div>
+                            <div class="upload-text">
+                                <strong>Kéo thả ảnh vào đây</strong>
+                                <span>hoặc click để chọn file</span>
+                            </div>
+                            <div class="upload-formats">PNG, JPG, GIF, WEBPs</div>
+                        </div>
+                        <div class="upload-or">hoặc</div>
+                        <div class="paste-area">
+                            <input type="text" id="visionImageUrlInput" class="url-input"
+                                placeholder="Paste URL ảnh vào đây...">
+                        </div>
+                        <div class="upload-preview" id="visionUploadPreview" style="display: none;">
+                            <img id="visionPreviewImg" src="">
+                            <button class="remove-preview" onclick="removeVisionPreview()">✕</button>
+                        </div>
+                    </div>
+
                     <div class="section">
                         <div class="section-title">📸 Image Description <span class="badge hot">HOT</span></div>
                         <div class="platforms">
@@ -13132,9 +13191,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         // macOS Sidebar Tab Switching - Removed duplicate
 
 
-        // Initialize: show video tab by
+        // Initialize: show video tab by default
         document.addEventListener('DOMContentLoaded', function () {
-            const videoTab etElementById('video-tab');
+            const videoTab = document.getElementById('video-tab');
             if (videoTab) {
                 videoTab.style.display = 'block';
                 videoTab.classList.add('active');
@@ -13276,12 +13335,13 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             // Clear search results
             document.getElementById('ytSearchResults').innerHTML = '';
 
-            // Show Title
-            if (title) {
-                document.getElementById('ytCurrentTitle').textContent = `Now Playing: ${title}`;
-            } else {
-                document.getElementById('ytCurrentTitle').textContent = `Now Playing: ${videoId}`;
-            }
+            // Show player container
+            const playerContainer = document.getElementById('ytPlayerContainer');
+            if (playerContainer) playerContainer.style.display = 'block';
+
+            // Update title UI
+            const titleEl = document.getElementById('ytCurrentTitle');
+            if (titleEl) titleEl.textContent = title ? title : `Playing: ${videoId}`;
 
             // Create/update player
             if (ytPlayer) {
@@ -13289,7 +13349,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             } else {
                 ytPlayer = new YT.Player('ytAudioPlayer', {
                     height: '225',
-                    width: '400',
+                    width: '100%',
                     videoId: videoId,
                     playerVars: {
                         'autoplay': 1,
@@ -13304,19 +13364,24 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 });
             }
 
-            // Update history
-            addToYTHistory(videoId);
+            addToYTHistory(videoId, title);
+        }
+
+        function closeYtPlayer() {
+            if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
+            document.getElementById('ytPlayerContainer').style.display = 'none';
         }
 
         function onYTPlayerReady(event) {
             document.getElementById('ytAudioControls').style.display = 'flex';
             // Ensure volume slider matches player volume
-            // Enable slider listener
-            document.getElementById('ytVolumeSlider').addEventListener('input', function () {
-                if (ytPlayer) ytPlayer.setVolume(this.value);
-                document.getElementById('ytVolumeLabel').textContent = '🔊 ' + this.value + '%';
-            });
-
+            const slider = document.getElementById('ytVolumeSlider');
+            if (slider) {
+                slider.addEventListener('input', function () {
+                    if (ytPlayer) ytPlayer.setVolume(this.value);
+                    document.getElementById('ytVolumeLabel').textContent = this.value + '%';
+                });
+            }
             event.target.playVideo();
         }
 
@@ -13324,10 +13389,19 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             // Handle state changes if needed
         }
 
-        function addToYTHistory(videoId) {
-            ytAudioHistory = ytAudioHistory.filter(id => id !== videoId);
-            ytAudioHistory.unshift(videoId);
-            ytAudioHistory = ytAudioHistory.slice(0, 10); // Keep last 10
+        function addToYTHistory(videoId, title = '') {
+            if (!videoId) return;
+            // Normalize: always store object {id, title, timestamp}
+            let newItem = { id: videoId, title: title || videoId, timestamp: Date.now() };
+
+            // Remove existing duplicates
+            ytAudioHistory = ytAudioHistory.filter(item => {
+                const id = typeof item === 'string' ? item : item.id;
+                return id !== videoId;
+            });
+
+            ytAudioHistory.unshift(newItem);
+            ytAudioHistory = ytAudioHistory.slice(0, 12); // Keep last 12
             localStorage.setItem('ytAudioHistory', JSON.stringify(ytAudioHistory));
             renderYTHistory();
         }
@@ -13335,19 +13409,218 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         function renderYTHistory() {
             const container = document.getElementById('ytAudioHistory');
             if (!container) return;
-            container.innerHTML = ytAudioHistory.map(id => `
-            <div class="yt-history-item" onclick="loadYTAudio('${id}')">
+
+            container.innerHTML = ytAudioHistory.map(item => {
+                // Handle legacy data (string) vs new data (object)
+                let id = item;
+                let title = item;
+                if (typeof item === 'object' && item !== null) {
+                    id = item.id;
+                    title = item.title || id;
+                }
+
+                // Skip invalid items
+                if (!id || typeof id !== 'string') return '';
+
+                return `
+            <div class="yt-history-item" onclick="loadYTAudio('${id}', '${title.replace(/'/g, "\\'")}')" title="${title}">
                 <img src="https://img.youtube.com/vi/${id}/default.jpg" 
-                     style="width:40px;height:30px;border-radius:4px;">
-                <span>${id}</span>
+                     style="width:40px;height:30px;border-radius:4px; object-fit:cover;">
+                <span style="max-width:150px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${title}</span>
             </div>
-        `).join('') || '<div style="color:var(--mac-text-secondary); font-style:italic;">Chưa có lịch sử</div>';
+            `;
+            }).join('') || '<div style="color:var(--mac-text-secondary); font-style:italic; width:100%; text-align:center; padding:20px;">Chưa có lịch sử phát</div>';
         }
 
-        // Init history render
+        function clearYtHistory() {
+            if (confirm('Xóa toàn bộ lịch sử nghe nhạc?')) {
+                ytAudioHistory = [];
+                localStorage.setItem('ytAudioHistory', '[]');
+                renderYTHistory();
+            }
+        }
+
+        // Initialize: show video tab by default
         document.addEventListener('DOMContentLoaded', () => {
             renderYTHistory();
+            setupVisionTabInteraction();
         });
+
+        // ==========================================
+        // VISION TAB LOGIC
+        // ==========================================
+        let visionImageFile = null;
+
+        const VISION_URLS = {
+            'chatgptvision': 'https://chat.openai.com/?model=gpt-4o',
+            'geminivision': 'https://gemini.google.com/',
+            'claudevision': 'https://claude.ai/',
+            'llava': 'https://llava.hliu.cc/',
+            'huggingfacecaption': 'https://huggingface.co/spaces/Salesforce/BLIP',
+            'storyboardhero': 'https://storyboardhero.ai/',
+            'adobefirefly': 'https://firefly.adobe.com/',
+            'ltxstudio': 'https://ltx.studio/',
+            'boords': 'https://boords.com/',
+            'katalist': 'https://www.katalist.ai/',
+            'higgsfield': 'https://higgsfield.ai/',
+            'qwenvl': 'https://tongyi.aliyun.com/qianwen/',
+            'glm4v': 'https://chatglm.cn/',
+            'doubaovision': 'https://www.doubao.com/',
+            'deepseekv': 'https://chat.deepseek.com/',
+            'kemengai': 'https://kemeng.ai/',
+            'senseseko': 'https://www.sensecore.cn/',
+            'yiyuanai': 'https://yiyuan.one/',
+            'submagic': 'https://www.submagic.co/',
+            'captionsai': 'https://www.captions.ai/',
+            'veedio': 'https://www.veed.io/',
+            'vmakerai': 'https://www.vmaker.com/'
+        };
+
+        function setupVisionTabInteraction() {
+            const dropArea = document.getElementById('visionUploadArea');
+            const fileInput = document.getElementById('visionImageFile');
+            const urlInput = document.getElementById('visionImageUrlInput');
+            const searchBtn = document.getElementById('visionSearchBtn');
+
+            if (searchBtn) {
+                // Remove existing listeners if any (clone node)
+                // searchBtn.replaceWith(searchBtn.cloneNode(true)); // Careful with this
+                // Just add listener
+                searchBtn.onclick = handleVisionSearch;
+            }
+
+            if (!dropArea || !fileInput) return;
+
+            // Click to open file dialog
+            dropArea.addEventListener('click', () => fileInput.click());
+
+            // File select change
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    handleVisionFile(e.target.files[0]);
+                }
+            });
+
+            // Drag & Drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            dropArea.addEventListener('dragover', () => dropArea.classList.add('highlight'));
+            dropArea.addEventListener('dragleave', () => dropArea.classList.remove('highlight'));
+            dropArea.addEventListener('drop', (e) => {
+                dropArea.classList.remove('highlight');
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files[0]) {
+                    handleVisionFile(files[0]);
+                }
+            });
+
+            // URL Input Paste
+            if (urlInput) {
+                urlInput.addEventListener('input', (e) => {
+                    const url = e.target.value.trim();
+                    if (url) {
+                        displayVisionPreview(url);
+                        visionImageFile = url; // Store URL string
+                    }
+                });
+            }
+        }
+
+        function handleVisionSearch() {
+            const selected = [];
+            document.querySelectorAll('#vision-tab .platform input:checked').forEach(cb => selected.push(cb.dataset.p));
+
+            if (selected.length === 0) {
+                toast('⚠️ Vui lòng chọn ít nhất 1 công cụ!');
+                return;
+            }
+
+            if (visionImageFile) {
+                // If local file, we can't easily pass it.
+                // If URL, maybe.
+                // For now, just copy to clipboard if it's a URL
+                if (typeof visionImageFile === 'string') {
+                    navigator.clipboard.writeText(visionImageFile).then(() => {
+                        toast('📋 Đã copy link ảnh! Dán vào công cụ...');
+                    });
+                } else {
+                    toast('📸 Ảnh đã sẵn sàng! Upload thủ công vào tool...');
+                }
+            }
+
+            // Open tools
+            let opened = 0;
+            selected.forEach((p, index) => {
+                const url = VISION_URLS[p];
+                if (url) {
+                    setTimeout(() => {
+                        window.open(url, '_blank');
+                    }, index * 300);
+                    opened++;
+                }
+            });
+
+            if (opened > 0) {
+                toast(`🚀 Đang mở ${opened} công cụ Vision...`);
+            }
+        }
+
+        function handleVisionFile(file) {
+            if (!file.type.startsWith('image/')) {
+                toast('⚠️ Vui lòng chọn file ảnh!', 'error');
+                return;
+            }
+            visionImageFile = file;
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = function () {
+                displayVisionPreview(reader.result);
+            }
+        }
+
+        function displayVisionPreview(src) {
+            const previewArea = document.getElementById('visionUploadPreview');
+            const previewImg = document.getElementById('visionPreviewImg');
+            const uploadSection = document.getElementById('visionUploadArea');
+            const orDiv = document.querySelector('#visionUploadSection .upload-or');
+            const pasteArea = document.querySelector('#visionUploadSection .paste-area');
+
+            if (previewArea && previewImg) {
+                previewImg.src = src;
+                previewArea.style.display = 'flex';
+                // Hide upload controls
+                if (uploadSection) uploadSection.style.display = 'none';
+                if (orDiv) orDiv.style.display = 'none';
+                if (pasteArea) pasteArea.style.display = 'none';
+            }
+        }
+
+        function removeVisionPreview() {
+            visionImageFile = null;
+            const previewArea = document.getElementById('visionUploadPreview');
+            const previewImg = document.getElementById('visionPreviewImg');
+            const uploadSection = document.getElementById('visionUploadArea');
+            const orDiv = document.querySelector('#visionUploadSection .upload-or');
+            const pasteArea = document.querySelector('#visionUploadSection .paste-area');
+            const fileInput = document.getElementById('visionImageFile');
+            const urlInput = document.getElementById('visionImageUrlInput');
+
+            if (previewArea) previewArea.style.display = 'none';
+            if (previewImg) previewImg.src = '';
+            if (uploadSection) uploadSection.style.display = 'block';
+            if (orDiv) orDiv.style.display = 'block';
+            if (pasteArea) pasteArea.style.display = 'block';
+            if (fileInput) fileInput.value = ''; // Reset input
+            if (urlInput) urlInput.value = '';
+        }
     </script>
 
 </body>
