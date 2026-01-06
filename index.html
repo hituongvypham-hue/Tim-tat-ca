@@ -4411,6 +4411,13 @@
                         <span class="icon">🌐</span>Wiki
                     </div>
                 </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">My Resources</div>
+                    <div class="sidebar-item" onclick="switchMacTab('resources')">
+                        <span class="icon">🚀</span>All Tools
+                    </div>
+                </div>
             </nav>
 
             <!-- Content Area -->
@@ -5389,6 +5396,83 @@
                         <button class="btn-search" id="wikiSearchBtn">Search<span class="count"
                                 id="wikiCount">0</span></button>
                         <button class="btn-select" onclick="toggleAll('wiki')">Toggle</button>
+                    </div>
+                </div>
+
+                <!-- RESOURCES TAB -->
+                <div class="tab-content" id="resources-tab">
+                    <div class="search-wrapper">
+                        <input type="text" id="resourcesInput" class="search-input"
+                            placeholder="Tìm kiếm tài nguyên...">
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">🔬 Scientific Illustration</div>
+                        <div class="platforms">
+                            <label class="platform"><input type="checkbox" data-p="biorender"><span
+                                    class="platform-label"><span class="platform-icon">🧬</span>BioRender</span></label>
+                            <label class="platform"><input type="checkbox" data-p="mindthegraph"><span
+                                    class="platform-label"><span class="platform-icon">📊</span>Mind the
+                                    Graph</span></label>
+                            <label class="platform"><input type="checkbox" data-p="inkscape"><span
+                                    class="platform-label"><span class="platform-icon">✒️</span>Inkscape</span></label>
+                            <label class="platform"><input type="checkbox" data-p="illustrator"><span
+                                    class="platform-label"><span
+                                        class="platform-icon">🎨</span>Illustrator</span></label>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">🎬 Video Production</div>
+                        <div class="platforms">
+                            <label class="platform"><input type="checkbox" data-p="envato"><span
+                                    class="platform-label"><span class="platform-icon">🌿</span>Envato</span></label>
+                            <label class="platform"><input type="checkbox" data-p="motionarray"><span
+                                    class="platform-label"><span class="platform-icon">🎞️</span>Motion
+                                    Array</span></label>
+                            <label class="platform"><input type="checkbox" data-p="aftereffects"><span
+                                    class="platform-label"><span class="platform-icon">🟣</span>After
+                                    Effects</span></label>
+                            <label class="platform"><input type="checkbox" data-p="premiere"><span
+                                    class="platform-label"><span class="platform-icon">🎞️</span>Premiere</span></label>
+                            <label class="platform"><input type="checkbox" data-p="davinci"><span
+                                    class="platform-label"><span class="platform-icon">🌈</span>DaVinci</span></label>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">🌍 Geography</div>
+                        <div class="platforms">
+                            <label class="platform"><input type="checkbox" data-p="naturalearth"><span
+                                    class="platform-label"><span class="platform-icon">🗺️</span>Natural
+                                    Earth</span></label>
+                            <label class="platform"><input type="checkbox" data-p="mapchart"><span
+                                    class="platform-label"><span class="platform-icon">📍</span>MapChart</span></label>
+                            <label class="platform"><input type="checkbox" data-p="googleearth"><span
+                                    class="platform-label"><span class="platform-icon">🌎</span>Google
+                                    Earth</span></label>
+                            <label class="platform"><input type="checkbox" data-p="qgis"><span
+                                    class="platform-label"><span class="platform-icon">🧭</span>QGIS</span></label>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">🐾 Animals</div>
+                        <div class="platforms">
+                            <label class="platform"><input type="checkbox" data-p="3dtotal"><span
+                                    class="platform-label"><span class="platform-icon">🦁</span>3DTotal</span></label>
+                            <label class="platform"><input type="checkbox" data-p="flaticon"><span
+                                    class="platform-label"><span class="platform-icon">🔖</span>Flaticon</span></label>
+                            <label class="platform"><input type="checkbox" data-p="textures"><span
+                                    class="platform-label"><span
+                                        class="platform-icon">🧱</span>Textures.com</span></label>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn-search" id="resourcesSearchBtn">Open<span class="count"
+                                id="resourcesCount">0</span></button>
+                        <button class="btn-select" onclick="toggleAll('resources')">Select All</button>
                     </div>
                 </div>
 
@@ -7341,6 +7425,33 @@
 
             };
 
+            // RESOURCES SEARCH URLS
+            const RESOURCES_URLS = {
+                // Scientific
+                biorender: q => `https://biorender.com/`,
+                mindthegraph: q => `https://mindthegraph.com/`,
+                inkscape: q => `https://inkscape.org/search/?q=${encodeURIComponent(q)}`,
+                illustrator: q => `https://helpx.adobe.com/illustrator/user-guide.html/search?q=${encodeURIComponent(q)}`,
+
+                // Video
+                envato: q => `https://elements.envato.com/video-templates/search/${encodeURIComponent(q)}`,
+                motionarray: q => `https://motionarray.com/browse/?q=${encodeURIComponent(q)}`,
+                aftereffects: q => `https://helpx.adobe.com/after-effects/user-guide.html/search?q=${encodeURIComponent(q)}`,
+                premiere: q => `https://helpx.adobe.com/premiere-pro/user-guide.html/search?q=${encodeURIComponent(q)}`,
+                davinci: q => `https://www.blackmagicdesign.com/search?q=${encodeURIComponent(q)}`,
+
+                // Geography
+                naturalearth: q => `https://www.naturalearthdata.com/search/?s=${encodeURIComponent(q)}`,
+                mapchart: q => `https://mapchart.net/`,
+                googleearth: q => `https://earth.google.com/`,
+                qgis: q => `https://qgis.org/en/site/search.html?q=${encodeURIComponent(q)}`,
+
+                // Animals
+                '3dtotal': q => `https://3dtotal.com/search?q=${encodeURIComponent(q)}`,
+                flaticon: q => `https://www.flaticon.com/search?word=${encodeURIComponent(q)}`,
+                textures: q => `https://www.textures.com/search?q=${encodeURIComponent(q)}`
+            };
+
             // REVERSE IMAGE SEARCH URLS - Direct upload pages
             const REVERSE_URLS = {
                 // Top Reverse Search
@@ -7396,8 +7507,60 @@
                     return;
                 }
 
-                const btn = document.getElementById('analyzeBtn');
                 btn.disabled = true;
+
+                // --- RESTORED NAVIGATION LOGIC ---
+                function switchMacTab(tabId) {
+                    // Sidebar items
+                    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+                    const sidebarItems = document.querySelectorAll('.sidebar-item');
+                    sidebarItems.forEach(item => {
+                        const onclick = item.getAttribute('onclick');
+                        if (onclick && onclick.includes(`'${tabId}'`)) {
+                            item.classList.add('active');
+                        }
+                    });
+
+                    // Tab content
+                    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                    const content = document.getElementById(`${tabId}-tab`);
+                    if (content) {
+                        content.classList.add('active');
+                    } else {
+                        // Fallback for old ID naming if needed
+                        const oldContent = document.getElementById(`${tabId}-content`);
+                        if (oldContent) oldContent.classList.add('active');
+                    }
+                    currentTab = tabId;
+                }
+
+                // --- MOBILE SIDEBAR TOGGLE ---
+                function toggleMobileSidebar() {
+                    const sidebar = document.querySelector('.mac-sidebar');
+                    const overlay = document.getElementById('sidebarOverlay');
+                    const menuBtn = document.getElementById('mobileMenuBtn');
+
+                    if (sidebar) sidebar.classList.toggle('open');
+                    if (overlay) overlay.classList.toggle('show');
+                    if (menuBtn) {
+                        menuBtn.classList.toggle('active');
+                        menuBtn.textContent = sidebar.classList.contains('open') ? '✕' : '☰';
+                    }
+                }
+
+                function closeMobileSidebar() {
+                    const sidebar = document.querySelector('.mac-sidebar');
+                    const overlay = document.getElementById('sidebarOverlay');
+                    const menuBtn = document.getElementById('mobileMenuBtn');
+
+                    if (sidebar) sidebar.classList.remove('open');
+                    if (overlay) overlay.classList.remove('show');
+                    if (menuBtn) {
+                        menuBtn.classList.remove('active');
+                        menuBtn.textContent = '☰';
+                    }
+                }
+
                 btn.innerHTML = '<span class="loading"></span> Đang phân tích...';
 
                 try {
@@ -8540,6 +8703,7 @@ Trả về JSON (chỉ JSON, không text khác):
                 document.getElementById('softwareCount').textContent = document.querySelectorAll('#software-tab .platform input:checked').length;
                 document.getElementById('aiCount').textContent = document.querySelectorAll('#ai-tab .platform input:checked').length;
                 document.getElementById('wikiCount').textContent = document.querySelectorAll('#wiki-tab .platform input:checked').length;
+                document.getElementById('resourcesCount').textContent = document.querySelectorAll('#resources-tab .platform input:checked').length;
                 document.getElementById('reverseCount').textContent = document.querySelectorAll('#reverse-tab .platform input:checked').length;
                 document.getElementById('discoverCount').textContent = document.querySelectorAll('#discover-tab .platform input:checked').length;
                 document.getElementById('visionCount').textContent = document.querySelectorAll('#vision-tab .platform input:checked').length;
@@ -8585,6 +8749,10 @@ Trả về JSON (chỉ JSON, không text khác):
                 } else if (currentTab === 'wiki') {
                     input = document.getElementById('wikiInput');
                     urls = WIKI_URLS;
+                    query = input ? input.value.trim() : '';
+                } else if (currentTab === 'resources') {
+                    input = document.getElementById('resourcesInput');
+                    urls = RESOURCES_URLS;
                     query = input ? input.value.trim() : '';
                 } else {
                     // Reverse tab - no input needed
@@ -8633,6 +8801,7 @@ Trả về JSON (chỉ JSON, không text khác):
             document.getElementById('softwareSearchBtn').addEventListener('click', search);
             document.getElementById('aiSearchBtn').addEventListener('click', search);
             document.getElementById('wikiSearchBtn').addEventListener('click', search);
+            document.getElementById('resourcesSearchBtn').addEventListener('click', search);
             document.getElementById('reverseSearchBtn').addEventListener('click', search);
             document.getElementById('discoverSearchBtn').addEventListener('click', search);
             document.getElementById('visionSearchBtn').addEventListener('click', search);
@@ -8643,6 +8812,7 @@ Trả về JSON (chỉ JSON, không text khác):
             document.getElementById('apkInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
             document.getElementById('softwareInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
             document.getElementById('wikiInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
+            document.getElementById('resourcesInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
             // Direct click on platform label to open homepage (only when no query)
             document.querySelectorAll('.platform-label').forEach(label => {
@@ -12772,42 +12942,8 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
     </div> <!-- End .mac-window -->
 
     <script>
-        // macOS Sidebar Tab Switching
-        function switchMacTab(tabName) {
-            // Update sidebar active state
-            document.querySelectorAll('.sidebar-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            if (event && event.target) {
-                const clickedItem = event.target.closest('.sidebar-item');
-                if (clickedItem) clickedItem.classList.add('active');
-            }
+        // macOS Sidebar Tab Switching - Removed duplicate
 
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-                content.style.display = 'none';
-            });
-
-            // Show the selected tab content
-            const tabContent = document.getElementById(tabName + '-tab');
-            if (tabContent) {
-                tabContent.classList.add('active');
-                tabContent.style.display = 'block';
-            }
-
-            // Also update the hidden tab buttons for consistency
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            const tabBtn = document.querySelector(`.tab[data-tab="${tabName}"]`);
-            if (tabBtn) {
-                tabBtn.classList.add('active');
-            }
-
-            // Fix: Update global currentTab variable so search logic works
-            currentTab = tabName;
-        }
 
         // Initialize: show video tab by default
         document.addEventListener('DOMContentLoaded', function () {
@@ -12842,6 +12978,8 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         });
     </script>
 
+    <!-- Load app.js -->
+    <script src="app.js"></script>
 </body>
 
 </html>
