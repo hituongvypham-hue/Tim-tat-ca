@@ -5635,8 +5635,11 @@
                         </div>
                         <div id="ytAudioPlayer"></div>
                         <div class="yt-audio-controls" id="ytAudioControls" style="display: none;">
-                            <button onclick="ytPlayer.playVideo()">▶️</button>
-                            <button onclick="ytPlayer.pauseVideo()">⏸️</button>
+                            <button onclick="ytPlayer.playVideo()" title="Phát">▶️</button>
+                            <button onclick="ytPlayer.pauseVideo()" title="Tạm dừng">⏸️</button>
+                            <button onclick="toggleYTPiP()" title="Picture-in-Picture">🖼️</button>
+                            <button onclick="toggleYTFavorite()" id="ytFavoriteBtn"
+                                title="Thêm vào yêu thích">🤍</button>
                             <div style="flex:1; display:flex; align-items:center; gap:10px; margin-left:10px;">
                                 <span>🔊</span>
                                 <input type="range" id="ytVolumeSlider" min="0" max="100" value="100"
@@ -5646,6 +5649,7 @@
                                     style="width:40px; text-align:right; font-size:12px; color:var(--mac-text-secondary);">100%</span>
                             </div>
                         </div>
+
                     </div>
 
                     <!-- History -->
@@ -5660,7 +5664,21 @@
                         <div id="ytAudioHistory" class="platforms"
                             style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
                     </div>
+
+                    <!-- Favorites -->
+                    <div class="section" style="margin-top:30px;">
+                        <div class="section-title"
+                            style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>❤️ Bài hát yêu thích</span>
+                            <button onclick="clearYtFavorites()"
+                                style="font-size:12px; padding:4px 8px; border-radius:4px; background:var(--mac-bg); border:1px solid var(--mac-border); cursor:pointer; color:var(--mac-text-secondary);">Xóa
+                                tất cả</button>
+                        </div>
+                        <div id="ytAudioFavorites" class="platforms"
+                            style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
+                    </div>
                 </div>
+
 
                 <!-- AI TAB -->
                 <div class="tab-content" id="ai-tab">
@@ -11028,9 +11046,10 @@ Trả về JSON (chỉ JSON, không text khác):
                         searchHistory: JSON.parse(localStorage.getItem('searchHistory') || '[]'),
                         myTools: JSON.parse(localStorage.getItem('myTools') || '[]'),
                         promptLibrary: JSON.parse(localStorage.getItem('promptLibrary') || '[]'),
-                        promptLibrary: JSON.parse(localStorage.getItem('promptLibrary') || '[]'),
                         stylePresets: JSON.parse(localStorage.getItem('stylePresets') || '[]'),
-                        favorites: JSON.parse(localStorage.getItem('favorites') || '[]')
+                        favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
+                        ytAudioHistory: JSON.parse(localStorage.getItem('ytAudioHistory') || '[]'),
+                        ytAudioFavorites: JSON.parse(localStorage.getItem('ytAudioFavorites') || '[]')
                     };
                 }
 
@@ -11044,7 +11063,8 @@ Trả về JSON (chỉ JSON, không text khác):
                     });
 
                     const jsonKeys = ['tabOrder', 'platformOrder', 'customSites', 'customHomepages',
-                        'defaultHomepages', 'searchHistory', 'myTools', 'promptLibrary', 'favorites', 'stylePresets'];
+                        'defaultHomepages', 'searchHistory', 'myTools', 'promptLibrary', 'favorites', 'stylePresets',
+                        'ytAudioHistory', 'ytAudioFavorites'];
                     jsonKeys.forEach(k => {
                         if (data[k]) localStorage.setItem(k, JSON.stringify(data[k]));
                     });
@@ -13884,6 +13904,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             currentVideoId = videoId;
             currentVideoTitle = title || videoId;
 
+            // Update favorite button state
+            updateFavoriteButton(checkIfFavorite(videoId));
+
             addToYTHistory(videoId, title);
 
             // Enable background playback
@@ -13936,9 +13959,14 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             });
 
             ytAudioHistory.unshift(newItem);
-            ytAudioHistory = ytAudioHistory.slice(0, 12); // Keep last 12
+            ytAudioHistory = ytAudioHistory.slice(0, 20); // Keep last 20
             localStorage.setItem('ytAudioHistory', JSON.stringify(ytAudioHistory));
             renderYTHistory();
+
+            // Auto sync to Drive immediately
+            if (typeof autoSyncToDrive === 'function') {
+                autoSyncToDrive();
+            }
         }
 
         function renderYTHistory() {
@@ -13972,14 +14000,183 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 ytAudioHistory = [];
                 localStorage.setItem('ytAudioHistory', '[]');
                 renderYTHistory();
+                if (typeof autoSyncToDrive === 'function') {
+                    autoSyncToDrive();
+                }
+            }
+        }
+
+        // ==========================================
+        // PICTURE-IN-PICTURE (PiP)
+        // ==========================================
+        async function toggleYTPiP() {
+            try {
+                // Get the iframe's video element
+                const iframe = document.querySelector('#ytAudioPlayer iframe');
+                if (!iframe) {
+                    toast('Player chưa sẵn sàng');
+                    return;
+                }
+
+                // Check if PiP is supported
+                if (!document.pictureInPictureEnabled) {
+                    toast('Trình duyệt không hỗ trợ PiP');
+                    return;
+                }
+
+                // For YouTube iframe, we need to find the video inside
+                // Unfortunately, cross-origin iframes don't allow PiP access
+                // Workaround: Open in new tab with YouTube's native PiP
+                const videoUrl = `https://www.youtube.com/watch?v=${currentVideoId}`;
+
+                // Try to use the iframe's contentWindow (may not work due to CORS)
+                toast('💡 Tip: Mở video trên YouTube để dùng PiP của trình duyệt');
+
+                // Alternative: Open in popup for better PiP experience
+                const pipWindow = window.open(
+                    videoUrl,
+                    'ytPiP',
+                    'width=400,height=300,left=100,top=100'
+                );
+
+                if (!pipWindow) {
+                    toast('Popup bị chặn. Vui lòng cho phép popup.');
+                }
+            } catch (err) {
+                console.error('[PiP] Error:', err);
+                toast('Lỗi: ' + err.message);
+            }
+        }
+
+        // ==========================================
+        // FAVORITES / YÊU THÍCH
+        // ==========================================
+        var ytAudioFavorites = JSON.parse(localStorage.getItem('ytAudioFavorites') || '[]');
+
+        function toggleYTFavorite() {
+            if (!currentVideoId) {
+                toast('Chưa có bài hát đang phát');
+                return;
+            }
+
+            const isFavorite = ytAudioFavorites.some(item => {
+                const id = typeof item === 'string' ? item : item.id;
+                return id === currentVideoId;
+            });
+
+            if (isFavorite) {
+                // Remove from favorites
+                ytAudioFavorites = ytAudioFavorites.filter(item => {
+                    const id = typeof item === 'string' ? item : item.id;
+                    return id !== currentVideoId;
+                });
+                toast('💔 Đã xóa khỏi yêu thích');
+                updateFavoriteButton(false);
+            } else {
+                // Add to favorites
+                ytAudioFavorites.unshift({
+                    id: currentVideoId,
+                    title: currentVideoTitle || currentVideoId,
+                    timestamp: Date.now()
+                });
+                toast('❤️ Đã thêm vào yêu thích');
+                updateFavoriteButton(true);
+            }
+
+            localStorage.setItem('ytAudioFavorites', JSON.stringify(ytAudioFavorites));
+            renderYTFavorites();
+
+            // Auto sync to Drive immediately
+            if (typeof autoSyncToDrive === 'function') {
+                autoSyncToDrive();
+            }
+        }
+
+        function updateFavoriteButton(isFavorite) {
+            const btn = document.getElementById('ytFavoriteBtn');
+            if (btn) {
+                btn.textContent = isFavorite ? '❤️' : '🤍';
+                btn.title = isFavorite ? 'Xóa khỏi yêu thích' : 'Thêm vào yêu thích';
+            }
+        }
+
+        function checkIfFavorite(videoId) {
+            return ytAudioFavorites.some(item => {
+                const id = typeof item === 'string' ? item : item.id;
+                return id === videoId;
+            });
+        }
+
+        function renderYTFavorites() {
+            const container = document.getElementById('ytAudioFavorites');
+            if (!container) return;
+
+            if (ytAudioFavorites.length === 0) {
+                container.innerHTML = '<div style="color:var(--mac-text-secondary); font-style:italic; width:100%; text-align:center; padding:20px;">Chưa có bài hát yêu thích. Nhấn ❤️ để thêm.</div>';
+                return;
+            }
+
+            container.innerHTML = ytAudioFavorites.map(item => {
+                let id = typeof item === 'string' ? item : item.id;
+                let title = typeof item === 'object' ? (item.title || id) : id;
+
+                if (!id || typeof id !== 'string') return '';
+
+                return `
+            <div class="yt-history-item" style="position:relative;" title="${title}">
+                <div onclick="loadYTAudio('${id}', '${title.replace(/'/g, "\\'")}')" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                    <img src="https://img.youtube.com/vi/${id}/default.jpg" 
+                         style="width:40px;height:30px;border-radius:4px; object-fit:cover;">
+                    <span style="max-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${title}</span>
+                </div>
+                <button onclick="removeFromFavorites('${id}')" 
+                    style="position:absolute; top:-5px; right:-5px; background:#ef4444; color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; line-height:1;">×</button>
+            </div>
+            `;
+            }).join('');
+        }
+
+        function removeFromFavorites(videoId) {
+            ytAudioFavorites = ytAudioFavorites.filter(item => {
+                const id = typeof item === 'string' ? item : item.id;
+                return id !== videoId;
+            });
+            localStorage.setItem('ytAudioFavorites', JSON.stringify(ytAudioFavorites));
+            renderYTFavorites();
+
+            // Update button if current video was removed
+            if (currentVideoId === videoId) {
+                updateFavoriteButton(false);
+            }
+
+            // Auto sync to Drive
+            if (typeof autoSyncToDrive === 'function') {
+                autoSyncToDrive();
+            }
+
+            toast('💔 Đã xóa khỏi yêu thích');
+        }
+
+        function clearYtFavorites() {
+            if (confirm('Xóa toàn bộ bài hát yêu thích?')) {
+                ytAudioFavorites = [];
+                localStorage.setItem('ytAudioFavorites', '[]');
+                renderYTFavorites();
+                updateFavoriteButton(false);
+
+                if (typeof autoSyncToDrive === 'function') {
+                    autoSyncToDrive();
+                }
             }
         }
 
         // Initialize: show video tab by default
         document.addEventListener('DOMContentLoaded', () => {
             renderYTHistory();
+            renderYTFavorites();
             setupVisionTabInteraction();
         });
+
 
         // ==========================================
         // VISION TAB LOGIC
