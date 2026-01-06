@@ -7497,6 +7497,64 @@
                 });
             });
 
+            // --- RESTORED NAVIGATION LOGIC (Global Scope) ---
+            function switchMacTab(tabId) {
+                // Sidebar items
+                document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+                const sidebarItems = document.querySelectorAll('.sidebar-item');
+                sidebarItems.forEach(item => {
+                    const onclick = item.getAttribute('onclick');
+                    if (onclick && onclick.includes(`'${tabId}'`)) {
+                        item.classList.add('active');
+                    }
+                });
+
+                // Tab content
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                const content = document.getElementById(`${tabId}-tab`);
+                if (content) {
+                    content.classList.add('active');
+                    content.style.display = 'block';
+                } else {
+                    // Fallback for old ID naming if needed
+                    const oldContent = document.getElementById(`${tabId}-content`);
+                    if (oldContent) {
+                        oldContent.classList.add('active');
+                        oldContent.style.display = 'block';
+                    }
+                }
+
+                // Update global state if available
+                if (typeof currentTab !== 'undefined') currentTab = tabId;
+            }
+
+            // --- MOBILE SIDEBAR TOGGLE ---
+            function toggleMobileSidebar() {
+                const sidebar = document.querySelector('.mac-sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                const menuBtn = document.getElementById('mobileMenuBtn');
+
+                if (sidebar) sidebar.classList.toggle('open');
+                if (overlay) overlay.classList.toggle('show');
+                if (menuBtn) {
+                    menuBtn.classList.toggle('active');
+                    menuBtn.textContent = sidebar.classList.contains('open') ? '✕' : '☰';
+                }
+            }
+
+            function closeMobileSidebar() {
+                const sidebar = document.querySelector('.mac-sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                const menuBtn = document.getElementById('mobileMenuBtn');
+
+                if (sidebar) sidebar.classList.remove('open');
+                if (overlay) overlay.classList.remove('show');
+                if (menuBtn) {
+                    menuBtn.classList.remove('active');
+                    menuBtn.textContent = '☰';
+                }
+            }
+
             // Analyze Script - Extract keywords (Pattern + AI)
             async function analyzeScript(type) {
                 const textarea = document.getElementById(`${type}Script`);
@@ -7509,57 +7567,7 @@
 
                 btn.disabled = true;
 
-                // --- RESTORED NAVIGATION LOGIC ---
-                function switchMacTab(tabId) {
-                    // Sidebar items
-                    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-                    const sidebarItems = document.querySelectorAll('.sidebar-item');
-                    sidebarItems.forEach(item => {
-                        const onclick = item.getAttribute('onclick');
-                        if (onclick && onclick.includes(`'${tabId}'`)) {
-                            item.classList.add('active');
-                        }
-                    });
 
-                    // Tab content
-                    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-                    const content = document.getElementById(`${tabId}-tab`);
-                    if (content) {
-                        content.classList.add('active');
-                    } else {
-                        // Fallback for old ID naming if needed
-                        const oldContent = document.getElementById(`${tabId}-content`);
-                        if (oldContent) oldContent.classList.add('active');
-                    }
-                    currentTab = tabId;
-                }
-
-                // --- MOBILE SIDEBAR TOGGLE ---
-                function toggleMobileSidebar() {
-                    const sidebar = document.querySelector('.mac-sidebar');
-                    const overlay = document.getElementById('sidebarOverlay');
-                    const menuBtn = document.getElementById('mobileMenuBtn');
-
-                    if (sidebar) sidebar.classList.toggle('open');
-                    if (overlay) overlay.classList.toggle('show');
-                    if (menuBtn) {
-                        menuBtn.classList.toggle('active');
-                        menuBtn.textContent = sidebar.classList.contains('open') ? '✕' : '☰';
-                    }
-                }
-
-                function closeMobileSidebar() {
-                    const sidebar = document.querySelector('.mac-sidebar');
-                    const overlay = document.getElementById('sidebarOverlay');
-                    const menuBtn = document.getElementById('mobileMenuBtn');
-
-                    if (sidebar) sidebar.classList.remove('open');
-                    if (overlay) overlay.classList.remove('show');
-                    if (menuBtn) {
-                        menuBtn.classList.remove('active');
-                        menuBtn.textContent = '☰';
-                    }
-                }
 
                 btn.innerHTML = '<span class="loading"></span> Đang phân tích...';
 
@@ -12945,9 +12953,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         // macOS Sidebar Tab Switching - Removed duplicate
 
 
-        // Initialize: show video tab by default
+        // Initialize: show video tab by
         document.addEventListener('DOMContentLoaded', function () {
-            const videoTab = document.getElementById('video-tab');
+            const videoTab etElementById('video-tab');
             if (videoTab) {
                 videoTab.style.display = 'block';
                 videoTab.classList.add('active');
