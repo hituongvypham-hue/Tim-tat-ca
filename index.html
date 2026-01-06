@@ -8880,7 +8880,21 @@ Trả về JSON (chỉ JSON, không text khác):
                     const platformKey = checkbox ? checkbox.dataset.p : null;
                     if (!platformKey) return;
 
-                    const homepage = HOMEPAGE_URLS[platformKey];
+                    let homepage = HOMEPAGE_URLS ? HOMEPAGE_URLS[platformKey] : null;
+
+                    // Fallback: try to generate homepage from specific URL maps if not in global HOMEPAGE_URLS
+                    if (!homepage) {
+                        if (RESOURCES_URLS && RESOURCES_URLS[platformKey]) homepage = RESOURCES_URLS[platformKey]('');
+                        else if (VIDEO_URLS && VIDEO_URLS[platformKey]) homepage = VIDEO_URLS[platformKey]('');
+                        else if (MOVIE_URLS && MOVIE_URLS[platformKey]) homepage = MOVIE_URLS[platformKey]('');
+                        else if (IMAGE_URLS && IMAGE_URLS[platformKey]) homepage = IMAGE_URLS[platformKey]('');
+                        else if (EBOOK_URLS && EBOOK_URLS[platformKey]) homepage = EBOOK_URLS[platformKey]('');
+                        else if (APK_URLS && APK_URLS[platformKey]) homepage = APK_URLS[platformKey]('');
+                        else if (SOFTWARE_URLS && SOFTWARE_URLS[platformKey]) homepage = SOFTWARE_URLS[platformKey]('');
+                        else if (AI_URLS && AI_URLS[platformKey]) homepage = AI_URLS[platformKey]('');
+                        else if (WIKI_URLS && WIKI_URLS[platformKey]) homepage = WIKI_URLS[platformKey]('');
+                    }
+
                     if (homepage) {
                         window.open(homepage, '_blank');
                     }
