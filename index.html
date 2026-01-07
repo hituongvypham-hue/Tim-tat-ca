@@ -11496,7 +11496,7 @@ Trả về JSON (chỉ JSON, không text khác):
             initPlatformDragDrop();
 
             // 5. Display app version in header
-            const APP_VERSION = 'v2.5.1';
+            const APP_VERSION = 'v2.6.0';
             document.getElementById('headerClock').textContent = APP_VERSION;
 
             // 6. Formula Cards functions
@@ -15023,6 +15023,216 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             return false;
         }
 
+
+        // ==========================================
+        // CINEMA MODE
+        // ==========================================
+        let cinemaMode = false;
+        let cinemaOverlay = null;
+        let cinemaSettings = JSON.parse(localStorage.getItem('cinemaSettings') || '{"opacity":0.85,"atmosphere":true}');
+
+        function toggleCinemaMode() {
+            if (!ytPlayer || !currentVideoId) {
+                toast('⚠️ Vui lòng phát video trước');
+                return;
+            }
+
+            if (cinemaMode) {
+                exitCinemaMode();
+            } else {
+                enterCinemaMode();
+            }
+        }
+
+        function enterCinemaMode() {
+            // Save current playback position before moving
+            let savedTime = 0;
+            let wasPlaying = false;
+            if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
+                savedTime = ytPlayer.getCurrentTime();
+                wasPlaying = ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
+            }
+
+            if (!cinemaOverlay) {
+                createCinemaOverlay();
+            }
+
+            const player = document.getElementById('ytAudioPlayer');
+            const cinemaContainer = document.getElementById('cinemaPlayerContainer');
+
+            if (player && cinemaContainer) {
+                cinemaContainer.appendChild(player);
+
+                // Make iframe larger for cinema
+                const iframe = player.querySelector('iframe');
+                if (iframe) {
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.minHeight = '400px';
+                    iframe.style.maxHeight = '70vh';
+                }
+            }
+
+            // Update title
+            const titleEl = document.getElementById('cinemaTitleText');
+            if (titleEl) {
+                titleEl.textContent = currentVideoTitle || 'Now Playing';
+            }
+
+            cinemaOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            cinemaMode = true;
+
+            // Restore playback position after a short delay
+            setTimeout(() => {
+                if (ytPlayer && typeof ytPlayer.seekTo === 'function' && savedTime > 0) {
+                    ytPlayer.seekTo(savedTime, true);
+                    if (wasPlaying) {
+                        ytPlayer.playVideo();
+                    }
+                }
+            }, 300);
+
+            // Add keyboard listener
+            document.addEventListener('keydown', handleCinemaEscape);
+
+            toast('🎬 Cinema Mode bật');
+        }
+
+        function createCinemaOverlay() {
+            cinemaOverlay = document.createElement('div');
+            cinemaOverlay.id = 'cinemaOverlay';
+            cinemaOverlay.innerHTML = `
+                <style>
+                    #cinemaOverlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,${cinemaSettings.opacity});
+                        z-index: 9999;
+                        display: none;
+                        align-items: center;
+                        justify-content: center;
+                        flex-direction: column;
+                    }
+                    #cinemaOverlay.active {
+                        display: flex;
+                    }
+                    .cinema-title {
+                        color: white;
+                        font-size: 18px;
+                        margin-bottom: 16px;
+                        text-align: center;
+                        max-width: 90%;
+                        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+                    }
+                    .cinema-player-container {
+                        width: 90%;
+                        max-width: 900px;
+                        border-radius: 12px;
+                        overflow: hidden;
+                        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+                    }
+                    .cinema-player-container.atmosphere-glow {
+                        box-shadow: 0 0 60px 20px rgba(139, 92, 246, 0.3), 0 20px 60px rgba(0,0,0,0.5);
+                    }
+                    .cinema-controls {
+                        display: flex;
+                        gap: 10px;
+                        margin-top: 20px;
+                    }
+                    .cinema-controls button {
+                        padding: 10px 20px;
+                        border: none;
+                        border-radius: 8px;
+                        background: rgba(255,255,255,0.1);
+                        color: white;
+                        cursor: pointer;
+                        font-size: 14px;
+                        transition: all 0.2s;
+                    }
+                    .cinema-controls button:hover {
+                        background: rgba(255,255,255,0.2);
+                        transform: scale(1.05);
+                    }
+                    .cinema-exit-btn {
+                        background: rgba(255,100,100,0.8) !important;
+                    }
+                    .cinema-exit-btn:hover {
+                        background: rgba(255,100,100,1) !important;
+                    }
+                </style>
+                <div class="cinema-title" id="cinemaTitleText"></div>
+                <div class="cinema-player-container ${cinemaSettings.atmosphere ? 'atmosphere-glow' : ''}" id="cinemaPlayerContainer"></div>
+                <div class="cinema-controls">
+                    <button onclick="playPreviousTrack()" title="Bài trước">⏮️</button>
+                    <button onclick="playNextTrack()" title="Bài tiếp">⏭️</button>
+                    <button class="cinema-exit-btn" onclick="toggleCinemaMode()">❌ Thoát</button>
+                </div>
+            `;
+            document.body.appendChild(cinemaOverlay);
+        }
+
+        function exitCinemaMode() {
+            if (cinemaOverlay) {
+                // Save current playback position before moving
+                let savedTime = 0;
+                let wasPlaying = false;
+                if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
+                    savedTime = ytPlayer.getCurrentTime();
+                    wasPlaying = ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
+                }
+
+                cinemaOverlay.classList.remove('active');
+
+                // Move player back
+                const player = document.getElementById('ytAudioPlayer');
+                const originalContainer = document.getElementById('ytPlayerContainer');
+
+                // Find the correct position (after ytCurrentTitle div)
+                const titleDiv = originalContainer.querySelector('#ytCurrentTitle');
+                if (titleDiv && titleDiv.parentElement) {
+                    titleDiv.parentElement.after(player);
+                } else {
+                    originalContainer.insertBefore(player, document.getElementById('ytAudioControls'));
+                }
+
+                // Restore iframe size
+                const iframe = player.querySelector('iframe');
+                if (iframe) {
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.minHeight = '';
+                    iframe.style.maxHeight = '';
+                }
+
+                // Restore playback position after a short delay
+                setTimeout(() => {
+                    if (ytPlayer && typeof ytPlayer.seekTo === 'function' && savedTime > 0) {
+                        ytPlayer.seekTo(savedTime, true);
+                        if (wasPlaying) {
+                            ytPlayer.playVideo();
+                        }
+                    }
+                }, 300);
+
+                document.body.style.overflow = '';
+                cinemaMode = false;
+
+                // Remove keyboard listener
+                document.removeEventListener('keydown', handleCinemaEscape);
+
+                toast('🎬 Cinema Mode tắt');
+            }
+        }
+
+        function handleCinemaEscape(e) {
+            if (e.key === 'Escape' && cinemaMode) {
+                toggleCinemaMode();
+            }
+        }
 
         function addPlaylistToFavorites(index) {
             if (index < 0 || index >= ytAudioPlaylists.length) return;
