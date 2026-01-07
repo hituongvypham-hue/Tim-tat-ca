@@ -13851,8 +13851,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
         // Smart auto-play based on playSource
         // playSource: 'search' | 'favorites' | 'playlist' | 'history'
-        function playNextTrack() {
-            console.log('[Auto-play] Current playSource:', playSource);
+        // isAutoPlay: true = bài tự kết thúc, false = nhấn nút Next
+        function playNextTrack(isAutoPlay = false) {
+            console.log('[Auto-play] playSource:', playSource, '| isAutoPlay:', isAutoPlay);
 
             // 1. PLAYLIST: Continue with next song in playlist
             if (playSource === 'playlist' && currentPlaylist && currentPlaylist.videos && currentPlaylist.videos.length > 0) {
@@ -13892,29 +13893,34 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 }
             }
 
-            // 3. SEARCH/HISTORY: Play related video (random from history)
+            // 3. SEARCH/HISTORY: Auto-play related (only when song ends naturally)
             if (playSource === 'search' || playSource === 'history') {
-                if (ytAudioHistory.length > 1) {
-                    // Pick random song from history (excluding current)
-                    let availableHistory = ytAudioHistory.filter(item => {
-                        const id = typeof item === 'string' ? item : item.id;
-                        return id !== currentVideoId;
-                    });
+                if (isAutoPlay) {
+                    // Auto-play: song ended naturally → play related from history
+                    if (ytAudioHistory.length > 1) {
+                        let availableHistory = ytAudioHistory.filter(item => {
+                            const id = typeof item === 'string' ? item : item.id;
+                            return id !== currentVideoId;
+                        });
 
-                    if (availableHistory.length > 0) {
-                        const randomIndex = Math.floor(Math.random() * availableHistory.length);
-                        const item = availableHistory[randomIndex];
-                        const id = typeof item === 'string' ? item : item.id;
-                        const title = typeof item === 'object' ? (item.title || id) : id;
-                        loadYTAudio(id, title, 'history');
-                        toast('⏭️ Tự động phát (từ Lịch sử)');
-                        return;
+                        if (availableHistory.length > 0) {
+                            const randomIndex = Math.floor(Math.random() * availableHistory.length);
+                            const item = availableHistory[randomIndex];
+                            const id = typeof item === 'string' ? item : item.id;
+                            const title = typeof item === 'object' ? (item.title || id) : id;
+                            loadYTAudio(id, title, 'history');
+                            toast('⏭️ Tự động phát (bài liên quan)');
+                            return;
+                        }
                     }
+                    toast('Hết bài để phát tự động');
+                } else {
+                    // Manual Next: show message
+                    toast('ℹ️ Đây là bài từ tìm kiếm. Thêm vào Yêu thích hoặc Playlist để dùng Next!');
                 }
-                // No history available, stop
-                toast('Hết bài để phát tự động. Thêm bài hoặc import playlist!');
             }
         }
+
 
 
 
@@ -14161,11 +14167,12 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 // Ended - auto play next track
                 console.log('[YT Player] Ended - playing next track...');
                 disableBackgroundPlayback();
-                // Small delay before playing next
+                // Small delay before playing next (isAutoPlay = true)
                 setTimeout(() => {
-                    playNextTrack();
+                    playNextTrack(true);
                 }, 500);
             }
+
         }
 
 
