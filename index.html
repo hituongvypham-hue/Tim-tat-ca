@@ -5648,16 +5648,8 @@
                                 style="padding:8px 10px;">🔗</button>
                             <button onclick="toggleYTFavorite()" id="ytFavoriteBtn" title="Thêm vào yêu thích"
                                 style="padding:8px 10px;">🤍</button>
-                            <div class="yt-volume-control"
-                                style="display:flex; align-items:center; gap:6px; width:100%; margin-top:4px;">
-                                <span>🔊</span>
-                                <input type="range" id="ytVolumeSlider" min="0" max="100" value="100"
-                                    style="flex:1; cursor:pointer; max-width:150px;"
-                                    onchange="if(ytPlayer) ytPlayer.setVolume(this.value)">
-                                <span id="ytVolumeLabel"
-                                    style="width:35px; text-align:right; font-size:11px; color:var(--mac-text-secondary);">100%</span>
-                            </div>
                         </div>
+
 
 
 
@@ -14123,16 +14115,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
         function onYTPlayerReady(event) {
             document.getElementById('ytAudioControls').style.display = 'flex';
-            // Ensure volume slider matches player volume
-            const slider = document.getElementById('ytVolumeSlider');
-            if (slider) {
-                slider.addEventListener('input', function () {
-                    if (ytPlayer) ytPlayer.setVolume(this.value);
-                    document.getElementById('ytVolumeLabel').textContent = this.value + '%';
-                });
-            }
             event.target.playVideo();
         }
+
 
         function onYTPlayerStateChange(event) {
             // YT.PlayerState: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
@@ -14142,12 +14127,21 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 // Playing - enable background audio
                 enableBackgroundPlayback(currentVideoTitle, currentVideoId);
                 console.log('[YT Player] Playing');
-            } else if (state === 2 || state === 0) {
-                // Paused or Ended - disable background audio
+            } else if (state === 2) {
+                // Paused
                 disableBackgroundPlayback();
-                console.log('[YT Player] Paused/Ended');
+                console.log('[YT Player] Paused');
+            } else if (state === 0) {
+                // Ended - auto play next track
+                console.log('[YT Player] Ended - playing next track...');
+                disableBackgroundPlayback();
+                // Small delay before playing next
+                setTimeout(() => {
+                    playNextTrack();
+                }, 500);
             }
         }
+
 
         function addToYTHistory(videoId, title = '') {
             if (!videoId) return;
