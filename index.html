@@ -11496,7 +11496,7 @@ Trả về JSON (chỉ JSON, không text khác):
             initPlatformDragDrop();
 
             // 5. Display last update time in header
-            const APP_LAST_UPDATE = '07/01 • 23:24';
+            const APP_LAST_UPDATE = '07/01 • 23:31';
             document.getElementById('headerClock').textContent = APP_LAST_UPDATE;
 
             // 6. Formula Cards functions
@@ -15116,9 +15116,13 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                         align-items: center;
                         justify-content: center;
                         flex-direction: column;
+                        cursor: pointer;
                     }
                     #cinemaOverlay.active {
                         display: flex;
+                    }
+                    .cinema-content {
+                        cursor: default;
                     }
                     .cinema-title {
                         color: white;
@@ -15142,6 +15146,8 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                         display: flex;
                         gap: 10px;
                         margin-top: 20px;
+                        flex-wrap: wrap;
+                        justify-content: center;
                     }
                     .cinema-controls button {
                         padding: 10px 20px;
@@ -15163,16 +15169,95 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                     .cinema-exit-btn:hover {
                         background: rgba(255,100,100,1) !important;
                     }
+                    .cinema-settings {
+                        margin-top: 20px;
+                        display: flex;
+                        gap: 20px;
+                        align-items: center;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                    }
+                    .cinema-setting-item {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        color: white;
+                        font-size: 13px;
+                    }
+                    .cinema-setting-item input[type="range"] {
+                        width: 100px;
+                        cursor: pointer;
+                    }
+                    .cinema-setting-item input[type="checkbox"] {
+                        cursor: pointer;
+                        width: 16px;
+                        height: 16px;
+                    }
+                    .cinema-hint {
+                        margin-top: 15px;
+                        color: rgba(255,255,255,0.5);
+                        font-size: 11px;
+                    }
                 </style>
-                <div class="cinema-title" id="cinemaTitleText"></div>
-                <div class="cinema-player-container ${cinemaSettings.atmosphere ? 'atmosphere-glow' : ''}" id="cinemaPlayerContainer"></div>
-                <div class="cinema-controls">
-                    <button onclick="playPreviousTrack()" title="Bài trước">⏮️</button>
-                    <button onclick="playNextTrack()" title="Bài tiếp">⏭️</button>
-                    <button class="cinema-exit-btn" onclick="toggleCinemaMode()">❌ Thoát</button>
+                <div class="cinema-content" onclick="event.stopPropagation()">
+                    <div class="cinema-title" id="cinemaTitleText"></div>
+                    <div class="cinema-player-container ${cinemaSettings.atmosphere ? 'atmosphere-glow' : ''}" id="cinemaPlayerContainer"></div>
+                    <div class="cinema-controls">
+                        <button onclick="playPreviousTrack()" title="Bài trước">⏮️</button>
+                        <button onclick="playNextTrack()" title="Bài tiếp">⏭️</button>
+                        <button class="cinema-exit-btn" onclick="toggleCinemaMode()">❌ Thoát</button>
+                    </div>
+                    <div class="cinema-settings">
+                        <div class="cinema-setting-item">
+                            <span>🌑 Độ tối:</span>
+                            <input type="range" id="cinemaOpacitySlider" min="50" max="100" value="${cinemaSettings.opacity * 100}" 
+                                   onchange="updateCinemaOpacity(this.value)">
+                            <span id="cinemaOpacityValue">${Math.round(cinemaSettings.opacity * 100)}%</span>
+                        </div>
+                        <div class="cinema-setting-item">
+                            <input type="checkbox" id="cinemaAtmosphereToggle" ${cinemaSettings.atmosphere ? 'checked' : ''} 
+                                   onchange="toggleCinemaAtmosphere(this.checked)">
+                            <span>✨ Atmosphere Glow</span>
+                        </div>
+                    </div>
+                    <div class="cinema-hint">Click vào nền tối hoặc nhấn ESC để thoát</div>
                 </div>
             `;
             document.body.appendChild(cinemaOverlay);
+
+            // Click outside to exit
+            cinemaOverlay.addEventListener('click', function (e) {
+                if (e.target === cinemaOverlay) {
+                    toggleCinemaMode();
+                }
+            });
+        }
+
+        function updateCinemaOpacity(value) {
+            const opacity = value / 100;
+            cinemaSettings.opacity = opacity;
+            localStorage.setItem('cinemaSettings', JSON.stringify(cinemaSettings));
+
+            if (cinemaOverlay) {
+                cinemaOverlay.style.background = `rgba(0,0,0,${opacity})`;
+            }
+
+            const valueEl = document.getElementById('cinemaOpacityValue');
+            if (valueEl) valueEl.textContent = value + '%';
+        }
+
+        function toggleCinemaAtmosphere(enabled) {
+            cinemaSettings.atmosphere = enabled;
+            localStorage.setItem('cinemaSettings', JSON.stringify(cinemaSettings));
+
+            const container = document.getElementById('cinemaPlayerContainer');
+            if (container) {
+                if (enabled) {
+                    container.classList.add('atmosphere-glow');
+                } else {
+                    container.classList.remove('atmosphere-glow');
+                }
+            }
         }
 
         function exitCinemaMode() {
