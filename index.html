@@ -2333,6 +2333,77 @@
             background: var(--mac-button-hover);
         }
 
+        /* Cinema Mode Overlay */
+        .cinema-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .cinema-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cinema-player-container {
+            width: 90vw;
+            max-width: 1200px;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .cinema-controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .cinema-controls button {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .cinema-exit-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+
+        .cinema-exit-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .cinema-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            max-width: 80%;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         #ytVolumeSlider {
             width: 100px;
             cursor: pointer;
@@ -5647,6 +5718,8 @@
                                 style="padding:8px 10px;">🔗</button>
                             <button onclick="toggleYTFavorite()" id="ytFavoriteBtn" title="Thêm vào yêu thích"
                                 style="padding:8px 10px;">🤍</button>
+                            <button onclick="toggleCinemaMode()" id="cinemaModeBtn" title="Chế độ Cinema"
+                                style="padding:8px 10px;">🎬</button>
                         </div>
 
 
@@ -14491,6 +14564,101 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 const id = typeof item === 'string' ? item : item.id;
                 return id === videoId;
             });
+        }
+
+        // Cinema Mode
+        let cinemaMode = false;
+        let cinemaOverlay = null;
+
+        function toggleCinemaMode() {
+            if (!currentVideoId) {
+                toast('Chưa có video đang phát');
+                return;
+            }
+
+            cinemaMode = !cinemaMode;
+
+            if (cinemaMode) {
+                // Create overlay if not exists
+                if (!cinemaOverlay) {
+                    cinemaOverlay = document.createElement('div');
+                    cinemaOverlay.className = 'cinema-overlay';
+                    cinemaOverlay.innerHTML = `
+                        <div class="cinema-title" id="cinemaTitleText"></div>
+                        <div class="cinema-player-container" id="cinemaPlayerContainer"></div>
+                        <div class="cinema-controls">
+                            <button onclick="seekBackward()" title="Tua lùi 10s">⏪ 10s</button>
+                            <button onclick="seekForward()" title="Tua tới 10s">⏩ 10s</button>
+                            <button class="cinema-exit-btn" onclick="toggleCinemaMode()">❌ Thoát Cinema</button>
+                        </div>
+                    `;
+                    document.body.appendChild(cinemaOverlay);
+
+                    // Close on Escape key
+                    document.addEventListener('keydown', handleCinemaEscape);
+                }
+
+                // Move player to cinema
+                const player = document.getElementById('ytAudioPlayer');
+                const cinemaContainer = document.getElementById('cinemaPlayerContainer');
+                document.getElementById('cinemaTitleText').textContent = currentVideoTitle || 'Đang phát...';
+                cinemaContainer.appendChild(player);
+
+                // Resize iframe
+                const iframe = player.querySelector('iframe');
+                if (iframe) {
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                }
+
+                cinemaOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+
+                // Update button
+                const btn = document.getElementById('cinemaModeBtn');
+                if (btn) btn.textContent = '🎬';
+
+                toast('🎬 Chế độ Cinema bật');
+            } else {
+                exitCinemaMode();
+            }
+        }
+
+        function exitCinemaMode() {
+            if (cinemaOverlay) {
+                cinemaOverlay.classList.remove('active');
+
+                // Move player back
+                const player = document.getElementById('ytAudioPlayer');
+                const originalContainer = document.getElementById('ytPlayerContainer');
+                const playerSlot = originalContainer.querySelector('#ytAudioPlayer') || originalContainer;
+
+                // Find the correct position (after ytCurrentTitle div)
+                const titleDiv = originalContainer.querySelector('#ytCurrentTitle');
+                if (titleDiv && titleDiv.parentElement) {
+                    titleDiv.parentElement.after(player);
+                } else {
+                    originalContainer.insertBefore(player, document.getElementById('ytAudioControls'));
+                }
+
+                // Restore iframe size
+                const iframe = player.querySelector('iframe');
+                if (iframe) {
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                }
+
+                document.body.style.overflow = '';
+                cinemaMode = false;
+
+                toast('🎬 Chế độ Cinema tắt');
+            }
+        }
+
+        function handleCinemaEscape(e) {
+            if (e.key === 'Escape' && cinemaMode) {
+                toggleCinemaMode();
+            }
         }
 
         function renderYTFavorites() {
