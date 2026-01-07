@@ -5582,7 +5582,7 @@
                     <div class="search-section"
                         style="margin-bottom: 20px; background: var(--mac-card); padding: 16px; border-radius: 12px; border: 1px solid var(--mac-folder-border);">
                         <!-- API Key Config -->
-                        <div style="margin-bottom: 15px;">
+                        <div style="margin-bottom: 15px;" id="ytApiConfigContainer">
                             <div class="collapsible-header"
                                 onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'"
                                 style="cursor:pointer; user-select:none; display:flex; align-items:center; gap:8px;">
@@ -5639,9 +5639,8 @@
                             <button onclick="playPreviousTrack()" title="Bài trước"
                                 style="padding:8px 10px;">⏮️</button>
                             <button onclick="seekBackward()" title="Tua lùi 10s" style="padding:8px 10px;">⏪</button>
-                            <button onclick="ytPlayer.playVideo()" title="Phát" style="padding:8px 10px;">▶️</button>
-                            <button onclick="ytPlayer.pauseVideo()" title="Tạm dừng"
-                                style="padding:8px 10px;">⏸️</button>
+                            <!-- Play/Pause removed -->
+
                             <button onclick="seekForward()" title="Tua tới 10s" style="padding:8px 10px;">⏩</button>
                             <button onclick="playNextTrack()" title="Bài tiếp" style="padding:8px 10px;">⏭️</button>
                             <button onclick="openYTInNewTab()" title="Mở trên YouTube"
@@ -7449,7 +7448,7 @@
 
                 <!-- History -->
 
-                <div class="section" style="margin-top: 2rem;">
+                <div class="section" style="margin-top: 2rem; display: none;">
                     <div class="section-title">Recent</div>
                     <div class="history" id="historyList"><span class="empty">No recent</span></div>
                 </div>
@@ -14062,6 +14061,11 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 ytApiKey = key;
                 localStorage.setItem('ytApiKey', key);
                 toast('Đã lưu API Key!', 'success');
+
+                // Hide config container
+                const configContainer = document.getElementById('ytApiConfigContainer');
+                if (configContainer) configContainer.style.display = 'none';
+
                 // Auto sync to Drive
                 if (typeof autoSyncToDrive === 'function') {
                     autoSyncToDrive();
@@ -14072,10 +14076,15 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
 
-        // Populate API Key field on load
+        // Populate API Key field on load and hide if present
         document.addEventListener('DOMContentLoaded', () => {
             if (document.getElementById('ytApiKey')) {
-                document.getElementById('ytApiKey').value = ytApiKey;
+                const storedKey = ytApiKey || localStorage.getItem('ytApiKey'); // usage of global var or storage
+                if (storedKey) {
+                    document.getElementById('ytApiKey').value = storedKey;
+                    const configContainer = document.getElementById('ytApiConfigContainer');
+                    if (configContainer) configContainer.style.display = 'none';
+                }
             }
         });
 
