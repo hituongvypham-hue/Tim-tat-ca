@@ -5634,25 +5634,31 @@
                                 style="background:transparent; border:none; cursor:pointer; font-size:18px;">❌</button>
                         </div>
                         <div id="ytAudioPlayer"></div>
-                        <div class="yt-audio-controls" id="ytAudioControls" style="display: none;">
-                            <button onclick="playPreviousTrack()" title="Bài trước">⏮️</button>
-                            <button onclick="seekBackward()" title="Tua lùi 10s">⏪</button>
-                            <button onclick="ytPlayer.playVideo()" title="Phát">▶️</button>
-                            <button onclick="ytPlayer.pauseVideo()" title="Tạm dừng">⏸️</button>
-                            <button onclick="seekForward()" title="Tua tới 10s">⏩</button>
-                            <button onclick="playNextTrack()" title="Bài tiếp">⏭️</button>
-                            <button onclick="toggleYTPiP()" title="Picture-in-Picture">🖼️</button>
-                            <button onclick="toggleYTFavorite()" id="ytFavoriteBtn"
-                                title="Thêm vào yêu thích">🤍</button>
-                            <div style="flex:1; display:flex; align-items:center; gap:10px; margin-left:10px;">
+                        <div class="yt-audio-controls" id="ytAudioControls"
+                            style="display: none; flex-wrap: wrap; gap: 6px;">
+                            <button onclick="playPreviousTrack()" title="Bài trước"
+                                style="padding:8px 10px;">⏮️</button>
+                            <button onclick="seekBackward()" title="Tua lùi 10s" style="padding:8px 10px;">⏪</button>
+                            <button onclick="ytPlayer.playVideo()" title="Phát" style="padding:8px 10px;">▶️</button>
+                            <button onclick="ytPlayer.pauseVideo()" title="Tạm dừng"
+                                style="padding:8px 10px;">⏸️</button>
+                            <button onclick="seekForward()" title="Tua tới 10s" style="padding:8px 10px;">⏩</button>
+                            <button onclick="playNextTrack()" title="Bài tiếp" style="padding:8px 10px;">⏭️</button>
+                            <button onclick="openYTInNewTab()" title="Mở trên YouTube"
+                                style="padding:8px 10px;">🔗</button>
+                            <button onclick="toggleYTFavorite()" id="ytFavoriteBtn" title="Thêm vào yêu thích"
+                                style="padding:8px 10px;">🤍</button>
+                            <div class="yt-volume-control"
+                                style="display:flex; align-items:center; gap:6px; width:100%; margin-top:4px;">
                                 <span>🔊</span>
                                 <input type="range" id="ytVolumeSlider" min="0" max="100" value="100"
-                                    style="flex:1; cursor:pointer;"
+                                    style="flex:1; cursor:pointer; max-width:150px;"
                                     onchange="if(ytPlayer) ytPlayer.setVolume(this.value)">
                                 <span id="ytVolumeLabel"
-                                    style="width:40px; text-align:right; font-size:12px; color:var(--mac-text-secondary);">100%</span>
+                                    style="width:35px; text-align:right; font-size:11px; color:var(--mac-text-secondary);">100%</span>
                             </div>
                         </div>
+
 
 
                     </div>
@@ -14143,46 +14149,19 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
         // ==========================================
-        // PICTURE-IN-PICTURE (PiP)
+        // OPEN YOUTUBE IN NEW TAB
         // ==========================================
-        async function toggleYTPiP() {
-            try {
-                // Get the iframe's video element
-                const iframe = document.querySelector('#ytAudioPlayer iframe');
-                if (!iframe) {
-                    toast('Player chưa sẵn sàng');
-                    return;
-                }
-
-                // Check if PiP is supported
-                if (!document.pictureInPictureEnabled) {
-                    toast('Trình duyệt không hỗ trợ PiP');
-                    return;
-                }
-
-                // For YouTube iframe, we need to find the video inside
-                // Unfortunately, cross-origin iframes don't allow PiP access
-                // Workaround: Open in new tab with YouTube's native PiP
-                const videoUrl = `https://www.youtube.com/watch?v=${currentVideoId}`;
-
-                // Try to use the iframe's contentWindow (may not work due to CORS)
-                toast('💡 Tip: Mở video trên YouTube để dùng PiP của trình duyệt');
-
-                // Alternative: Open in popup for better PiP experience
-                const pipWindow = window.open(
-                    videoUrl,
-                    'ytPiP',
-                    'width=400,height=300,left=100,top=100'
-                );
-
-                if (!pipWindow) {
-                    toast('Popup bị chặn. Vui lòng cho phép popup.');
-                }
-            } catch (err) {
-                console.error('[PiP] Error:', err);
-                toast('Lỗi: ' + err.message);
+        function openYTInNewTab() {
+            if (!currentVideoId) {
+                toast('Chưa có bài hát đang phát');
+                return;
             }
+
+            const videoUrl = `https://www.youtube.com/watch?v=${currentVideoId}`;
+            window.open(videoUrl, '_blank');
+            toast('🔗 Đã mở video trên YouTube');
         }
+
 
         // ==========================================
         // FAVORITES / YÊU THÍCH
