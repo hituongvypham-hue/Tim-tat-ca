@@ -14368,6 +14368,11 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
             localStorage.setItem('ytSearchKeywords', JSON.stringify(ytSearchKeywords));
             renderYTKeywordHistory();
+
+            // Auto sync to Drive
+            if (typeof autoSyncToDrive === 'function') {
+                autoSyncToDrive();
+            }
         }
 
         // Render keyword history as pills
@@ -14711,6 +14716,14 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                     document.addEventListener('keydown', handleCinemaEscape);
                 }
 
+                // Save current playback position before moving
+                let savedTime = 0;
+                let wasPlaying = false;
+                if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
+                    savedTime = ytPlayer.getCurrentTime();
+                    wasPlaying = ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
+                }
+
                 // Move player to cinema
                 const player = document.getElementById('ytAudioPlayer');
                 const cinemaContainer = document.getElementById('cinemaPlayerContainer');
@@ -14723,6 +14736,16 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                     iframe.style.width = '100%';
                     iframe.style.height = '100%';
                 }
+
+                // Restore playback position after a short delay
+                setTimeout(() => {
+                    if (ytPlayer && typeof ytPlayer.seekTo === 'function' && savedTime > 0) {
+                        ytPlayer.seekTo(savedTime, true);
+                        if (wasPlaying) {
+                            ytPlayer.playVideo();
+                        }
+                    }
+                }, 300);
 
                 // Apply saved settings
                 cinemaOverlay.style.setProperty('--cinema-opacity', cinemaSettings.opacity / 100);
@@ -14770,6 +14793,14 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
         function exitCinemaMode() {
             if (cinemaOverlay) {
+                // Save current playback position before moving
+                let savedTime = 0;
+                let wasPlaying = false;
+                if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
+                    savedTime = ytPlayer.getCurrentTime();
+                    wasPlaying = ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
+                }
+
                 cinemaOverlay.classList.remove('active');
 
                 // Move player back
@@ -14790,6 +14821,16 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                     iframe.style.width = '100%';
                     iframe.style.height = '100%';
                 }
+
+                // Restore playback position after a short delay
+                setTimeout(() => {
+                    if (ytPlayer && typeof ytPlayer.seekTo === 'function' && savedTime > 0) {
+                        ytPlayer.seekTo(savedTime, true);
+                        if (wasPlaying) {
+                            ytPlayer.playVideo();
+                        }
+                    }
+                }, 300);
 
                 document.body.style.overflow = '';
                 cinemaMode = false;
