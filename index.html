@@ -13939,10 +13939,11 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             console.log('[Related] Searching with keywords:', searchQuery);
 
             try {
-                // Remove videoCategoryId to get more diverse results
+                // Search for music videos sorted by view count (most popular)
                 const response = await fetch(
-                    `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery + ' music')}&type=video&maxResults=25&key=${ytApiKey}`
+                    `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&type=video&videoCategoryId=10&order=viewCount&maxResults=25&key=${ytApiKey}`
                 );
+
 
                 const data = await response.json();
 
