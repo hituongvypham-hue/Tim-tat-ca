@@ -11493,15 +11493,9 @@ Trả về JSON (chỉ JSON, không text khác):
             // 4. Finally init drag-drop for all platforms
             initPlatformDragDrop();
 
-            // 5. Update header clock
-            function updateClock() {
-                const now = new Date();
-                const time = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-                const date = now.toLocaleDateString('vi-VN', { weekday: 'short', day: 'numeric', month: 'numeric' });
-                document.getElementById('headerClock').textContent = `${date} • ${time}`;
-            }
-            updateClock();
-            setInterval(updateClock, 60000);
+            // 5. Display app version in header
+            const APP_VERSION = 'v2.5.0';
+            document.getElementById('headerClock').textContent = APP_VERSION;
 
             // 6. Formula Cards functions
             function toggleFormulaCards() {
