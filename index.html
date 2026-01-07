@@ -14060,8 +14060,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         `).join('');
         }
 
-        function loadYTAudio(videoId, title = '') {
+        function loadYTAudio(videoId, title = '', fromPlaylist = false) {
             if (!videoId) return;
+
 
             // Clear search results
             document.getElementById('ytSearchResults').innerHTML = '';
@@ -14073,6 +14074,13 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             // Update title UI
             const titleEl = document.getElementById('ytCurrentTitle');
             if (titleEl) titleEl.textContent = title ? title : `Playing: ${videoId}`;
+
+            // Reset playlist if playing standalone video (not from playlist)
+            // This prevents "next" from playing playlist songs when user searched/clicked a new video
+            if (typeof fromPlaylist === 'undefined' || !fromPlaylist) {
+                currentPlaylist = null;
+                currentPlaylistIndex = -1;
+            }
 
             // Create/update player
             if (ytPlayer) {
@@ -14106,6 +14114,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             // Enable background playback
             enableBackgroundPlayback(currentVideoTitle, currentVideoId);
         }
+
 
         function closeYtPlayer() {
             if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
@@ -14556,7 +14565,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
             if (currentPlaylist.videos.length > 0) {
                 const video = currentPlaylist.videos[0];
-                loadYTAudio(video.id, video.title);
+                loadYTAudio(video.id, video.title, true); // true = from playlist
                 toast(`▶️ Đang phát: ${currentPlaylist.name}`);
             }
         }
@@ -14571,11 +14580,12 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
             const video = currentPlaylist.videos[currentPlaylistIndex];
             if (video) {
-                loadYTAudio(video.id, video.title);
+                loadYTAudio(video.id, video.title, true); // true = from playlist
                 return true;
             }
             return false;
         }
+
 
         function addPlaylistToFavorites(index) {
             if (index < 0 || index >= ytAudioPlaylists.length) return;
