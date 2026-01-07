@@ -14425,15 +14425,16 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             container.innerHTML = ytAudioPlaylists.map((playlist, index) => {
                 const thumbnail = playlist.thumbnail || `https://img.youtube.com/vi/${playlist.videos[0]?.id}/default.jpg`;
                 return `
-                <div class="yt-playlist-item" style="position:relative; background:var(--mac-card); border:1px solid var(--mac-border); border-radius:12px; padding:12px; min-width:200px; max-width:250px;">
+                <div class="yt-playlist-item" style="position:relative; background:var(--mac-card); border:1px solid var(--mac-border); border-radius:12px; padding:12px; min-width:180px; max-width:220px;">
                     <div onclick="playPlaylist(${index})" style="cursor:pointer;">
-                        <img src="${thumbnail}" style="width:100%; height:80px; object-fit:cover; border-radius:8px; margin-bottom:8px;">
-                        <div style="font-weight:600; color:var(--mac-text); margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${playlist.name}">${playlist.name}</div>
-                        <div style="font-size:12px; color:var(--mac-text-secondary);">${playlist.videos.length} bài hát</div>
+                        <img src="${thumbnail}" style="width:100%; height:70px; object-fit:cover; border-radius:8px; margin-bottom:6px;">
+                        <div style="font-weight:600; color:var(--mac-text); margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:13px;" title="${playlist.name}">${playlist.name}</div>
+                        <div style="font-size:11px; color:var(--mac-text-secondary);">${playlist.videos.length} bài hát</div>
                     </div>
-                    <div style="display:flex; gap:4px; margin-top:8px;">
-                        <button onclick="playPlaylist(${index})" style="flex:1; padding:6px; border-radius:6px; border:none; background:var(--mac-accent); color:white; cursor:pointer; font-size:12px;">▶️ Phát</button>
-                        <button onclick="addPlaylistToFavorites(${index})" style="padding:6px 10px; border-radius:6px; border:1px solid var(--mac-border); background:var(--mac-bg); cursor:pointer; font-size:12px;" title="Thêm tất cả vào Yêu thích">❤️</button>
+                    <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap;">
+                        <button onclick="playPlaylist(${index})" style="flex:1; padding:5px; border-radius:6px; border:none; background:var(--mac-accent); color:white; cursor:pointer; font-size:11px;" title="Phát">▶️</button>
+                        <button onclick="refreshPlaylist(${index})" style="padding:5px 8px; border-radius:6px; border:1px solid var(--mac-border); background:var(--mac-bg); cursor:pointer; font-size:11px;" title="Cập nhật từ YouTube">🔄</button>
+                        <button onclick="addPlaylistToFavorites(${index})" style="padding:5px 8px; border-radius:6px; border:1px solid var(--mac-border); background:var(--mac-bg); cursor:pointer; font-size:11px;" title="Thêm vào Yêu thích">❤️</button>
                     </div>
                     <button onclick="removePlaylist(${index})" 
                         style="position:absolute; top:-5px; right:-5px; background:#ef4444; color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; line-height:1;">×</button>
@@ -14441,6 +14442,57 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 `;
             }).join('');
         }
+
+        // Refresh playlist from YouTube
+        async function refreshPlaylist(index) {
+            if (index < 0 || index >= ytAudioPlaylists.length) return;
+            
+            const playlist = ytAudioPlaylists[index];
+            const playlistId = playlist.id;
+
+            if (!ytApiKey) {
+                toast('Cần API Key để cập nhật playlist');
+                return;
+            }
+
+            toast('🔄 Đang cập nhật playlist...');
+
+            try {
+                // Fetch playlist items (max 50)
+                const itemsRes = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=50&key=${ytApiKey}`);
+                const itemsData = await itemsRes.json();
+
+                if (!itemsData.items || itemsData.items.length === 0) {
+                    toast('Playlist trống hoặc không thể truy cập');
+                    return;
+                }
+
+                const videos = itemsData.items.map(item => ({
+                    id: item.snippet.resourceId.videoId,
+                    title: item.snippet.title
+                })).filter(v => v.id && v.title !== 'Private video' && v.title !== 'Deleted video');
+
+                // Update playlist
+                ytAudioPlaylists[index].videos = videos;
+                ytAudioPlaylists[index].thumbnail = itemsData.items[0]?.snippet?.thumbnails?.default?.url || playlist.thumbnail;
+                ytAudioPlaylists[index].updatedAt = Date.now();
+
+                localStorage.setItem('ytAudioPlaylists', JSON.stringify(ytAudioPlaylists));
+                renderYTPlaylists();
+
+                // Auto sync to Drive
+                if (typeof autoSyncToDrive === 'function') {
+                    autoSyncToDrive();
+                }
+
+                toast(`✓ Đã cập nhật: ${playlist.name} (${videos.length} bài)`);
+
+            } catch (err) {
+                console.error('[Playlist] Refresh error:', err);
+                toast('Lỗi cập nhật: ' + err.message);
+            }
+        }
+
 
         function playPlaylist(index) {
             if (index < 0 || index >= ytAudioPlaylists.length) return;
