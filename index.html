@@ -11112,6 +11112,61 @@ Trả về JSON (chỉ JSON, không text khác):
                     }, CONFIG.AUTO_SYNC_DELAY);
                 };
 
+                // Auto-sync FROM Drive on login (check if cloud data is newer)
+                async function autoSyncFromDriveOnLogin() {
+                    if (!accessToken) return;
+
+                    try {
+                        console.log('[GDrive] Checking for cloud data on login...');
+
+                        // Find backup file
+                        const searchRes = await fetch(
+                            `https://www.googleapis.com/drive/v3/files?q=name='${CONFIG.FILE_NAME}' and trashed=false&spaces=drive&fields=files(id,modifiedTime)`,
+                            { headers: { 'Authorization': `Bearer ${accessToken}` } }
+                        );
+                        const searchData = await searchRes.json();
+
+                        if (!searchData.files || searchData.files.length === 0) {
+                            console.log('[GDrive] No cloud backup found, skipping auto-sync');
+                            return;
+                        }
+
+                        // Download and check
+                        const fileId = searchData.files[0].id;
+                        const cloudModified = new Date(searchData.files[0].modifiedTime).getTime();
+
+                        const downloadRes = await fetch(
+                            `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+                            { headers: { 'Authorization': `Bearer ${accessToken}` } }
+                        );
+                        const cloudData = await downloadRes.json();
+
+                        // Check if cloud has playlists that local doesn't have
+                        const localPlaylists = JSON.parse(localStorage.getItem('ytAudioPlaylists') || '[]');
+                        const cloudPlaylists = cloudData.ytAudioPlaylists || [];
+
+                        const shouldSync = cloudPlaylists.length > localPlaylists.length ||
+                            (cloudData.ytAudioHistory?.length > (JSON.parse(localStorage.getItem('ytAudioHistory') || '[]')).length) ||
+                            (cloudData.ytAudioFavorites?.length > (JSON.parse(localStorage.getItem('ytAudioFavorites') || '[]')).length);
+
+                        if (shouldSync) {
+                            console.log('[GDrive] Cloud data has more items, syncing...');
+                            applySyncData(cloudData);
+                            toast('☁️ Đã đồng bộ dữ liệu từ Drive');
+
+                            // Reload lists without full page reload
+                            if (typeof renderYTHistory === 'function') renderYTHistory();
+                            if (typeof renderYTFavorites === 'function') renderYTFavorites();
+                            if (typeof renderYTPlaylists === 'function') renderYTPlaylists();
+                        } else {
+                            console.log('[GDrive] Local data is up to date');
+                        }
+
+                    } catch (err) {
+                        console.error('[GDrive] Auto-sync from drive error:', err);
+                    }
+                }
+
                 // ===== UI UPDATE =====
                 function updateUI(state, errorMsg) {
                     const notSignedIn = document.getElementById('driveNotSignedIn');
@@ -11154,7 +11209,12 @@ Trả về JSON (chỉ JSON, không text khác):
                                     userName.textContent = currentUser.email || currentUser.name || 'Đã đăng nhập';
                                 }
                             }
+                            // Auto-sync from Drive after sign-in
+                            setTimeout(() => {
+                                autoSyncFromDriveOnLogin();
+                            }, 1000);
                             break;
+
 
                         case 'signed-out':
                         default:
@@ -14446,7 +14506,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         // Refresh playlist from YouTube
         async function refreshPlaylist(index) {
             if (index < 0 || index >= ytAudioPlaylists.length) return;
-            
+
             const playlist = ytAudioPlaylists[index];
             const playlistId = playlist.id;
 
