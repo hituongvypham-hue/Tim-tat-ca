@@ -13900,43 +13900,80 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             }
         }
 
-        // Fetch related video using YouTube API
+        // Fetch related video using YouTube API (keyword-based since relatedToVideoId is deprecated)
+        // Use video title keywords + exclude recently played videos
+        var recentlyPlayedIds = []; // Track to avoid repeating
+
         async function fetchRelatedVideo(videoId) {
             if (!ytApiKey) {
                 toast('⚠️ Cần API Key YouTube để tìm bài liên quan');
                 return;
             }
 
-            try {
-                // Use search with relatedToVideoId parameter
-                const response = await fetch(
-                    `https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=10&key=${ytApiKey}`
-                );
+            // Add current video to recently played
+            if (!recentlyPlayedIds.includes(videoId)) {
+                recentlyPlayedIds.push(videoId);
+                if (recentlyPlayedIds.length > 20) recentlyPlayedIds.shift(); // Keep last 20
+            }
 
+            // Extract keywords from title
+            let searchQuery = '';
+            if (currentVideoTitle) {
+                // Clean title: remove common noise words, special chars
+                searchQuery = currentVideoTitle
+                    .replace(/[\[\]【】\(\)（）\|｜\-－]/g, ' ')
+                    .replace(/official|video|mv|lyric|lyrics|audio|hd|4k|full|remix|cover/gi, '')
+                    .split(' ')
+                    .filter(w => w.length > 2)
+                    .slice(0, 4)
+                    .join(' ')
+                    .trim();
+            }
+
+            if (!searchQuery) {
+                toast('Không có đủ thông tin để tìm bài liên quan');
+                return;
+            }
+
+            console.log('[Related] Searching with keywords:', searchQuery);
+
+            try {
+                const response = await fetch(
+                    `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&type=video&videoCategoryId=10&maxResults=20&key=${ytApiKey}`
+                );
                 const data = await response.json();
 
                 if (data.error) {
                     console.error('[Related] API Error:', data.error);
-                    // Fallback: search with current video title keywords
-                    if (currentVideoTitle) {
-                        const keywords = currentVideoTitle.split(' ').slice(0, 3).join(' ');
-                        await searchRelatedByKeyword(keywords);
-                    } else {
-                        toast('Không tìm được bài liên quan');
-                    }
+                    toast('Lỗi API: ' + (data.error.message || 'Unknown'));
                     return;
                 }
 
                 if (data.items && data.items.length > 0) {
-                    // Pick random from top results
-                    const randomIndex = Math.floor(Math.random() * Math.min(5, data.items.length));
-                    const video = data.items[randomIndex];
-                    const newVideoId = video.id.videoId;
-                    const newTitle = video.snippet.title;
+                    // Filter out recently played videos
+                    const availableVideos = data.items.filter(item =>
+                        item.id.videoId && !recentlyPlayedIds.includes(item.id.videoId)
+                    );
 
-                    console.log('[Related] Playing:', newTitle);
-                    loadYTAudio(newVideoId, newTitle, 'search');
-                    toast('⏭️ Bài liên quan');
+                    if (availableVideos.length > 0) {
+                        // Pick random from available
+                        const randomIndex = Math.floor(Math.random() * Math.min(5, availableVideos.length));
+                        const video = availableVideos[randomIndex];
+
+                        console.log('[Related] Playing:', video.snippet.title);
+                        loadYTAudio(video.id.videoId, video.snippet.title, 'search');
+                        toast('⏭️ Bài liên quan');
+                    } else {
+                        // All results were recently played, clear history and try again
+                        console.log('[Related] All videos recently played, clearing history');
+                        recentlyPlayedIds = [videoId];
+                        const randomIndex = Math.floor(Math.random() * Math.min(5, data.items.length));
+                        const video = data.items[randomIndex];
+                        if (video.id.videoId) {
+                            loadYTAudio(video.id.videoId, video.snippet.title, 'search');
+                            toast('⏭️ Bài liên quan');
+                        }
+                    }
                 } else {
                     toast('Không tìm được bài liên quan');
                 }
@@ -13946,28 +13983,6 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             }
         }
 
-        // Fallback: search by keyword
-        async function searchRelatedByKeyword(keywords) {
-            try {
-                const response = await fetch(
-                    `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(keywords)}&type=video&maxResults=10&key=${ytApiKey}`
-                );
-                const data = await response.json();
-
-                if (data.items && data.items.length > 0) {
-                    // Pick random, skip first (likely same video)
-                    const randomIndex = Math.floor(Math.random() * Math.min(5, data.items.length - 1)) + 1;
-                    const video = data.items[randomIndex];
-                    loadYTAudio(video.id.videoId, video.snippet.title, 'search');
-                    toast('⏭️ Bài liên quan');
-                } else {
-                    toast('Không tìm được bài liên quan');
-                }
-            } catch (err) {
-                console.error('[Related] Keyword search error:', err);
-                toast('Lỗi tìm bài');
-            }
-        }
 
 
 
