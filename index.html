@@ -2333,161 +2333,6 @@
             background: var(--mac-button-hover);
         }
 
-        /* Cinema Mode Overlay - Enhanced */
-        .cinema-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, var(--cinema-opacity, 0.95));
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.4s ease, visibility 0.4s ease, background 0.3s ease;
-            cursor: pointer;
-        }
-
-        .cinema-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .cinema-content {
-            cursor: default;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .cinema-player-container {
-            width: 90vw;
-            max-width: 1200px;
-            aspect-ratio: 16/9;
-            background: #000;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 0 80px 20px var(--atmosphere-color, rgba(100, 100, 255, 0.15)),
-                0 20px 60px rgba(0, 0, 0, 0.9);
-            transition: box-shadow 0.5s ease;
-        }
-
-        .cinema-player-container.atmosphere-glow {
-            animation: atmospherePulse 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes atmospherePulse {
-            0% {
-                box-shadow: 0 0 60px 15px rgba(100, 100, 255, 0.15), 0 20px 60px rgba(0, 0, 0, 0.9);
-            }
-
-            50% {
-                box-shadow: 0 0 80px 25px rgba(150, 100, 255, 0.2), 0 20px 60px rgba(0, 0, 0, 0.9);
-            }
-
-            100% {
-                box-shadow: 0 0 70px 20px rgba(100, 150, 255, 0.18), 0 20px 60px rgba(0, 0, 0, 0.9);
-            }
-        }
-
-        .cinema-controls {
-            margin-top: 25px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .cinema-controls button {
-            padding: 10px 18px;
-            font-size: 14px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .cinema-controls button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .cinema-exit-btn {
-            background: rgba(255, 80, 80, 0.2) !important;
-            border-color: rgba(255, 100, 100, 0.4) !important;
-        }
-
-        .cinema-exit-btn:hover {
-            background: rgba(255, 80, 80, 0.35) !important;
-        }
-
-        .cinema-title {
-            color: white;
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 20px;
-            max-width: 80%;
-            text-align: center;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            opacity: 0.9;
-        }
-
-        .cinema-settings {
-            margin-top: 20px;
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .cinema-setting-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 13px;
-        }
-
-        .cinema-setting-item input[type="range"] {
-            width: 100px;
-            accent-color: #6366f1;
-            cursor: pointer;
-        }
-
-        .cinema-setting-item input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            accent-color: #6366f1;
-            cursor: pointer;
-        }
-
-        .cinema-hint {
-            position: absolute;
-            bottom: 20px;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 12px;
-        }
-
-        .cinema-hint kbd {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 3px 8px;
-            border-radius: 4px;
-            margin: 0 3px;
-        }
-
         #ytVolumeSlider {
             width: 100px;
             cursor: pointer;
@@ -2500,15 +2345,207 @@
             padding: 0.5rem 0.75rem;
             background: var(--mac-button);
             border: 1px solid var(--mac-border);
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 0.8rem;
             margin: 0.25rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .yt-history-item:hover {
             background: var(--mac-button-hover);
             border-color: var(--mac-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .yt-history-item:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Collapsible Section Styles */
+        .yt-section {
+            margin-top: 20px;
+            background: var(--mac-card);
+            border: 1px solid var(--mac-border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .yt-section:hover {
+            border-color: var(--mac-accent-light, rgba(99, 102, 241, 0.3));
+        }
+
+        .yt-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            cursor: pointer;
+            user-select: none;
+            background: var(--mac-bg);
+            transition: background 0.2s ease;
+        }
+
+        .yt-section-header:hover {
+            background: var(--mac-hover);
+        }
+
+        .yt-section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--mac-text);
+        }
+
+        .yt-section-title .count-badge {
+            background: var(--mac-accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .yt-section-toggle {
+            font-size: 12px;
+            color: var(--mac-text-secondary);
+            transition: transform 0.3s ease;
+        }
+
+        .yt-section.collapsed .yt-section-toggle {
+            transform: rotate(-90deg);
+        }
+
+        .yt-section-content {
+            padding: 12px 16px 16px;
+            max-height: 500px;
+            overflow-y: auto;
+            transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+        }
+
+        .yt-section.collapsed .yt-section-content {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .yt-section-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .yt-section-actions button {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--mac-border);
+            background: var(--mac-bg);
+            color: var(--mac-text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .yt-section-actions button:hover {
+            background: var(--mac-hover);
+            border-color: var(--mac-accent);
+            color: var(--mac-text);
+        }
+
+        .yt-section-actions .btn-primary {
+            background: var(--mac-accent);
+            color: white;
+            border: none;
+        }
+
+        .yt-section-actions .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        /* Improved Favorite/Playlist Cards */
+        .yt-card {
+            position: relative;
+            background: var(--mac-card);
+            border: 1px solid var(--mac-border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .yt-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-color: var(--mac-accent);
+        }
+
+        .yt-card-delete {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 100, 100, 0.9);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.2s ease;
+        }
+
+        .yt-card:hover .yt-card-delete {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .yt-section-content {
+                max-height: 300px;
+            }
+
+            .yt-section-header {
+                padding: 12px 14px;
+            }
+
+            .yt-section-title {
+                font-size: 13px;
+            }
+
+            .yt-card:hover {
+                transform: none;
+            }
+
+            .yt-card .yt-card-delete {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Slide in animation for login popup */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         .yt-search-result-item {
@@ -5793,15 +5830,15 @@
                             style="display: none; flex-wrap: wrap; gap: 6px;">
                             <button onclick="playPreviousTrack()" title="Bài trước"
                                 style="padding:8px 10px;">⏮️</button>
-                            <!-- Seek buttons removed -->
+                            <button onclick="seekBackward()" title="Tua lùi 10s" style="padding:8px 10px;">⏪</button>
+                            <!-- Play/Pause removed -->
 
+                            <button onclick="seekForward()" title="Tua tới 10s" style="padding:8px 10px;">⏩</button>
                             <button onclick="playNextTrack()" title="Bài tiếp" style="padding:8px 10px;">⏭️</button>
                             <button onclick="openYTInNewTab()" title="Mở trên YouTube"
                                 style="padding:8px 10px;">🔗</button>
                             <button onclick="toggleYTFavorite()" id="ytFavoriteBtn" title="Thêm vào yêu thích"
                                 style="padding:8px 10px;">🤍</button>
-                            <button onclick="toggleCinemaMode()" id="cinemaModeBtn" title="Chế độ Cinema"
-                                style="padding:8px 10px;">🎬</button>
                         </div>
 
 
@@ -5810,47 +5847,52 @@
                     </div>
 
                     <!-- Keyword Search History -->
-                    <div class="section" style="margin-top:30px;">
-                        <div class="section-title"
-                            style="display:flex; justify-content:space-between; align-items:center;">
-                            <span>🔍 Từ khóa tìm kiếm</span>
-                            <button onclick="clearYtKeywordHistory()"
-                                style="font-size:12px; padding:4px 8px; border-radius:4px; background:var(--mac-bg); border:1px solid var(--mac-border); cursor:pointer; color:var(--mac-text-secondary);">Xóa
-                                tất cả</button>
+                    <div class="yt-section" id="ytKeywordsSection">
+                        <div class="yt-section-header" onclick="toggleYtSection('ytKeywordsSection')">
+                            <div class="yt-section-title">
+                                🔍 Từ khóa tìm kiếm <span class="count-badge" id="ytKeywordsCount">0</span>
+                            </div>
+                            <div class="yt-section-actions" onclick="event.stopPropagation()">
+                                <button onclick="clearYtKeywordHistory()">Xóa tất cả</button>
+                            </div>
+                            <span class="yt-section-toggle">▼</span>
                         </div>
-                        <div id="ytKeywordHistory" class="platforms"
-                            style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;"></div>
+                        <div class="yt-section-content">
+                            <div id="ytKeywordHistory" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+                        </div>
                     </div>
 
                     <!-- Favorites -->
-                    <div class="section" style="margin-top:30px;">
-                        <div class="section-title"
-                            style="display:flex; justify-content:space-between; align-items:center;">
-                            <span>❤️ Bài hát yêu thích</span>
-                            <button onclick="clearYtFavorites()"
-                                style="font-size:12px; padding:4px 8px; border-radius:4px; background:var(--mac-bg); border:1px solid var(--mac-border); cursor:pointer; color:var(--mac-text-secondary);">Xóa
-                                tất cả</button>
+                    <div class="yt-section" id="ytFavoritesSection">
+                        <div class="yt-section-header" onclick="toggleYtSection('ytFavoritesSection')">
+                            <div class="yt-section-title">
+                                ❤️ Bài hát yêu thích <span class="count-badge" id="ytFavoritesCount">0</span>
+                            </div>
+                            <div class="yt-section-actions" onclick="event.stopPropagation()">
+                                <button onclick="clearYtFavorites()">Xóa tất cả</button>
+                            </div>
+                            <span class="yt-section-toggle">▼</span>
                         </div>
-                        <div id="ytAudioFavorites" class="platforms"
-                            style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
+                        <div class="yt-section-content">
+                            <div id="ytAudioFavorites" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+                        </div>
                     </div>
 
                     <!-- Playlists -->
-                    <div class="section" style="margin-top:30px;">
-                        <div class="section-title"
-                            style="display:flex; justify-content:space-between; align-items:center;">
-                            <span>📋 Danh sách phát</span>
-                            <div style="display:flex; gap:8px;">
-                                <button onclick="showAddPlaylistModal()"
-                                    style="font-size:12px; padding:4px 8px; border-radius:4px; background:var(--mac-accent); color:white; border:none; cursor:pointer;">+
-                                    Thêm Playlist</button>
-                                <button onclick="clearYtPlaylists()"
-                                    style="font-size:12px; padding:4px 8px; border-radius:4px; background:var(--mac-bg); border:1px solid var(--mac-border); cursor:pointer; color:var(--mac-text-secondary);">Xóa
-                                    tất cả</button>
+                    <div class="yt-section" id="ytPlaylistsSection">
+                        <div class="yt-section-header" onclick="toggleYtSection('ytPlaylistsSection')">
+                            <div class="yt-section-title">
+                                📋 Danh sách phát <span class="count-badge" id="ytPlaylistsCount">0</span>
                             </div>
+                            <div class="yt-section-actions" onclick="event.stopPropagation()">
+                                <button class="btn-primary" onclick="showAddPlaylistModal()">+ Thêm</button>
+                                <button onclick="clearYtPlaylists()">Xóa tất cả</button>
+                            </div>
+                            <span class="yt-section-toggle">▼</span>
                         </div>
-                        <div id="ytAudioPlaylists" class="platforms"
-                            style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
+                        <div class="yt-section-content">
+                            <div id="ytAudioPlaylists" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -6858,8 +6900,6 @@
 
                     <div class="section">
                         <div class="section-title">🔥 Top Reverse Search <span class="badge ai">BEST</span></div>
-                        <div class="section-desc">💡 Thêm từ khóa "youtube" sau khi search • Dùng ảnh chất lượng cao, rõ
-                            nét • Chọn frame có chi tiết độc đáo (logo, text)</div>
                         <div class="platforms">
                             <label class="platform"><input type="checkbox" data-p="tineye"><span
                                     class="platform-label"><span class="platform-icon">👁️</span>TinEye</span></label>
@@ -6878,13 +6918,16 @@
 
                     <div class="section">
                         <div class="section-title">🤖 AI-Powered <span class="badge ai">AI</span></div>
-                        <div class="section-desc">🔎 Lenso: Tìm ảnh tương tự với AI • PimEyes: Chuyên tìm khuôn mặt
-                            trong video/ảnh</div>
                         <div class="platforms">
                             <label class="platform"><input type="checkbox" data-p="lenso"><span
                                     class="platform-label"><span class="platform-icon">🔎</span>Lenso.ai</span></label>
+                            <label class="platform"><input type="checkbox" data-p="copyseeker"><span
+                                    class="platform-label"><span
+                                        class="platform-icon">📋</span>CopySeeker</span></label>
                             <label class="platform"><input type="checkbox" data-p="pimeyes"><span
                                     class="platform-label"><span class="platform-icon">👤</span>PimEyes</span></label>
+                            <label class="platform"><input type="checkbox" data-p="reversely"><span
+                                    class="platform-label"><span class="platform-icon">🔄</span>Reversely</span></label>
                             <label class="platform add-btn" onclick="addCustomTool('reverse','ai')"><span
                                     class="platform-label"><span class="platform-icon">➕</span>Thêm</span></label>
                         </div>
@@ -6892,8 +6935,6 @@
 
                     <div class="section">
                         <div class="section-title">🎬 Video/YouTube Search <span class="badge hot">NEW</span></div>
-                        <div class="section-desc">🎥 Tìm video YouTube từ screenshot • ReverseVideo: tự động phát hiện
-                            keyframe • InVID: plugin xác minh video</div>
                         <div class="platforms">
                             <label class="platform"><input type="checkbox" data-p="reversevideosearch"><span
                                     class="platform-label"><span
@@ -6905,6 +6946,8 @@
                             <label class="platform"><input type="checkbox" data-p="invid"><span
                                     class="platform-label"><span class="platform-icon">✅</span>InVID
                                     Plugin</span></label>
+                            <label class="platform"><input type="checkbox" data-p="socialvidfinder"><span
+                                    class="platform-label"><span class="platform-icon">📱</span>SocialVid</span></label>
                             <label class="platform add-btn" onclick="addCustomTool('reverse','video')"><span
                                     class="platform-label"><span class="platform-icon">➕</span>Thêm</span></label>
                         </div>
@@ -6912,11 +6955,14 @@
 
                     <div class="section">
                         <div class="section-title">🛠️ Aggregators</div>
-                        <div class="section-desc">⚙️ ImgOps: Tìm đa engine cùng lúc • KarmaDecay: Chuyên tìm ảnh trùng
-                            lặp trên Reddit</div>
                         <div class="platforms">
                             <label class="platform"><input type="checkbox" data-p="imgops"><span
                                     class="platform-label"><span class="platform-icon">⚙️</span>ImgOps</span></label>
+                            <label class="platform"><input type="checkbox" data-p="duplichecker"><span
+                                    class="platform-label"><span
+                                        class="platform-icon">🔗</span>Duplichecker</span></label>
+                            <label class="platform"><input type="checkbox" data-p="smallseotools"><span
+                                    class="platform-label"><span class="platform-icon">🔧</span>SmallSEO</span></label>
                             <label class="platform"><input type="checkbox" data-p="karmadecay"><span
                                     class="platform-label"><span
                                         class="platform-icon">🔁</span>KarmaDecay</span></label>
@@ -6927,8 +6973,6 @@
 
                     <div class="section">
                         <div class="section-title">🎌 Anime / Manga</div>
-                        <div class="section-desc">🍜 SauceNAO: Tìm nguồn artwork • trace.moe: Tìm anime từ screenshot
-                            scene</div>
                         <div class="platforms">
                             <label class="platform"><input type="checkbox" data-p="saucenao"><span
                                     class="platform-label"><span class="platform-icon">🍜</span>SauceNAO</span></label>
@@ -6943,8 +6987,6 @@
 
                     <div class="section">
                         <div class="section-title">🇨🇳 China 以图搜图 <span class="badge hot">HOT</span></div>
-                        <div class="section-desc">🔵 百度识图: Mạnh nhất với nội dung Trung Quốc • Hay tìm được video Google
-                            bỏ sót</div>
                         <div class="platforms">
                             <label class="platform"><input type="checkbox" data-p="baidureverse"><span
                                     class="platform-label"><span class="platform-icon">🔵</span>百度识图</span></label>
@@ -10995,13 +11037,8 @@ Trả về JSON (chỉ JSON, không text khác):
                                 if (valid) {
                                     updateUI('signed-in');
                                 } else {
-                                    // Token expired - try to refresh silently first
                                     clearSession();
                                     updateUI('signed-out');
-                                    // Show login popup after short delay
-                                    setTimeout(() => {
-                                        showLoginPrompt('Phiên đăng nhập đã hết hạn. Đăng nhập lại?');
-                                    }, 1000);
                                 }
                             });
                         } catch (e) {
@@ -11010,62 +11047,7 @@ Trả về JSON (chỉ JSON, không text khác):
                         }
                     } else {
                         updateUI('signed-out');
-                        // Show login prompt on first app load if not logged in
-                        setTimeout(() => {
-                            showLoginPrompt('Đăng nhập Google để đồng bộ dữ liệu giữa các thiết bị');
-                        }, 2000);
                     }
-                }
-
-                // Show login prompt popup
-                function showLoginPrompt(message) {
-                    // Don't show if already signed in or if popup was dismissed recently
-                    if (accessToken) return;
-                    const dismissed = sessionStorage.getItem('login_prompt_dismissed');
-                    if (dismissed) return;
-
-                    const popup = document.createElement('div');
-                    popup.id = 'loginPromptPopup';
-                    popup.style.cssText = `
-                        position: fixed;
-                        bottom: 20px;
-                        right: 20px;
-                        background: var(--mac-card, #fff);
-                        border: 1px solid var(--mac-border, #ddd);
-                        border-radius: 12px;
-                        padding: 16px 20px;
-                        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-                        z-index: 10000;
-                        max-width: 320px;
-                        animation: slideInRight 0.3s ease;
-                    `;
-                    popup.innerHTML = `
-                        <div style="display:flex; align-items:flex-start; gap:12px;">
-                            <div style="font-size:24px;">🔐</div>
-                            <div style="flex:1;">
-                                <div style="font-weight:600; margin-bottom:6px; color:var(--mac-text, #333);">Đồng bộ Google Drive</div>
-                                <div style="font-size:13px; color:var(--mac-text-secondary, #666); margin-bottom:12px;">${message}</div>
-                                <div style="display:flex; gap:8px;">
-                                    <button onclick="signInGoogle(); document.getElementById('loginPromptPopup')?.remove();" 
-                                        style="padding:8px 16px; background:#4285f4; color:white; border:none; border-radius:6px; cursor:pointer; font-size:13px;">
-                                        Đăng nhập
-                                    </button>
-                                    <button onclick="sessionStorage.setItem('login_prompt_dismissed','1'); document.getElementById('loginPromptPopup')?.remove();" 
-                                        style="padding:8px 16px; background:var(--mac-bg, #f5f5f5); color:var(--mac-text, #333); border:1px solid var(--mac-border, #ddd); border-radius:6px; cursor:pointer; font-size:13px;">
-                                        Để sau
-                                    </button>
-                                </div>
-                            </div>
-                            <button onclick="document.getElementById('loginPromptPopup')?.remove();" 
-                                style="background:none; border:none; cursor:pointer; font-size:16px; color:var(--mac-text-secondary, #999);">✕</button>
-                        </div>
-                    `;
-                    document.body.appendChild(popup);
-
-                    // Auto dismiss after 30 seconds
-                    setTimeout(() => {
-                        popup.remove();
-                    }, 30000);
                 }
 
                 async function validateToken() {
@@ -11330,8 +11312,7 @@ Trả về JSON (chỉ JSON, không text khác):
                         favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
                         ytAudioHistory: JSON.parse(localStorage.getItem('ytAudioHistory') || '[]'),
                         ytAudioFavorites: JSON.parse(localStorage.getItem('ytAudioFavorites') || '[]'),
-                        ytAudioPlaylists: JSON.parse(localStorage.getItem('ytAudioPlaylists') || '[]'),
-                        ytSearchKeywords: JSON.parse(localStorage.getItem('ytSearchKeywords') || '[]')
+                        ytAudioPlaylists: JSON.parse(localStorage.getItem('ytAudioPlaylists') || '[]')
                     };
                 }
 
@@ -11346,7 +11327,7 @@ Trả về JSON (chỉ JSON, không text khác):
 
                     const jsonKeys = ['tabOrder', 'platformOrder', 'customSites', 'customHomepages',
                         'defaultHomepages', 'searchHistory', 'myTools', 'promptLibrary', 'favorites', 'stylePresets',
-                        'ytAudioHistory', 'ytAudioFavorites', 'ytAudioPlaylists', 'ytSearchKeywords'];
+                        'ytAudioHistory', 'ytAudioFavorites', 'ytAudioPlaylists'];
                     jsonKeys.forEach(k => {
                         if (data[k]) localStorage.setItem(k, JSON.stringify(data[k]));
                     });
@@ -11398,8 +11379,7 @@ Trả về JSON (chỉ JSON, không text khác):
 
                         const shouldSync = cloudPlaylists.length > localPlaylists.length ||
                             (cloudData.ytAudioHistory?.length > (JSON.parse(localStorage.getItem('ytAudioHistory') || '[]')).length) ||
-                            (cloudData.ytAudioFavorites?.length > (JSON.parse(localStorage.getItem('ytAudioFavorites') || '[]')).length) ||
-                            (cloudData.ytSearchKeywords?.length > (JSON.parse(localStorage.getItem('ytSearchKeywords') || '[]')).length);
+                            (cloudData.ytAudioFavorites?.length > (JSON.parse(localStorage.getItem('ytAudioFavorites') || '[]')).length);
 
                         if (shouldSync) {
                             console.log('[GDrive] Cloud data has more items, syncing...');
@@ -14428,17 +14408,16 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
             localStorage.setItem('ytSearchKeywords', JSON.stringify(ytSearchKeywords));
             renderYTKeywordHistory();
-
-            // Auto sync to Drive
-            if (typeof autoSyncToDrive === 'function') {
-                autoSyncToDrive();
-            }
         }
 
         // Render keyword history as pills
         function renderYTKeywordHistory() {
             const container = document.getElementById('ytKeywordHistory');
             if (!container) return;
+
+            // Update count badge
+            const countEl = document.getElementById('ytKeywordsCount');
+            if (countEl) countEl.textContent = ytSearchKeywords.length;
 
             if (ytSearchKeywords.length === 0) {
                 container.innerHTML = '<div style="color:var(--mac-text-secondary); font-style:italic; width:100%; text-align:center; padding:20px;">Chưa có từ khóa tìm kiếm</div>';
@@ -14453,6 +14432,29 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                     ${keyword}
                 </span>
             `).join('');
+        }
+
+        // Toggle collapsible sections
+        function toggleYtSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.classList.toggle('collapsed');
+                // Save state to localStorage
+                const collapsed = JSON.parse(localStorage.getItem('ytSectionCollapsed') || '{}');
+                collapsed[sectionId] = section.classList.contains('collapsed');
+                localStorage.setItem('ytSectionCollapsed', JSON.stringify(collapsed));
+            }
+        }
+
+        // Restore collapsed states on load
+        function restoreYtSectionStates() {
+            const collapsed = JSON.parse(localStorage.getItem('ytSectionCollapsed') || '{}');
+            Object.keys(collapsed).forEach(id => {
+                const section = document.getElementById(id);
+                if (section && collapsed[id]) {
+                    section.classList.add('collapsed');
+                }
+            });
         }
 
         // Search from keyword pill click
@@ -14715,197 +14717,13 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             });
         }
 
-        // Cinema Mode - Enhanced
-        let cinemaMode = false;
-        let cinemaOverlay = null;
-        let cinemaSettings = JSON.parse(localStorage.getItem('cinemaSettings') || '{"opacity": 95, "atmosphere": true}');
-
-        function toggleCinemaMode() {
-            if (!currentVideoId) {
-                toast('Chưa có video đang phát');
-                return;
-            }
-
-            cinemaMode = !cinemaMode;
-
-            if (cinemaMode) {
-                // Create overlay if not exists
-                if (!cinemaOverlay) {
-                    cinemaOverlay = document.createElement('div');
-                    cinemaOverlay.className = 'cinema-overlay';
-                    cinemaOverlay.style.setProperty('--cinema-opacity', cinemaSettings.opacity / 100);
-                    cinemaOverlay.innerHTML = `
-                        <div class="cinema-content" onclick="event.stopPropagation()">
-                            <div class="cinema-title" id="cinemaTitleText"></div>
-                            <div class="cinema-player-container ${cinemaSettings.atmosphere ? 'atmosphere-glow' : ''}" id="cinemaPlayerContainer"></div>
-                            <div class="cinema-controls">
-                                <button onclick="playPreviousTrack()" title="Bài trước">⏮️</button>
-                                <button onclick="playNextTrack()" title="Bài tiếp">⏭️</button>
-                                <button class="cinema-exit-btn" onclick="toggleCinemaMode()">❌ Thoát</button>
-                            </div>
-                            <div class="cinema-settings">
-                                <div class="cinema-setting-item">
-                                    <span>🌑 Độ tối:</span>
-                                    <input type="range" id="cinemaOpacitySlider" min="50" max="100" value="${cinemaSettings.opacity}" 
-                                        oninput="updateCinemaOpacity(this.value)">
-                                    <span id="cinemaOpacityValue">${cinemaSettings.opacity}%</span>
-                                </div>
-                                <div class="cinema-setting-item">
-                                    <label>
-                                        <input type="checkbox" id="cinemaAtmosphereToggle" ${cinemaSettings.atmosphere ? 'checked' : ''} 
-                                            onchange="toggleAtmosphere(this.checked)">
-                                        ✨ Atmosphere Glow
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="cinema-hint">Nhấn <kbd>ESC</kbd> hoặc click nền tối để thoát</div>
-                    `;
-                    document.body.appendChild(cinemaOverlay);
-
-                    // Click on overlay background to exit
-                    cinemaOverlay.addEventListener('click', (e) => {
-                        if (e.target === cinemaOverlay) {
-                            toggleCinemaMode();
-                        }
-                    });
-
-                    // Close on Escape key
-                    document.addEventListener('keydown', handleCinemaEscape);
-                }
-
-                // Save current playback position before moving
-                let savedTime = 0;
-                let wasPlaying = false;
-                if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
-                    savedTime = ytPlayer.getCurrentTime();
-                    wasPlaying = ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
-                }
-
-                // Move player to cinema
-                const player = document.getElementById('ytAudioPlayer');
-                const cinemaContainer = document.getElementById('cinemaPlayerContainer');
-                document.getElementById('cinemaTitleText').textContent = currentVideoTitle || 'Đang phát...';
-                cinemaContainer.appendChild(player);
-
-                // Resize iframe
-                const iframe = player.querySelector('iframe');
-                if (iframe) {
-                    iframe.style.width = '100%';
-                    iframe.style.height = '100%';
-                }
-
-                // Restore playback position after a short delay
-                setTimeout(() => {
-                    if (ytPlayer && typeof ytPlayer.seekTo === 'function' && savedTime > 0) {
-                        ytPlayer.seekTo(savedTime, true);
-                        if (wasPlaying) {
-                            ytPlayer.playVideo();
-                        }
-                    }
-                }, 300);
-
-                // Apply saved settings
-                cinemaOverlay.style.setProperty('--cinema-opacity', cinemaSettings.opacity / 100);
-                const container = document.getElementById('cinemaPlayerContainer');
-                if (cinemaSettings.atmosphere) {
-                    container.classList.add('atmosphere-glow');
-                } else {
-                    container.classList.remove('atmosphere-glow');
-                }
-
-                cinemaOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-
-                // Update button
-                const btn = document.getElementById('cinemaModeBtn');
-                if (btn) btn.textContent = '🎬';
-
-                toast('🎬 Cinema Mode bật');
-            } else {
-                exitCinemaMode();
-            }
-        }
-
-        function updateCinemaOpacity(value) {
-            cinemaSettings.opacity = parseInt(value);
-            document.getElementById('cinemaOpacityValue').textContent = value + '%';
-            if (cinemaOverlay) {
-                cinemaOverlay.style.setProperty('--cinema-opacity', value / 100);
-            }
-            localStorage.setItem('cinemaSettings', JSON.stringify(cinemaSettings));
-        }
-
-        function toggleAtmosphere(enabled) {
-            cinemaSettings.atmosphere = enabled;
-            const container = document.getElementById('cinemaPlayerContainer');
-            if (container) {
-                if (enabled) {
-                    container.classList.add('atmosphere-glow');
-                } else {
-                    container.classList.remove('atmosphere-glow');
-                }
-            }
-            localStorage.setItem('cinemaSettings', JSON.stringify(cinemaSettings));
-        }
-
-        function exitCinemaMode() {
-            if (cinemaOverlay) {
-                // Save current playback position before moving
-                let savedTime = 0;
-                let wasPlaying = false;
-                if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
-                    savedTime = ytPlayer.getCurrentTime();
-                    wasPlaying = ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
-                }
-
-                cinemaOverlay.classList.remove('active');
-
-                // Move player back
-                const player = document.getElementById('ytAudioPlayer');
-                const originalContainer = document.getElementById('ytPlayerContainer');
-
-                // Find the correct position (after ytCurrentTitle div)
-                const titleDiv = originalContainer.querySelector('#ytCurrentTitle');
-                if (titleDiv && titleDiv.parentElement) {
-                    titleDiv.parentElement.after(player);
-                } else {
-                    originalContainer.insertBefore(player, document.getElementById('ytAudioControls'));
-                }
-
-                // Restore iframe size
-                const iframe = player.querySelector('iframe');
-                if (iframe) {
-                    iframe.style.width = '100%';
-                    iframe.style.height = '100%';
-                }
-
-                // Restore playback position after a short delay
-                setTimeout(() => {
-                    if (ytPlayer && typeof ytPlayer.seekTo === 'function' && savedTime > 0) {
-                        ytPlayer.seekTo(savedTime, true);
-                        if (wasPlaying) {
-                            ytPlayer.playVideo();
-                        }
-                    }
-                }, 300);
-
-                document.body.style.overflow = '';
-                cinemaMode = false;
-
-                toast('🎬 Cinema Mode tắt');
-            }
-        }
-
-        function handleCinemaEscape(e) {
-            if (e.key === 'Escape' && cinemaMode) {
-                toggleCinemaMode();
-            }
-        }
-
         function renderYTFavorites() {
             const container = document.getElementById('ytAudioFavorites');
             if (!container) return;
+
+            // Update count badge
+            const countEl = document.getElementById('ytFavoritesCount');
+            if (countEl) countEl.textContent = ytAudioFavorites.length;
 
             if (ytAudioFavorites.length === 0) {
                 container.innerHTML = '<div style="color:var(--mac-text-secondary); font-style:italic; width:100%; text-align:center; padding:20px;">Chưa có bài hát yêu thích. Nhấn ❤️ để thêm.</div>';
@@ -15099,6 +14917,10 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             const container = document.getElementById('ytAudioPlaylists');
             if (!container) return;
 
+            // Update count badge
+            const countEl = document.getElementById('ytPlaylistsCount');
+            if (countEl) countEl.textContent = ytAudioPlaylists.length;
+
             if (ytAudioPlaylists.length === 0) {
                 container.innerHTML = '<div style="color:var(--mac-text-secondary); font-style:italic; width:100%; text-align:center; padding:20px;">Chưa có playlist. Nhấn "+ Thêm Playlist" để import từ YouTube.</div>';
                 return;
@@ -15270,6 +15092,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             renderYTKeywordHistory();
             renderYTFavorites();
             renderYTPlaylists();
+            restoreYtSectionStates();
             setupVisionTabInteraction();
         });
 
