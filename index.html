@@ -5635,8 +5635,12 @@
                         </div>
                         <div id="ytAudioPlayer"></div>
                         <div class="yt-audio-controls" id="ytAudioControls" style="display: none;">
+                            <button onclick="playPreviousTrack()" title="Bài trước">⏮️</button>
+                            <button onclick="seekBackward()" title="Tua lùi 10s">⏪</button>
                             <button onclick="ytPlayer.playVideo()" title="Phát">▶️</button>
                             <button onclick="ytPlayer.pauseVideo()" title="Tạm dừng">⏸️</button>
+                            <button onclick="seekForward()" title="Tua tới 10s">⏩</button>
+                            <button onclick="playNextTrack()" title="Bài tiếp">⏭️</button>
                             <button onclick="toggleYTPiP()" title="Picture-in-Picture">🖼️</button>
                             <button onclick="toggleYTFavorite()" id="ytFavoriteBtn"
                                 title="Thêm vào yêu thích">🤍</button>
@@ -5649,6 +5653,7 @@
                                     style="width:40px; text-align:right; font-size:12px; color:var(--mac-text-secondary);">100%</span>
                             </div>
                         </div>
+
 
                     </div>
 
@@ -13696,20 +13701,115 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             });
 
             navigator.mediaSession.setActionHandler('previoustrack', () => {
-                // Play previous from history
-                if (ytAudioHistory.length > 1) {
-                    const prev = ytAudioHistory[1];
-                    if (prev) loadYTAudio(prev.id || prev, prev.title || '');
-                }
+                playPreviousTrack();
             });
 
             navigator.mediaSession.setActionHandler('nexttrack', () => {
-                // Could implement playlist functionality here
-                toast('Chức năng Next chưa khả dụng');
+                playNextTrack();
+            });
+
+            // Seek backward 10 seconds
+            navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+                seekBackward(details?.seekOffset || 10);
+            });
+
+            // Seek forward 10 seconds
+            navigator.mediaSession.setActionHandler('seekforward', (details) => {
+                seekForward(details?.seekOffset || 10);
             });
 
             console.log('[Background Audio] Media Session updated:', title);
         }
+
+        // ==========================================
+        // PLAYBACK NAVIGATION FUNCTIONS
+        // ==========================================
+
+        // Seek backward by seconds (default 10s)
+        function seekBackward(seconds = 10) {
+            if (!ytPlayer || !ytPlayer.getCurrentTime) {
+                toast('Player chưa sẵn sàng');
+                return;
+            }
+            const currentTime = ytPlayer.getCurrentTime();
+            const newTime = Math.max(0, currentTime - seconds);
+            ytPlayer.seekTo(newTime, true);
+            toast(`⏪ -${seconds}s`);
+        }
+
+        // Seek forward by seconds (default 10s)
+        function seekForward(seconds = 10) {
+            if (!ytPlayer || !ytPlayer.getCurrentTime || !ytPlayer.getDuration) {
+                toast('Player chưa sẵn sàng');
+                return;
+            }
+            const currentTime = ytPlayer.getCurrentTime();
+            const duration = ytPlayer.getDuration();
+            const newTime = Math.min(duration, currentTime + seconds);
+            ytPlayer.seekTo(newTime, true);
+            toast(`⏩ +${seconds}s`);
+        }
+
+        // Play previous track from history (skip current song which is at index 0)
+        function playPreviousTrack() {
+            if (ytAudioHistory.length > 1) {
+                // Index 0 is current song, index 1 is previous
+                const prev = ytAudioHistory[1];
+                if (prev) {
+                    const id = typeof prev === 'string' ? prev : prev.id;
+                    const title = typeof prev === 'object' ? (prev.title || id) : id;
+                    loadYTAudio(id, title);
+                    toast('⏮️ Bài trước');
+                }
+            } else {
+                // If no history, restart current song
+                if (ytPlayer && ytPlayer.seekTo) {
+                    ytPlayer.seekTo(0, true);
+                    toast('⏮️ Phát lại từ đầu');
+                }
+            }
+        }
+
+        // Play next track from favorites (random or sequential)
+        function playNextTrack() {
+            if (ytAudioFavorites.length > 0) {
+                // Find current song index in favorites
+                const currentIndex = ytAudioFavorites.findIndex(item => {
+                    const id = typeof item === 'string' ? item : item.id;
+                    return id === currentVideoId;
+                });
+
+                let nextIndex;
+                if (currentIndex >= 0 && currentIndex < ytAudioFavorites.length - 1) {
+                    // Play next in favorites list
+                    nextIndex = currentIndex + 1;
+                } else {
+                    // Either not in favorites or at end, play first favorite
+                    nextIndex = 0;
+                }
+
+                const next = ytAudioFavorites[nextIndex];
+                if (next) {
+                    const id = typeof next === 'string' ? next : next.id;
+                    const title = typeof next === 'object' ? (next.title || id) : id;
+                    loadYTAudio(id, title);
+                    toast('⏭️ Bài tiếp (từ Yêu thích)');
+                }
+            } else if (ytAudioHistory.length > 0) {
+                // No favorites, play random from history
+                const randomIndex = Math.floor(Math.random() * ytAudioHistory.length);
+                const item = ytAudioHistory[randomIndex];
+                if (item) {
+                    const id = typeof item === 'string' ? item : item.id;
+                    const title = typeof item === 'object' ? (item.title || id) : id;
+                    loadYTAudio(id, title);
+                    toast('⏭️ Bài ngẫu nhiên (từ Lịch sử)');
+                }
+            } else {
+                toast('Thêm bài hát vào Yêu thích để dùng chức năng Bài tiếp');
+            }
+        }
+
 
         // 3. Wake Lock API - Prevent screen from turning off (optional)
         async function requestWakeLock() {
