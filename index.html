@@ -13893,33 +13893,82 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 }
             }
 
-            // 3. SEARCH/HISTORY: Auto-play related (only when song ends naturally)
+            // 3. SEARCH/HISTORY: Fetch related video from YouTube API
             if (playSource === 'search' || playSource === 'history') {
-                if (isAutoPlay) {
-                    // Auto-play: song ended naturally → play related from history
-                    if (ytAudioHistory.length > 1) {
-                        let availableHistory = ytAudioHistory.filter(item => {
-                            const id = typeof item === 'string' ? item : item.id;
-                            return id !== currentVideoId;
-                        });
-
-                        if (availableHistory.length > 0) {
-                            const randomIndex = Math.floor(Math.random() * availableHistory.length);
-                            const item = availableHistory[randomIndex];
-                            const id = typeof item === 'string' ? item : item.id;
-                            const title = typeof item === 'object' ? (item.title || id) : id;
-                            loadYTAudio(id, title, 'history');
-                            toast('⏭️ Tự động phát (bài liên quan)');
-                            return;
-                        }
-                    }
-                    toast('Hết bài để phát tự động');
-                } else {
-                    // Manual Next: show message
-                    toast('ℹ️ Đây là bài từ tìm kiếm. Thêm vào Yêu thích hoặc Playlist để dùng Next!');
-                }
+                toast('🔍 Đang tìm bài liên quan...');
+                fetchRelatedVideo(currentVideoId);
             }
         }
+
+        // Fetch related video using YouTube API
+        async function fetchRelatedVideo(videoId) {
+            if (!ytApiKey) {
+                toast('⚠️ Cần API Key YouTube để tìm bài liên quan');
+                return;
+            }
+
+            try {
+                // Use search with relatedToVideoId parameter
+                const response = await fetch(
+                    `https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=10&key=${ytApiKey}`
+                );
+
+                const data = await response.json();
+
+                if (data.error) {
+                    console.error('[Related] API Error:', data.error);
+                    // Fallback: search with current video title keywords
+                    if (currentVideoTitle) {
+                        const keywords = currentVideoTitle.split(' ').slice(0, 3).join(' ');
+                        await searchRelatedByKeyword(keywords);
+                    } else {
+                        toast('Không tìm được bài liên quan');
+                    }
+                    return;
+                }
+
+                if (data.items && data.items.length > 0) {
+                    // Pick random from top results
+                    const randomIndex = Math.floor(Math.random() * Math.min(5, data.items.length));
+                    const video = data.items[randomIndex];
+                    const newVideoId = video.id.videoId;
+                    const newTitle = video.snippet.title;
+
+                    console.log('[Related] Playing:', newTitle);
+                    loadYTAudio(newVideoId, newTitle, 'search');
+                    toast('⏭️ Bài liên quan');
+                } else {
+                    toast('Không tìm được bài liên quan');
+                }
+            } catch (err) {
+                console.error('[Related] Error:', err);
+                toast('Lỗi tìm bài liên quan');
+            }
+        }
+
+        // Fallback: search by keyword
+        async function searchRelatedByKeyword(keywords) {
+            try {
+                const response = await fetch(
+                    `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(keywords)}&type=video&maxResults=10&key=${ytApiKey}`
+                );
+                const data = await response.json();
+
+                if (data.items && data.items.length > 0) {
+                    // Pick random, skip first (likely same video)
+                    const randomIndex = Math.floor(Math.random() * Math.min(5, data.items.length - 1)) + 1;
+                    const video = data.items[randomIndex];
+                    loadYTAudio(video.id.videoId, video.snippet.title, 'search');
+                    toast('⏭️ Bài liên quan');
+                } else {
+                    toast('Không tìm được bài liên quan');
+                }
+            } catch (err) {
+                console.error('[Related] Keyword search error:', err);
+                toast('Lỗi tìm bài');
+            }
+        }
+
 
 
 
