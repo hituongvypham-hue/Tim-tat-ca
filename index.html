@@ -13916,31 +13916,34 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 if (recentlyPlayedIds.length > 20) recentlyPlayedIds.shift(); // Keep last 20
             }
 
-            // Extract keywords from title
+            // Extract keywords from title - be smarter about it
             let searchQuery = '';
             if (currentVideoTitle) {
-                // Clean title: remove common noise words, special chars
+                // Clean title: remove common noise words, special chars, numbers
                 searchQuery = currentVideoTitle
-                    .replace(/[\[\]【】\(\)（）\|｜\-－]/g, ' ')
-                    .replace(/official|video|mv|lyric|lyrics|audio|hd|4k|full|remix|cover/gi, '')
+                    .replace(/[\[\]【】\(\)（）\|｜\-－""''\"\']/g, ' ')
+                    .replace(/official|video|mv|lyric|lyrics|audio|hd|4k|full|remix|cover|karaoke|vietsub|engsub|sub|viet|eng/gi, '')
+                    .replace(/\d{4}/g, '') // Remove years like 2024, 2025
                     .split(' ')
-                    .filter(w => w.length > 2)
-                    .slice(0, 4)
+                    .filter(w => w.length > 1 && !/^\d+$/.test(w)) // Keep words > 1 char, no pure numbers
+                    .slice(0, 5) // Take more keywords for better matching
                     .join(' ')
                     .trim();
             }
 
-            if (!searchQuery) {
-                toast('Không có đủ thông tin để tìm bài liên quan');
-                return;
+            if (!searchQuery || searchQuery.length < 3) {
+                // Fallback: use first few words of title as-is
+                searchQuery = currentVideoTitle.split(' ').slice(0, 3).join(' ');
             }
 
             console.log('[Related] Searching with keywords:', searchQuery);
 
             try {
+                // Remove videoCategoryId to get more diverse results
                 const response = await fetch(
-                    `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&type=video&videoCategoryId=10&maxResults=20&key=${ytApiKey}`
+                    `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery + ' music')}&type=video&maxResults=25&key=${ytApiKey}`
                 );
+
                 const data = await response.json();
 
                 if (data.error) {
