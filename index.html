@@ -13711,6 +13711,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         var ytApiKey = localStorage.getItem('ytApiKey') || '';
         var currentVideoTitle = '';
         var currentVideoId = '';
+        var playSource = 'search'; // 'search' | 'favorites' | 'playlist'
         var silentAudio = null;
         var wakeLock = null;
 
@@ -13848,25 +13849,27 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             }
         }
 
-        // Play next track: priority = current playlist > favorites > random history
+        // Smart auto-play based on playSource
+        // playSource: 'search' | 'favorites' | 'playlist' | 'history'
         function playNextTrack() {
-            // 1. If playing from a playlist, continue with playlist
-            if (currentPlaylist && currentPlaylist.videos && currentPlaylist.videos.length > 0) {
+            console.log('[Auto-play] Current playSource:', playSource);
+
+            // 1. PLAYLIST: Continue with next song in playlist
+            if (playSource === 'playlist' && currentPlaylist && currentPlaylist.videos && currentPlaylist.videos.length > 0) {
                 currentPlaylistIndex++;
                 if (currentPlaylistIndex >= currentPlaylist.videos.length) {
                     currentPlaylistIndex = 0; // Loop back to start
                 }
                 const video = currentPlaylist.videos[currentPlaylistIndex];
                 if (video) {
-                    loadYTAudio(video.id, video.title);
+                    loadYTAudio(video.id, video.title, 'playlist');
                     toast(`⏭️ ${currentPlaylistIndex + 1}/${currentPlaylist.videos.length} - ${currentPlaylist.name}`);
                     return;
                 }
             }
 
-            // 2. Play from favorites
-            if (ytAudioFavorites.length > 0) {
-                // Find current song index in favorites
+            // 2. FAVORITES: Play next in favorites list
+            if (playSource === 'favorites' && ytAudioFavorites.length > 0) {
                 const currentIndex = ytAudioFavorites.findIndex(item => {
                     const id = typeof item === 'string' ? item : item.id;
                     return id === currentVideoId;
@@ -13874,34 +13877,45 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
                 let nextIndex;
                 if (currentIndex >= 0 && currentIndex < ytAudioFavorites.length - 1) {
-                    // Play next in favorites list
                     nextIndex = currentIndex + 1;
                 } else {
-                    // Either not in favorites or at end, play first favorite
-                    nextIndex = 0;
+                    nextIndex = 0; // Loop back to first
                 }
 
                 const next = ytAudioFavorites[nextIndex];
                 if (next) {
                     const id = typeof next === 'string' ? next : next.id;
                     const title = typeof next === 'object' ? (next.title || id) : id;
-                    loadYTAudio(id, title);
-                    toast('⏭️ Bài tiếp (từ Yêu thích)');
+                    loadYTAudio(id, title, 'favorites');
+                    toast(`⏭️ Yêu thích ${nextIndex + 1}/${ytAudioFavorites.length}`);
+                    return;
                 }
-            } else if (ytAudioHistory.length > 0) {
-                // 3. No favorites, play random from history
-                const randomIndex = Math.floor(Math.random() * ytAudioHistory.length);
-                const item = ytAudioHistory[randomIndex];
-                if (item) {
-                    const id = typeof item === 'string' ? item : item.id;
-                    const title = typeof item === 'object' ? (item.title || id) : id;
-                    loadYTAudio(id, title);
-                    toast('⏭️ Bài ngẫu nhiên (từ Lịch sử)');
+            }
+
+            // 3. SEARCH/HISTORY: Play related video (random from history)
+            if (playSource === 'search' || playSource === 'history') {
+                if (ytAudioHistory.length > 1) {
+                    // Pick random song from history (excluding current)
+                    let availableHistory = ytAudioHistory.filter(item => {
+                        const id = typeof item === 'string' ? item : item.id;
+                        return id !== currentVideoId;
+                    });
+
+                    if (availableHistory.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * availableHistory.length);
+                        const item = availableHistory[randomIndex];
+                        const id = typeof item === 'string' ? item : item.id;
+                        const title = typeof item === 'object' ? (item.title || id) : id;
+                        loadYTAudio(id, title, 'history');
+                        toast('⏭️ Tự động phát (từ Lịch sử)');
+                        return;
+                    }
                 }
-            } else {
-                toast('Thêm bài hoặc import playlist để dùng chức năng Bài tiếp');
+                // No history available, stop
+                toast('Hết bài để phát tự động. Thêm bài hoặc import playlist!');
             }
         }
+
 
 
 
@@ -14060,9 +14074,18 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         `).join('');
         }
 
-        function loadYTAudio(videoId, title = '', fromPlaylist = false) {
+        function loadYTAudio(videoId, title = '', source = 'search') {
             if (!videoId) return;
 
+            // Track play source for smart auto-play
+            // source: 'search' | 'favorites' | 'playlist' | 'history'
+            playSource = source;
+
+            // Reset playlist if NOT playing from playlist
+            if (source !== 'playlist') {
+                currentPlaylist = null;
+                currentPlaylistIndex = -1;
+            }
 
             // Clear search results
             document.getElementById('ytSearchResults').innerHTML = '';
@@ -14075,12 +14098,6 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             const titleEl = document.getElementById('ytCurrentTitle');
             if (titleEl) titleEl.textContent = title ? title : `Playing: ${videoId}`;
 
-            // Reset playlist if playing standalone video (not from playlist)
-            // This prevents "next" from playing playlist songs when user searched/clicked a new video
-            if (typeof fromPlaylist === 'undefined' || !fromPlaylist) {
-                currentPlaylist = null;
-                currentPlaylistIndex = -1;
-            }
 
             // Create/update player
             if (ytPlayer) {
@@ -14191,12 +14208,13 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 if (!id || typeof id !== 'string') return '';
 
                 return `
-            <div class="yt-history-item" onclick="loadYTAudio('${id}', '${title.replace(/'/g, "\\'")}')" title="${title}">
+            <div class="yt-history-item" onclick="loadYTAudio('${id}', '${title.replace(/'/g, "\\'")}', 'history')" title="${title}">
                 <img src="https://img.youtube.com/vi/${id}/default.jpg" 
                      style="width:40px;height:30px;border-radius:4px; object-fit:cover;">
                 <span style="max-width:150px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${title}</span>
             </div>
             `;
+
             }).join('') || '<div style="color:var(--mac-text-secondary); font-style:italic; width:100%; text-align:center; padding:20px;">Chưa có lịch sử phát</div>';
         }
 
@@ -14302,7 +14320,8 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
                 return `
             <div class="yt-history-item" style="position:relative;" title="${title}">
-                <div onclick="loadYTAudio('${id}', '${title.replace(/'/g, "\\'")}')" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <div onclick="loadYTAudio('${id}', '${title.replace(/'/g, "\\'")}', 'favorites')" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+
                     <img src="https://img.youtube.com/vi/${id}/default.jpg" 
                          style="width:40px;height:30px;border-radius:4px; object-fit:cover;">
                     <span style="max-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${title}</span>
@@ -14565,7 +14584,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
             if (currentPlaylist.videos.length > 0) {
                 const video = currentPlaylist.videos[0];
-                loadYTAudio(video.id, video.title, true); // true = from playlist
+                loadYTAudio(video.id, video.title, 'playlist');
                 toast(`▶️ Đang phát: ${currentPlaylist.name}`);
             }
         }
@@ -14580,7 +14599,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
             const video = currentPlaylist.videos[currentPlaylistIndex];
             if (video) {
-                loadYTAudio(video.id, video.title, true); // true = from playlist
+                loadYTAudio(video.id, video.title, 'playlist');
                 return true;
             }
             return false;
