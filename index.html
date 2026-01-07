@@ -6714,6 +6714,8 @@
                             <label class="platform"><input type="checkbox" data-p="bingreverse"><span
                                     class="platform-label"><span class="platform-icon">🔷</span>Bing
                                     Visual</span></label>
+                            <label class="platform add-btn" onclick="addCustomTool('reverse','top')"><span
+                                    class="platform-label"><span class="platform-icon">➕</span>Thêm</span></label>
                         </div>
                     </div>
 
@@ -6729,6 +6731,28 @@
                                     class="platform-label"><span class="platform-icon">👤</span>PimEyes</span></label>
                             <label class="platform"><input type="checkbox" data-p="reversely"><span
                                     class="platform-label"><span class="platform-icon">🔄</span>Reversely</span></label>
+                            <label class="platform add-btn" onclick="addCustomTool('reverse','ai')"><span
+                                    class="platform-label"><span class="platform-icon">➕</span>Thêm</span></label>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">🎬 Video/YouTube Search <span class="badge hot">NEW</span></div>
+                        <div class="platforms">
+                            <label class="platform"><input type="checkbox" data-p="reversevideosearch"><span
+                                    class="platform-label"><span
+                                        class="platform-icon">🎥</span>ReverseVideoSearch</span></label>
+                            <label class="platform"><input type="checkbox" data-p="berify"><span
+                                    class="platform-label"><span class="platform-icon">🔍</span>Berify</span></label>
+                            <label class="platform"><input type="checkbox" data-p="amnestyyt"><span
+                                    class="platform-label"><span class="platform-icon">📺</span>AmnestyYT</span></label>
+                            <label class="platform"><input type="checkbox" data-p="invid"><span
+                                    class="platform-label"><span class="platform-icon">✅</span>InVID
+                                    Plugin</span></label>
+                            <label class="platform"><input type="checkbox" data-p="socialvidfinder"><span
+                                    class="platform-label"><span class="platform-icon">📱</span>SocialVid</span></label>
+                            <label class="platform add-btn" onclick="addCustomTool('reverse','video')"><span
+                                    class="platform-label"><span class="platform-icon">➕</span>Thêm</span></label>
                         </div>
                     </div>
 
@@ -6742,6 +6766,11 @@
                                         class="platform-icon">🔗</span>Duplichecker</span></label>
                             <label class="platform"><input type="checkbox" data-p="smallseotools"><span
                                     class="platform-label"><span class="platform-icon">🔧</span>SmallSEO</span></label>
+                            <label class="platform"><input type="checkbox" data-p="karmadecay"><span
+                                    class="platform-label"><span
+                                        class="platform-icon">🔁</span>KarmaDecay</span></label>
+                            <label class="platform add-btn" onclick="addCustomTool('reverse','agg')"><span
+                                    class="platform-label"><span class="platform-icon">➕</span>Thêm</span></label>
                         </div>
                     </div>
 
@@ -6754,6 +6783,8 @@
                                     class="platform-label"><span class="platform-icon">🎨</span>IQDB</span></label>
                             <label class="platform"><input type="checkbox" data-p="trace"><span
                                     class="platform-label"><span class="platform-icon">📺</span>trace.moe</span></label>
+                            <label class="platform add-btn" onclick="addCustomTool('reverse','anime')"><span
+                                    class="platform-label"><span class="platform-icon">➕</span>Thêm</span></label>
                         </div>
                     </div>
 
@@ -6768,6 +6799,8 @@
                                     class="platform-label"><span class="platform-icon">🟢</span>360识图</span></label>
                             <label class="platform"><input type="checkbox" data-p="taobaoimage"><span
                                     class="platform-label"><span class="platform-icon">🛒</span>拍立淘</span></label>
+                            <label class="platform add-btn" onclick="addCustomTool('reverse','china')"><span
+                                    class="platform-label"><span class="platform-icon">➕</span>Thêm</span></label>
                         </div>
                     </div>
 
@@ -8098,10 +8131,18 @@
                 pimeyes: () => `https://pimeyes.com/en`,
                 reversely: () => `https://reversely.ai/`,
 
+                // Video/YouTube Search
+                reversevideosearch: () => `https://www.reversevideosearch.io/`,
+                berify: () => `https://berify.com/`,
+                amnestyyt: () => `https://citizenevidence.amnestyusa.org/`,
+                invid: () => `https://chromewebstore.google.com/detail/invid-weverify/fghbpkjdjodafkempegkghfnkpakifeg`,
+                socialvidfinder: () => `https://socialvidfinder.com/`,
+
                 // Aggregators
                 imgops: () => `https://imgops.com/`,
                 duplichecker: () => `https://www.duplichecker.com/reverse-image-search.php`,
                 smallseotools: () => `https://smallseotools.com/reverse-image-search/`,
+                karmadecay: () => `https://karmadecay.com/`,
 
                 // Anime
                 saucenao: () => `https://saucenao.com/`,
@@ -9772,7 +9813,10 @@ Trả về JSON (chỉ JSON, không text khác):
                             saucenao: `https://saucenao.com/search.php?url=${encodeURIComponent(uploadedImageUrl)}`,
                             iqdb: `https://iqdb.org/?url=${encodeURIComponent(uploadedImageUrl)}`,
                             trace: `https://trace.moe/?url=${encodeURIComponent(uploadedImageUrl)}`,
-                            imgops: `https://imgops.com/${encodeURIComponent(uploadedImageUrl)}`
+                            imgops: `https://imgops.com/${encodeURIComponent(uploadedImageUrl)}`,
+                            // Video/YouTube tools
+                            reversevideosearch: `https://www.reversevideosearch.io/?image=${encodeURIComponent(uploadedImageUrl)}`,
+                            karmadecay: `https://karmadecay.com/search?q=${encodeURIComponent(uploadedImageUrl)}`
                         };
                         return urlSupported[key] || original();
                     }
