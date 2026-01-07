@@ -10995,8 +10995,13 @@ Trả về JSON (chỉ JSON, không text khác):
                                 if (valid) {
                                     updateUI('signed-in');
                                 } else {
+                                    // Token expired - try to refresh silently first
                                     clearSession();
                                     updateUI('signed-out');
+                                    // Show login popup after short delay
+                                    setTimeout(() => {
+                                        showLoginPrompt('Phiên đăng nhập đã hết hạn. Đăng nhập lại?');
+                                    }, 1000);
                                 }
                             });
                         } catch (e) {
@@ -11005,7 +11010,62 @@ Trả về JSON (chỉ JSON, không text khác):
                         }
                     } else {
                         updateUI('signed-out');
+                        // Show login prompt on first app load if not logged in
+                        setTimeout(() => {
+                            showLoginPrompt('Đăng nhập Google để đồng bộ dữ liệu giữa các thiết bị');
+                        }, 2000);
                     }
+                }
+
+                // Show login prompt popup
+                function showLoginPrompt(message) {
+                    // Don't show if already signed in or if popup was dismissed recently
+                    if (accessToken) return;
+                    const dismissed = sessionStorage.getItem('login_prompt_dismissed');
+                    if (dismissed) return;
+
+                    const popup = document.createElement('div');
+                    popup.id = 'loginPromptPopup';
+                    popup.style.cssText = `
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        background: var(--mac-card, #fff);
+                        border: 1px solid var(--mac-border, #ddd);
+                        border-radius: 12px;
+                        padding: 16px 20px;
+                        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                        z-index: 10000;
+                        max-width: 320px;
+                        animation: slideInRight 0.3s ease;
+                    `;
+                    popup.innerHTML = `
+                        <div style="display:flex; align-items:flex-start; gap:12px;">
+                            <div style="font-size:24px;">🔐</div>
+                            <div style="flex:1;">
+                                <div style="font-weight:600; margin-bottom:6px; color:var(--mac-text, #333);">Đồng bộ Google Drive</div>
+                                <div style="font-size:13px; color:var(--mac-text-secondary, #666); margin-bottom:12px;">${message}</div>
+                                <div style="display:flex; gap:8px;">
+                                    <button onclick="signInGoogle(); document.getElementById('loginPromptPopup')?.remove();" 
+                                        style="padding:8px 16px; background:#4285f4; color:white; border:none; border-radius:6px; cursor:pointer; font-size:13px;">
+                                        Đăng nhập
+                                    </button>
+                                    <button onclick="sessionStorage.setItem('login_prompt_dismissed','1'); document.getElementById('loginPromptPopup')?.remove();" 
+                                        style="padding:8px 16px; background:var(--mac-bg, #f5f5f5); color:var(--mac-text, #333); border:1px solid var(--mac-border, #ddd); border-radius:6px; cursor:pointer; font-size:13px;">
+                                        Để sau
+                                    </button>
+                                </div>
+                            </div>
+                            <button onclick="document.getElementById('loginPromptPopup')?.remove();" 
+                                style="background:none; border:none; cursor:pointer; font-size:16px; color:var(--mac-text-secondary, #999);">✕</button>
+                        </div>
+                    `;
+                    document.body.appendChild(popup);
+
+                    // Auto dismiss after 30 seconds
+                    setTimeout(() => {
+                        popup.remove();
+                    }, 30000);
                 }
 
                 async function validateToken() {
@@ -11285,7 +11345,7 @@ Trả về JSON (chỉ JSON, không text khác):
 
                     const jsonKeys = ['tabOrder', 'platformOrder', 'customSites', 'customHomepages',
                         'defaultHomepages', 'searchHistory', 'myTools', 'promptLibrary', 'favorites', 'stylePresets',
-                        'ytAudioHistory', 'ytAudioFavorites', 'ytAudioPlaylists'];
+                        'ytAudioHistory', 'ytAudioFavorites', 'ytAudioPlaylists', 'ytSearchKeywords'];
                     jsonKeys.forEach(k => {
                         if (data[k]) localStorage.setItem(k, JSON.stringify(data[k]));
                     });
@@ -11337,7 +11397,8 @@ Trả về JSON (chỉ JSON, không text khác):
 
                         const shouldSync = cloudPlaylists.length > localPlaylists.length ||
                             (cloudData.ytAudioHistory?.length > (JSON.parse(localStorage.getItem('ytAudioHistory') || '[]')).length) ||
-                            (cloudData.ytAudioFavorites?.length > (JSON.parse(localStorage.getItem('ytAudioFavorites') || '[]')).length);
+                            (cloudData.ytAudioFavorites?.length > (JSON.parse(localStorage.getItem('ytAudioFavorites') || '[]')).length) ||
+                            (cloudData.ytSearchKeywords?.length > (JSON.parse(localStorage.getItem('ytSearchKeywords') || '[]')).length);
 
                         if (shouldSync) {
                             console.log('[GDrive] Cloud data has more items, syncing...');
