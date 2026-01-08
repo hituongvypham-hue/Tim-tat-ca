@@ -11491,7 +11491,7 @@ Trả về JSON (chỉ JSON, không text khác):
             initPlatformDragDrop();
 
             // 5. Display last update time in header
-            const APP_LAST_UPDATE = '08/01 • 21:32';
+            const APP_LAST_UPDATE = '08/01 • 23:29';
             document.getElementById('headerClock').textContent = APP_LAST_UPDATE;
 
             // 6. Formula Cards functions
@@ -14164,10 +14164,18 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 }
 
                 if (data.items && data.items.length > 0) {
-                    // Filter out recently played videos
-                    const availableVideos = data.items.filter(item =>
-                        item.id.videoId && !recentlyPlayedIds.includes(item.id.videoId)
-                    );
+                    // Filter out: recently played + karaoke/instrumental/cover
+                    const excludePatterns = /karaoke|instrumental|beat|cover|remix|nightcore|slowed|reverb|8d audio|lofi|lo-fi|beat only|không lời|nhac nen|minus|backing track/i;
+
+                    const availableVideos = data.items.filter(item => {
+                        if (!item.id.videoId) return false;
+                        if (recentlyPlayedIds.includes(item.id.videoId)) return false;
+                        // Exclude karaoke, instrumental etc from title
+                        if (excludePatterns.test(item.snippet.title)) return false;
+                        return true;
+                    });
+
+                    console.log('[Related] Filtered:', data.items.length, '→', availableVideos.length, 'videos');
 
                     if (availableVideos.length > 0) {
                         // Pick random from available
@@ -14178,14 +14186,26 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                         loadYTAudio(video.id.videoId, video.snippet.title, 'search');
                         toast('⏭️ Bài liên quan');
                     } else {
-                        // All results were recently played, clear history and try again
-                        console.log('[Related] All videos recently played, clearing history');
-                        recentlyPlayedIds = [videoId];
-                        const randomIndex = Math.floor(Math.random() * Math.min(5, data.items.length));
-                        const video = data.items[randomIndex];
-                        if (video.id.videoId) {
+                        // All results were filtered out, try with less strict filter
+                        console.log('[Related] All videos filtered, trying without karaoke filter');
+                        const fallbackVideos = data.items.filter(item =>
+                            item.id.videoId && !recentlyPlayedIds.includes(item.id.videoId)
+                        );
+
+                        if (fallbackVideos.length > 0) {
+                            const randomIndex = Math.floor(Math.random() * Math.min(5, fallbackVideos.length));
+                            const video = fallbackVideos[randomIndex];
                             loadYTAudio(video.id.videoId, video.snippet.title, 'search');
                             toast('⏭️ Bài liên quan');
+                        } else {
+                            // Clear history and try again
+                            recentlyPlayedIds = [videoId];
+                            const randomIndex = Math.floor(Math.random() * Math.min(5, data.items.length));
+                            const video = data.items[randomIndex];
+                            if (video.id.videoId) {
+                                loadYTAudio(video.id.videoId, video.snippet.title, 'search');
+                                toast('⏭️ Bài liên quan');
+                            }
                         }
                     }
                 } else {
