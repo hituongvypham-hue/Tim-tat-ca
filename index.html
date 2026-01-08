@@ -11496,7 +11496,7 @@ Trả về JSON (chỉ JSON, không text khác):
             initPlatformDragDrop();
 
             // 5. Display last update time in header
-            const APP_LAST_UPDATE = '07/01 • 23:31';
+            const APP_LAST_UPDATE = '08/01 • 21:24';
             document.getElementById('headerClock').textContent = APP_LAST_UPDATE;
 
             // 6. Formula Cards functions
@@ -14107,32 +14107,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 }
             }
 
-            // 2. FAVORITES: Play next in favorites list
-            if (playSource === 'favorites' && ytAudioFavorites.length > 0) {
-                const currentIndex = ytAudioFavorites.findIndex(item => {
-                    const id = typeof item === 'string' ? item : item.id;
-                    return id === currentVideoId;
-                });
-
-                let nextIndex;
-                if (currentIndex >= 0 && currentIndex < ytAudioFavorites.length - 1) {
-                    nextIndex = currentIndex + 1;
-                } else {
-                    nextIndex = 0; // Loop back to first
-                }
-
-                const next = ytAudioFavorites[nextIndex];
-                if (next) {
-                    const id = typeof next === 'string' ? next : next.id;
-                    const title = typeof next === 'object' ? (next.title || id) : id;
-                    loadYTAudio(id, title, 'favorites');
-                    toast(`⏭️ Yêu thích ${nextIndex + 1}/${ytAudioFavorites.length}`);
-                    return;
-                }
-            }
-
-            // 3. SEARCH/HISTORY: Fetch related video from YouTube API
-            if (playSource === 'search' || playSource === 'history') {
+            // 2. ALL OTHER SOURCES: Fetch related video from YouTube API
+            // (favorites, search, history, keywords - all behave the same)
+            if (currentVideoId) {
                 toast('🔍 Đang tìm bài liên quan...');
                 fetchRelatedVideo(currentVideoId);
             }
