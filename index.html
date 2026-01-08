@@ -11512,7 +11512,7 @@ Trả về JSON (chỉ JSON, không text khác):
             initPlatformDragDrop();
 
             // 5. Display last update time in header
-            const APP_LAST_UPDATE = '08/01 • 23:42';
+            const APP_LAST_UPDATE = '08/01 • 23:47';
             document.getElementById('headerClock').textContent = APP_LAST_UPDATE;
 
             // 6. Formula Cards functions
@@ -15171,53 +15171,137 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
         function enterCinemaMode() {
-            // Save current playback position before moving
-            let savedTime = 0;
-            let wasPlaying = false;
-            if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
-                savedTime = ytPlayer.getCurrentTime();
-                wasPlaying = ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
+            // Create overlay backdrop only (don't move player)
+            if (!document.getElementById('cinemaBackdrop')) {
+                const backdrop = document.createElement('div');
+                backdrop.id = 'cinemaBackdrop';
+                backdrop.innerHTML = `
+                    <style>
+                        #cinemaBackdrop {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(0,0,0,${cinemaSettings.opacity});
+                            z-index: 9998;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            flex-direction: column;
+                        }
+                        #cinemaBackdrop .cinema-title {
+                            color: white;
+                            font-size: 18px;
+                            margin-bottom: 16px;
+                            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+                            position: fixed;
+                            top: 20px;
+                            z-index: 10001;
+                        }
+                        #cinemaBackdrop .cinema-controls {
+                            position: fixed;
+                            bottom: 80px;
+                            display: flex;
+                            gap: 10px;
+                            z-index: 10001;
+                        }
+                        #cinemaBackdrop .cinema-controls button {
+                            padding: 10px 20px;
+                            border: none;
+                            border-radius: 8px;
+                            background: rgba(255,255,255,0.1);
+                            color: white;
+                            cursor: pointer;
+                            font-size: 14px;
+                            transition: all 0.2s;
+                        }
+                        #cinemaBackdrop .cinema-controls button:hover {
+                            background: rgba(255,255,255,0.2);
+                            transform: scale(1.05);
+                        }
+                        #cinemaBackdrop .cinema-exit-btn {
+                            background: rgba(255,100,100,0.8) !important;
+                        }
+                        #cinemaBackdrop .cinema-settings {
+                            position: fixed;
+                            bottom: 30px;
+                            display: flex;
+                            gap: 20px;
+                            align-items: center;
+                            z-index: 10001;
+                        }
+                        #cinemaBackdrop .cinema-setting-item {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            color: white;
+                            font-size: 13px;
+                        }
+                        #cinemaBackdrop .cinema-setting-item input[type="range"] {
+                            width: 100px;
+                        }
+                        .player-cinema-mode {
+                            position: fixed !important;
+                            top: 50% !important;
+                            left: 50% !important;
+                            transform: translate(-50%, -50%) !important;
+                            z-index: 10000 !important;
+                            width: 80vw !important;
+                            max-width: 900px !important;
+                            border-radius: 12px !important;
+                            overflow: hidden !important;
+                            box-shadow: ${cinemaSettings.atmosphere ? '0 0 60px 20px rgba(139, 92, 246, 0.3),' : ''} 0 20px 60px rgba(0,0,0,0.5) !important;
+                        }
+                        .player-cinema-mode iframe {
+                            width: 100% !important;
+                            height: 50vh !important;
+                            min-height: 300px !important;
+                        }
+                    </style>
+                    <div class="cinema-title">${currentVideoTitle || 'Now Playing'}</div>
+                    <div class="cinema-controls">
+                        <button onclick="playPreviousTrack()" title="Bài trước">⏮️</button>
+                        <button onclick="playNextTrack()" title="Bài tiếp">⏭️</button>
+                        <button class="cinema-exit-btn" onclick="exitCinemaMode()">❌ Thoát</button>
+                    </div>
+                    <div class="cinema-settings">
+                        <div class="cinema-setting-item">
+                            <span>🌑 Độ tối:</span>
+                            <input type="range" id="cinemaOpacitySlider" min="50" max="100" value="${cinemaSettings.opacity * 100}" 
+                                   onchange="updateCinemaOpacity(this.value)">
+                            <span id="cinemaOpacityValue">${Math.round(cinemaSettings.opacity * 100)}%</span>
+                        </div>
+                        <div class="cinema-setting-item">
+                            <input type="checkbox" id="cinemaAtmosphereToggle" ${cinemaSettings.atmosphere ? 'checked' : ''} 
+                                   onchange="toggleCinemaAtmosphere(this.checked)">
+                            <span>✨ Glow</span>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(backdrop);
+
+                // Click backdrop to exit
+                backdrop.addEventListener('click', function (e) {
+                    if (e.target === backdrop) {
+                        exitCinemaMode();
+                    }
+                });
+            } else {
+                document.getElementById('cinemaBackdrop').style.display = 'flex';
+                // Update title
+                const title = document.querySelector('#cinemaBackdrop .cinema-title');
+                if (title) title.textContent = currentVideoTitle || 'Now Playing';
             }
 
-            if (!cinemaOverlay) {
-                createCinemaOverlay();
+            // Add cinema class to player (CSS transforms only, no DOM move)
+            const playerContainer = document.getElementById('ytPlayerContainer');
+            if (playerContainer) {
+                playerContainer.classList.add('player-cinema-mode');
             }
 
-            const player = document.getElementById('ytAudioPlayer');
-            const cinemaContainer = document.getElementById('cinemaPlayerContainer');
-
-            if (player && cinemaContainer) {
-                cinemaContainer.appendChild(player);
-
-                // Make iframe larger for cinema
-                const iframe = player.querySelector('iframe');
-                if (iframe) {
-                    iframe.style.width = '100%';
-                    iframe.style.height = '100%';
-                    iframe.style.minHeight = '400px';
-                    iframe.style.maxHeight = '70vh';
-                }
-            }
-
-            // Update title
-            const titleEl = document.getElementById('cinemaTitleText');
-            if (titleEl) {
-                titleEl.textContent = currentVideoTitle || 'Now Playing';
-            }
-
-            cinemaOverlay.classList.add('active');
             document.body.style.overflow = 'hidden';
             cinemaMode = true;
-
-            // Restore playback position after a short delay
-            setTimeout(() => {
-                if (ytPlayer && typeof ytPlayer.seekTo === 'function' && savedTime > 0) {
-                    ytPlayer.seekTo(savedTime, true);
-                    if (wasPlaying) {
-                        ytPlayer.playVideo();
-                    }
-                }
-            }, 300);
 
             // Add keyboard listener
             document.addEventListener('keydown', handleCinemaEscape);
@@ -15387,56 +15471,25 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
         function exitCinemaMode() {
-            if (cinemaOverlay) {
-                // Save current playback position before moving
-                let savedTime = 0;
-                let wasPlaying = false;
-                if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
-                    savedTime = ytPlayer.getCurrentTime();
-                    wasPlaying = ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
-                }
-
-                cinemaOverlay.classList.remove('active');
-
-                // Move player back
-                const player = document.getElementById('ytAudioPlayer');
-                const originalContainer = document.getElementById('ytPlayerContainer');
-
-                // Find the correct position (after ytCurrentTitle div)
-                const titleDiv = originalContainer.querySelector('#ytCurrentTitle');
-                if (titleDiv && titleDiv.parentElement) {
-                    titleDiv.parentElement.after(player);
-                } else {
-                    originalContainer.insertBefore(player, document.getElementById('ytAudioControls'));
-                }
-
-                // Restore iframe size
-                const iframe = player.querySelector('iframe');
-                if (iframe) {
-                    iframe.style.width = '100%';
-                    iframe.style.height = '100%';
-                    iframe.style.minHeight = '';
-                    iframe.style.maxHeight = '';
-                }
-
-                // Restore playback position after a short delay
-                setTimeout(() => {
-                    if (ytPlayer && typeof ytPlayer.seekTo === 'function' && savedTime > 0) {
-                        ytPlayer.seekTo(savedTime, true);
-                        if (wasPlaying) {
-                            ytPlayer.playVideo();
-                        }
-                    }
-                }, 300);
-
-                document.body.style.overflow = '';
-                cinemaMode = false;
-
-                // Remove keyboard listener
-                document.removeEventListener('keydown', handleCinemaEscape);
-
-                toast('🎬 Cinema Mode tắt');
+            // Hide backdrop
+            const backdrop = document.getElementById('cinemaBackdrop');
+            if (backdrop) {
+                backdrop.style.display = 'none';
             }
+
+            // Remove cinema class from player (no DOM manipulation needed)
+            const playerContainer = document.getElementById('ytPlayerContainer');
+            if (playerContainer) {
+                playerContainer.classList.remove('player-cinema-mode');
+            }
+
+            document.body.style.overflow = '';
+            cinemaMode = false;
+
+            // Remove keyboard listener
+            document.removeEventListener('keydown', handleCinemaEscape);
+
+            toast('🎬 Cinema Mode tắt');
         }
 
         function handleCinemaEscape(e) {
