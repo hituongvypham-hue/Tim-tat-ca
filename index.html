@@ -5848,6 +5848,27 @@
 
                     </div>
 
+
+                    <!-- Personalized Recommendations -->
+                    <div class="yt-section" id="ytRecommendationsSection">
+                        <div class="yt-section-header" onclick="toggleYtSection('ytRecommendationsSection')">
+                            <div class="yt-section-title">
+                                ✨ Đề xuất cho bạn <span class="count-badge" id="ytRecommendationsCount">0</span>
+                            </div>
+                            <div class="yt-section-actions" onclick="event.stopPropagation()">
+                                <button class="btn-primary" onclick="fetchPersonalizedRecommendations()">🔄 Làm
+                                    mới</button>
+                            </div>
+                            <span class="yt-section-toggle">▼</span>
+                        </div>
+                        <div class="yt-section-content">
+                            <div id="ytRecommendations" style="display:flex; flex-wrap:wrap; gap:10px;">
+                                <p style="color:#888; font-size:13px;">Bấm "Làm mới" để xem đề xuất dựa trên lịch sử
+                                    nghe của bạn</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Keyword Search History -->
                     <div class="yt-section" id="ytKeywordsSection">
                         <div class="yt-section-header" onclick="toggleYtSection('ytKeywordsSection')">
@@ -11491,7 +11512,7 @@ Trả về JSON (chỉ JSON, không text khác):
             initPlatformDragDrop();
 
             // 5. Display last update time in header
-            const APP_LAST_UPDATE = '08/01 • 23:29';
+            const APP_LAST_UPDATE = '08/01 • 23:42';
             document.getElementById('headerClock').textContent = APP_LAST_UPDATE;
 
             // 6. Formula Cards functions
@@ -14216,6 +14237,119 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 toast('Lỗi tìm bài liên quan');
             }
         }
+
+        // Personalized recommendations based on listening history
+        async function fetchPersonalizedRecommendations() {
+            if (!ytApiKey) {
+                toast('⚠️ Cần API Key YouTube');
+                return;
+            }
+
+            const container = document.getElementById('ytRecommendations');
+            const countBadge = document.getElementById('ytRecommendationsCount');
+
+            container.innerHTML = '<p style="color:#888; font-size:13px;">🔍 Đang tìm đề xuất...</p>';
+
+            // Collect keywords from: saved keywords + favorite song titles
+            let keywords = [];
+
+            // From saved search keywords
+            if (ytSearchKeywords && ytSearchKeywords.length > 0) {
+                keywords = keywords.concat(ytSearchKeywords.slice(0, 5));
+            }
+
+            // From favorite song titles
+            if (ytAudioFavorites && ytAudioFavorites.length > 0) {
+                ytAudioFavorites.slice(0, 5).forEach(fav => {
+                    if (typeof fav === 'object' && fav.title) {
+                        // Extract main keywords from title
+                        const titleWords = fav.title
+                            .replace(/[\\[\\]【】\\(\\)（）\\|｜\\-－\"\"''\\\"\\'\\.\\,]/g, ' ')
+                            .replace(/official|video|mv|lyric|lyrics|audio|hd|4k|full|vietsub|engsub/gi, '')
+                            .split(' ')
+                            .filter(w => w.length > 2)
+                            .slice(0, 3)
+                            .join(' ');
+                        if (titleWords) keywords.push(titleWords);
+                    }
+                });
+            }
+
+            if (keywords.length === 0) {
+                container.innerHTML = '<p style="color:#888; font-size:13px;">Chưa có lịch sử nghe. Hãy tìm kiếm và nghe nhạc trước!</p>';
+                return;
+            }
+
+            // Pick random keywords to search
+            const shuffled = keywords.sort(() => 0.5 - Math.random());
+            const searchTerms = shuffled.slice(0, 3);
+
+            console.log('[Recommendations] Keywords:', searchTerms);
+
+            const excludePatterns = /karaoke|instrumental|beat|cover|remix|nightcore|slowed|reverb|8d audio|lofi|lo-fi|beat only|không lời|nhac nen|minus|backing track/i;
+            let allVideos = [];
+
+            try {
+                // Search for each term with date filter (recent videos)
+                for (const term of searchTerms) {
+                    const response = await fetch(
+                        `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(term + ' nhạc mới')}&type=video&videoCategoryId=10&order=viewCount&publishedAfter=${getDateMonthsAgo(3)}&maxResults=10&key=${ytApiKey}`
+                    );
+                    const data = await response.json();
+
+                    if (data.items) {
+                        allVideos = allVideos.concat(data.items);
+                    }
+                }
+
+                // Filter and dedupe
+                const seen = new Set();
+                const filteredVideos = allVideos.filter(item => {
+                    if (!item.id.videoId) return false;
+                    if (seen.has(item.id.videoId)) return false;
+                    if (excludePatterns.test(item.snippet.title)) return false;
+                    seen.add(item.id.videoId);
+                    return true;
+                });
+
+                // Shuffle and take top results
+                const recommendations = filteredVideos
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 12);
+
+                if (recommendations.length > 0) {
+                    renderRecommendations(recommendations);
+                    countBadge.textContent = recommendations.length;
+                    toast(`✨ Tìm thấy ${recommendations.length} bài đề xuất`);
+                } else {
+                    container.innerHTML = '<p style="color:#888; font-size:13px;">Không tìm thấy đề xuất phù hợp</p>';
+                    countBadge.textContent = '0';
+                }
+            } catch (err) {
+                console.error('[Recommendations] Error:', err);
+                container.innerHTML = '<p style="color:#f55; font-size:13px;">Lỗi khi tải đề xuất</p>';
+            }
+        }
+
+        function getDateMonthsAgo(months) {
+            const date = new Date();
+            date.setMonth(date.getMonth() - months);
+            return date.toISOString();
+        }
+
+        function renderRecommendations(videos) {
+            const container = document.getElementById('ytRecommendations');
+            container.innerHTML = videos.map(item => `
+                <div class="yt-card" onclick="loadYTAudio('${item.id.videoId}', '${item.snippet.title.replace(/'/g, "\\'")}', 'search')" style="cursor:pointer; width:160px;">
+                    <img src="${item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url}" 
+                         style="width:100%; border-radius:8px; aspect-ratio:16/9; object-fit:cover;">
+                    <div style="padding:8px 4px; font-size:12px; line-height:1.3; max-height:48px; overflow:hidden;">
+                        ${item.snippet.title.substring(0, 50)}${item.snippet.title.length > 50 ? '...' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
 
 
 
