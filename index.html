@@ -5854,9 +5854,7 @@
                             <div class="yt-section-title">
                                 🔍 Từ khóa tìm kiếm <span class="count-badge" id="ytKeywordsCount">0</span>
                             </div>
-                            <div class="yt-section-actions" onclick="event.stopPropagation()">
-                                <button onclick="clearYtKeywordHistory()">Xóa tất cả</button>
-                            </div>
+
                             <span class="yt-section-toggle">▼</span>
                         </div>
                         <div class="yt-section-content">
@@ -5870,9 +5868,7 @@
                             <div class="yt-section-title">
                                 ❤️ Bài hát yêu thích <span class="count-badge" id="ytFavoritesCount">0</span>
                             </div>
-                            <div class="yt-section-actions" onclick="event.stopPropagation()">
-                                <button onclick="clearYtFavorites()">Xóa tất cả</button>
-                            </div>
+
                             <span class="yt-section-toggle">▼</span>
                         </div>
                         <div class="yt-section-content">
@@ -5888,7 +5884,6 @@
                             </div>
                             <div class="yt-section-actions" onclick="event.stopPropagation()">
                                 <button class="btn-primary" onclick="showAddPlaylistModal()">+ Thêm</button>
-                                <button onclick="clearYtPlaylists()">Xóa tất cả</button>
                             </div>
                             <span class="yt-section-toggle">▼</span>
                         </div>
@@ -11496,7 +11491,7 @@ Trả về JSON (chỉ JSON, không text khác):
             initPlatformDragDrop();
 
             // 5. Display last update time in header
-            const APP_LAST_UPDATE = '08/01 • 21:24';
+            const APP_LAST_UPDATE = '08/01 • 21:32';
             document.getElementById('headerClock').textContent = APP_LAST_UPDATE;
 
             // 6. Formula Cards functions
