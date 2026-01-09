@@ -5810,6 +5810,18 @@
                                 🔍 Tìm / Phát
                             </button>
                         </div>
+
+                        <!-- Quota Display -->
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding:8px 12px; background:var(--mac-bg); border-radius:8px; font-size:12px;">
+                            <div style="color:var(--mac-text-secondary);">
+                                📊 Quota ước tính: <span id="ytQuotaDisplay">~10,000/10,000 units</span>
+                            </div>
+                            <a href="https://console.cloud.google.com/apis/api/youtube.googleapis.com/quotas"
+                                target="_blank" style="color:var(--mac-accent); text-decoration:none; font-size:11px;">
+                                📈 Xem quota thực tế →
+                            </a>
+                        </div>
                     </div>
 
                     <!-- Search Results -->
@@ -14057,6 +14069,50 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
         // Partial response fields
         const YT_SEARCH_FIELDS = 'items(id,snippet(title,thumbnails/medium))';
+
+        // ==========================================
+        // INTERNAL QUOTA TRACKING (ESTIMATE)
+        // ==========================================
+        const YT_QUOTA_LIMIT = 10000;
+        const YT_QUOTA_COSTS = { search: 100, read: 1, playlistInfo: 3, playlistItems: 3 };
+
+        // Load saved quota data
+        var ytQuotaData = JSON.parse(localStorage.getItem('ytQuotaData') || '{"used": 0, "lastReset": null}');
+
+        // Check if quota should reset (new day in PT)
+        function checkQuotaReset() {
+            const now = new Date();
+            const ptDateStr = now.toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles' });
+
+            if (ytQuotaData.lastReset !== ptDateStr) {
+                ytQuotaData = { used: 0, lastReset: ptDateStr };
+                localStorage.setItem('ytQuotaData', JSON.stringify(ytQuotaData));
+                console.log('[Quota] Reset for new day:', ptDateStr);
+            }
+        }
+
+        function trackQuotaUsage(cost) {
+            checkQuotaReset();
+            ytQuotaData.used += cost;
+            localStorage.setItem('ytQuotaData', JSON.stringify(ytQuotaData));
+            updateQuotaDisplay();
+        }
+
+        function getEstimatedQuotaRemaining() {
+            checkQuotaReset();
+            return Math.max(0, YT_QUOTA_LIMIT - ytQuotaData.used);
+        }
+
+        function updateQuotaDisplay() {
+            const remaining = getEstimatedQuotaRemaining();
+            const percent = Math.round((remaining / YT_QUOTA_LIMIT) * 100);
+            const el = document.getElementById('ytQuotaDisplay');
+            if (el) {
+                const color = percent > 50 ? '#22c55e' : percent > 20 ? '#f59e0b' : '#ef4444';
+                el.innerHTML = `<span style="color:${color};">~${remaining.toLocaleString()}</span>/${YT_QUOTA_LIMIT.toLocaleString()} units`;
+            }
+        }
+
         function buildSearchUrl(query, maxResults = 10) {
             return `https://www.googleapis.com/youtube/v3/search?part=snippet&fields=${encodeURIComponent(YT_SEARCH_FIELDS)}&q=${encodeURIComponent(query)}&type=video&videoCategoryId=10&order=viewCount&maxResults=${maxResults}&key=${ytApiKey}`;
         }
@@ -14486,10 +14542,23 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
+                    // Track quota usage (search = 100 units)
+                    trackQuotaUsage(YT_QUOTA_COSTS.search);
+
                     if (data.items) {
                         renderYTSearchResults(data.items);
+                    } else if (data.error) {
+                        const isQuotaError = data.error.errors?.some(e =>
+                            e.reason === 'quotaExceeded' || e.reason === 'dailyLimitExceeded'
+                        );
+                        if (isQuotaError) {
+                            toast('⚠️ Hết quota API hôm nay!');
+                            startQuotaCountdown();
+                        } else {
+                            toast('Không tìm thấy kết quả hoặc lỗi API', 'error');
+                        }
                     } else {
-                        toast('Không tìm thấy kết quả hoặc lỗi API', 'error');
+                        toast('Không tìm thấy kết quả', 'error');
                     }
                 })
                 .catch(err => {
@@ -15231,6 +15300,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             renderYTPlaylists();
             restoreYtSectionStates();
             setupVisionTabInteraction();
+            updateQuotaDisplay(); // Show initial quota estimate
         });
 
 
