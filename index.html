@@ -5853,7 +5853,7 @@
                                 🔍 Từ khóa tìm kiếm <span class="count-badge" id="ytKeywordsCount">0</span>
                             </div>
                             <div class="yt-section-actions" onclick="event.stopPropagation()">
-                                <button onclick="clearYtKeywordHistory()">Xóa tất cả</button>
+
                             </div>
                             <span class="yt-section-toggle">▼</span>
                         </div>
@@ -5869,7 +5869,7 @@
                                 ❤️ Bài hát yêu thích <span class="count-badge" id="ytFavoritesCount">0</span>
                             </div>
                             <div class="yt-section-actions" onclick="event.stopPropagation()">
-                                <button onclick="clearYtFavorites()">Xóa tất cả</button>
+
                             </div>
                             <span class="yt-section-toggle">▼</span>
                         </div>
@@ -5886,7 +5886,7 @@
                             </div>
                             <div class="yt-section-actions" onclick="event.stopPropagation()">
                                 <button class="btn-primary" onclick="showAddPlaylistModal()">+ Thêm</button>
-                                <button onclick="clearYtPlaylists()">Xóa tất cả</button>
+
                             </div>
                             <span class="yt-section-toggle">▼</span>
                         </div>
@@ -14464,7 +14464,11 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
         // Render keyword history as pills
+        // Render keyword history as pills
         function renderYTKeywordHistory() {
+            // Refresh from localStorage (important for Drive sync)
+            ytSearchKeywords = JSON.parse(localStorage.getItem('ytSearchKeywords') || '[]');
+
             const container = document.getElementById('ytKeywordHistory');
             if (!container) return;
 
@@ -14478,13 +14482,33 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             }
 
             container.innerHTML = ytSearchKeywords.map(keyword => `
-                <span class="keyword-pill" onclick="searchFromKeyword('${keyword.replace(/'/g, "\\'")}')" 
-                      style="padding:6px 12px; background:var(--mac-bg); border:1px solid var(--mac-border); border-radius:20px; cursor:pointer; font-size:13px; color:var(--mac-text); transition:all 0.2s;"
-                      onmouseover="this.style.background='var(--mac-accent)'; this.style.color='white';"
-                      onmouseout="this.style.background='var(--mac-bg)'; this.style.color='var(--mac-text)';">
-                    ${keyword}
+                <span class="keyword-pill" style="display:inline-flex; align-items:center; gap:6px; padding:6px 12px; background:var(--mac-bg); border:1px solid var(--mac-border); border-radius:20px; font-size:13px; color:var(--mac-text); transition:all 0.2s;">
+                    <span onclick="searchFromKeyword('${keyword.replace(/'/g, "\\'")}')" style="cursor:pointer;" 
+                          onmouseover="this.parentElement.style.background='var(--mac-accent)'; this.parentElement.style.color='white';"
+                          onmouseout="this.parentElement.style.background='var(--mac-bg)'; this.parentElement.style.color='var(--mac-text)';">
+                        ${keyword}
+                    </span>
+                    <span onclick="deleteYTKeyword('${keyword.replace(/'/g, "\\'")}')" 
+                          style="cursor:pointer; font-size:14px; opacity:0.6; padding-left:4px; border-left:1px solid var(--mac-border); display:flex; align-items:center;"
+                          onmouseover="this.style.opacity='1'; this.style.color='#ef4444';"
+                          onmouseout="this.style.opacity='0.6'; this.style.color='inherit';">
+                        ×
+                    </span>
                 </span>
             `).join('');
+        }
+
+        // Delete individual keyword
+        function deleteYTKeyword(keyword) {
+            event.stopPropagation(); // Prevent search trigger
+            ytSearchKeywords = ytSearchKeywords.filter(k => k !== keyword);
+            localStorage.setItem('ytSearchKeywords', JSON.stringify(ytSearchKeywords));
+            renderYTKeywordHistory();
+
+            // Auto sync
+            if (typeof autoSyncToDrive === 'function') {
+                autoSyncToDrive();
+            }
         }
 
         // Toggle collapsible sections
@@ -14771,6 +14795,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
         function renderYTFavorites() {
+            // Refresh from localStorage (important for Drive sync)
+            ytAudioFavorites = JSON.parse(localStorage.getItem('ytAudioFavorites') || '[]');
+
             const container = document.getElementById('ytAudioFavorites');
             if (!container) return;
 
@@ -14967,6 +14994,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
         function renderYTPlaylists() {
+            // Refresh from localStorage (important for Drive sync)
+            ytAudioPlaylists = JSON.parse(localStorage.getItem('ytAudioPlaylists') || '[]');
+
             const container = document.getElementById('ytAudioPlaylists');
             if (!container) return;
 
