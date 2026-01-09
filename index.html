@@ -15063,6 +15063,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 const infoRes = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${playlistId}&key=${ytApiKey}`);
                 const infoData = await infoRes.json();
 
+                // Track quota (playlists.list = 1 unit)
+                if (infoRes.ok) trackQuotaUsage(1);
+
                 let playlistName = nameInput?.value.trim() || 'Playlist';
                 if (infoData.items && infoData.items.length > 0) {
                     playlistName = nameInput?.value.trim() || infoData.items[0].snippet.title;
@@ -15071,6 +15074,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 // Fetch playlist items (max 50)
                 const itemsRes = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=50&key=${ytApiKey}`);
                 const itemsData = await itemsRes.json();
+
+                // Track quota (playlistItems.list = 1 unit)
+                if (itemsRes.ok) trackQuotaUsage(1);
 
                 if (!itemsData.items || itemsData.items.length === 0) {
                     toast('Playlist trống hoặc không thể truy cập');
