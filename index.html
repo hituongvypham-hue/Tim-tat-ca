@@ -13959,6 +13959,57 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         // ==========================================
         var ytSearchCache = JSON.parse(localStorage.getItem('ytSearchCache') || '{}');
         const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+        var quotaCountdownInterval = null;
+
+        // Calculate time until next Midnight Pacific Time (PT)
+        function getMsUntilPacificMidnight() {
+            const now = new Date();
+            // Create a date object for the current time in PT
+            const ptDateStr = now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
+            const ptDate = new Date(ptDateStr);
+
+            // Create target date (Midnight next day in PT)
+            const ptMidnight = new Date(ptDate);
+            ptMidnight.setHours(24, 0, 0, 0); // Next midnight
+
+            // Calculate difference
+            return ptMidnight.getTime() - ptDate.getTime();
+        }
+
+        function startQuotaCountdown() {
+            if (quotaCountdownInterval) clearInterval(quotaCountdownInterval);
+
+            const container = document.getElementById('ytSearchResults');
+            if (!container) return;
+
+            function updateTimer() {
+                const ms = getMsUntilPacificMidnight();
+                if (ms <= 0) {
+                    clearInterval(quotaCountdownInterval);
+                    container.innerHTML = '<div style="padding:20px; text-align:center; color:#22c55e;">✅ Quota đã được reset! Hãy thử lại.</div>';
+                    return;
+                }
+
+                const hours = Math.floor(ms / (1000 * 60 * 60));
+                const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+
+                const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                container.innerHTML = `
+                    <div style="padding:20px; text-align:center; background:rgba(239, 68, 68, 0.1); border:1px solid #ef4444; border-radius:12px; margin-top:20px;">
+                        <h3 style="color:#ef4444; margin:0 0 10px 0;">⚠️ Hết Quota YouTube API</h3>
+                        <p style="color:var(--mac-text); margin-bottom:5px;">Quota sẽ reset vào 00:00 (Pacific Time)</p>
+                        <div style="font-size:24px; font-weight:bold; font-family:monospace; color:var(--mac-text);">
+                            Reset sau: ${timeStr}
+                        </div>
+                    </div>
+                `;
+            }
+
+            updateTimer(); // Run immediately
+            quotaCountdownInterval = setInterval(updateTimer, 1000);
+        }
 
         function getCachedSearch(query) {
             const cached = ytSearchCache[query];
@@ -13994,7 +14045,10 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 const isQuotaError = data.error.errors.some(e =>
                     e.reason === 'quotaExceeded' || e.reason === 'dailyLimitExceeded'
                 );
-                if (isQuotaError) toast('⚠️ Hết quota API hôm nay!');
+                if (isQuotaError) {
+                    toast('⚠️ Hết quota API hôm nay!');
+                    startQuotaCountdown();
+                }
             }
 
             if (!data.error && useCache) setCachedSearch(cacheKey, data);
