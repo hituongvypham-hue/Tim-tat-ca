@@ -5781,29 +5781,19 @@
                                 <span style="color:var(--mac-text-secondary);">⚙️ Cấu hình API Key</span>
                                 <span style="font-size:10px; opacity:0.7">▼</span>
                             </div>
-                            style="display:none; margin-top:10px; padding:10px; background:var(--mac-bg);
-                            border-radius:8px;">
-                            <div style="display:flex; gap:10px; margin-bottom:10px;">
-                                <input type="text" id="ytApiKey" class="search-input"
-                                    placeholder="Paste YouTube Data API Key here..."
-                                    style="flex:1; padding:8px; border-radius:6px; border:1px solid var(--mac-border); background:var(--mac-input-bg); color:var(--mac-text);">
-                                <button onclick="saveYTApiKey()"
-                                    style="padding:8px 16px; background:var(--mac-button); color:var(--mac-text); border:1px solid var(--mac-border); border-radius:6px; cursor:pointer;">Lưu</button>
+                            <div
+                                style="display:none; margin-top:10px; padding:10px; background:var(--mac-bg); border-radius:8px;">
+                                <div style="display:flex; gap:10px;">
+                                    <input type="text" id="ytApiKey" class="search-input"
+                                        placeholder="Paste YouTube Data API Key here..."
+                                        style="flex:1; padding:8px; border-radius:6px; border:1px solid var(--mac-border); background:var(--mac-input-bg); color:var(--mac-text);">
+                                    <button onclick="saveYTApiKey()"
+                                        style="padding:8px 16px; background:var(--mac-button); color:var(--mac-text); border:1px solid var(--mac-border); border-radius:6px; cursor:pointer;">Lưu</button>
+                                </div>
+                                <p style="font-size:12px; color:var(--mac-text-secondary); margin-top:8px;">
+                                    * Caching tự động (1h). Tiết kiệm 50-80% quota.
+                                </p>
                             </div>
-                            <div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
-                                <label
-                                    style="padding:8px 16px; background:var(--mac-accent); color:white; border-radius:6px; cursor:pointer; font-size:13px;">
-                                    📁 Tải file API Keys (.txt)
-                                    <input type="file" id="ytApiKeyFile" accept=".txt" style="display:none;"
-                                        onchange="loadApiKeysFromFile(this)">
-                                </label>
-                                <span id="ytApiKeyStatus" style="font-size:12px; color:var(--mac-text-secondary);">
-                                    Đang dùng: Key #1
-                                </span>
-                            </div>
-                            <p style="font-size:12px; color:var(--mac-text-secondary); margin-top:5px;">
-                                * Mỗi key 1 dòng. Tự động xoay key khi hết quota.
-                            </p>
                         </div>
                     </div>
 
@@ -11483,7 +11473,7 @@ Trả về JSON (chỉ JSON, không text khác):
         initPlatformDragDrop();
 
         // 5. Display last update time in header
-        const APP_LAST_UPDATE = '09/01 • 08:00';
+        const APP_LAST_UPDATE = '09/01 • 08:14';
         document.getElementById('headerClock').textContent = APP_LAST_UPDATE;
 
         // 6. Formula Cards functions
@@ -13933,69 +13923,13 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         var ytPlayer;
         var ytAudioHistory = JSON.parse(localStorage.getItem('ytAudioHistory') || '[]');
         var ytSearchKeywords = JSON.parse(localStorage.getItem('ytSearchKeywords') || '[]');
-
-        // Multi-API Key Support
-        var ytApiKeys = JSON.parse(localStorage.getItem('ytApiKeys') || '[]');
-        var ytApiKeyIndex = parseInt(localStorage.getItem('ytApiKeyIndex') || '0');
-        var ytApiKey = ytApiKeys[ytApiKeyIndex] || localStorage.getItem('ytApiKey') || '';
+        var ytApiKey = localStorage.getItem('ytApiKey') || '';
 
         var currentVideoTitle = '';
         var currentVideoId = '';
         var playSource = 'search'; // 'search' | 'favorites' | 'playlist'
         var silentAudio = null;
         var wakeLock = null;
-
-        // Load API keys from txt file
-        function loadApiKeysFromFile(input) {
-            const file = input.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const text = e.target.result;
-                const keys = text.split('\n')
-                    .map(line => line.trim())
-                    .filter(line => line.length > 10); // Filter valid keys
-
-                if (keys.length > 0) {
-                    ytApiKeys = keys;
-                    ytApiKeyIndex = 0;
-                    ytApiKey = ytApiKeys[0];
-
-                    localStorage.setItem('ytApiKeys', JSON.stringify(ytApiKeys));
-                    localStorage.setItem('ytApiKeyIndex', '0');
-                    localStorage.setItem('ytApiKey', ytApiKey);
-
-                    updateApiKeyStatus();
-                    toast(`✅ Đã tải ${keys.length} API keys`);
-
-                    // Update input field
-                    document.getElementById('ytApiKey').value = ytApiKey;
-                } else {
-                    toast('⚠️ File không chứa API key hợp lệ');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // Rotate to next API key when quota exceeded
-        function rotateApiKey() {
-            if (ytApiKeys.length <= 1) { toast('⚠️ Chỉ có 1 API key, không thể xoay'); return false; }
-            ytApiKeyIndex = (ytApiKeyIndex + 1) % ytApiKeys.length; ytApiKey = ytApiKeys[ytApiKeyIndex];
-            localStorage.setItem('ytApiKeyIndex', ytApiKeyIndex.toString()); localStorage.setItem('ytApiKey', ytApiKey);
-            updateApiKeyStatus(); toast(`🔄 Đã chuyển sang Key #${ytApiKeyIndex + 1}`); return true;
-        } // Update status
-        display function updateApiKeyStatus() {
-            const statusEl = document.getElementById('ytApiKeyStatus'); if (statusEl) {
-                if (ytApiKeys.length > 1) {
-                    statusEl.textContent = `Đang dùng: Key #${ytApiKeyIndex + 1}/${ytApiKeys.length}`;
-                } else if (ytApiKey) {
-                    statusEl.textContent = `Đang dùng: Key #1`;
-                } else {
-                    statusEl.textContent = `Chưa có API key`;
-                }
-            }
-        }
 
         // ==========================================
         // API CACHING SYSTEM (Saves 50-80% quota)
@@ -14031,7 +13965,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             toast('🗑️ Đã xóa cache tìm kiếm');
         }
 
-        // Wrapper for YouTube API fetch with caching + auto-rotation
+        // Wrapper for YouTube API fetch with caching
         async function ytApiFetch(url, useCache = true) {
             // Extract query for caching
             const queryMatch = url.match(/[?&]q=([^&]+)/);
@@ -14046,31 +13980,17 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             }
 
             // Make actual API call
-            let currentUrl = url.replace(/key=[^&]+/, `key=${ytApiKey}`);
-
+            const currentUrl = url.replace(/key=[^&]+/, `key=${ytApiKey}`);
             const response = await fetch(currentUrl);
             const data = await response.json();
 
-            // Check if quota exceeded
+            // Check if quota exceeded - show error to user
             if (data.error && data.error.errors) {
                 const isQuotaError = data.error.errors.some(e =>
                     e.reason === 'quotaExceeded' || e.reason === 'dailyLimitExceeded'
                 );
-
-                if (isQuotaError && ytApiKeys.length > 1) {
-                    console.log('[API] Quota exceeded, rotating key...');
-                    if (rotateApiKey()) {
-                        // Retry with new key
-                        currentUrl = url.replace(/key=[^&]+/, `key=${ytApiKey}`);
-                        const retryResponse = await fetch(currentUrl);
-                        const retryData = await retryResponse.json();
-
-                        // Cache successful retry
-                        if (!retryData.error && useCache) {
-                            setCachedSearch(cacheKey, retryData);
-                        }
-                        return retryData;
-                    }
+                if (isQuotaError) {
+                    toast('⚠️ Hết quota API hôm nay! Thử lại sau 3h chiều (giờ VN)');
                 }
             }
 
@@ -14560,8 +14480,6 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                     if (configContainer) configContainer.style.display = 'none';
                 }
             }
-            // Update API key status display
-            updateApiKeyStatus();
         });
 
         function handleYTSearch() {
