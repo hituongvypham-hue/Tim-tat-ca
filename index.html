@@ -11473,7 +11473,7 @@ Trả về JSON (chỉ JSON, không text khác):
         initPlatformDragDrop();
 
         // 5. Display last update time in header
-        const APP_LAST_UPDATE = '09/01 • 08:14';
+        const APP_LAST_UPDATE = '09/01 • 08:48';
         document.getElementById('headerClock').textContent = APP_LAST_UPDATE;
 
         // 6. Formula Cards functions
@@ -14560,6 +14560,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
         // Render keyword history as pills
         function renderYTKeywordHistory() {
+            // Refresh from localStorage (important for Drive sync)
+            ytSearchKeywords = JSON.parse(localStorage.getItem('ytSearchKeywords') || '[]');
+
             const container = document.getElementById('ytKeywordHistory');
             if (!container) return;
 
@@ -14568,9 +14571,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             if (countEl) countEl.textContent = ytSearchKeywords.length;
 
             if (ytSearchKeywords.length === 0) {
-                container.innerHTML = '<div
-                style = "color:var(--mac-text-secondary); font-style:italic; width:100%; text-align:center; padding:20px;" >
-                    Chưa có từ khóa tìm kiếm</div > ';
+                container.innerHTML = '<div style="color:var(--mac-text-secondary); font-style:italic; width:100%; text-align:center; padding:20px;">Chưa có từ khóa tìm kiếm</div>';
                 return;
             }
 
@@ -14873,6 +14874,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
         function renderYTFavorites() {
+            // Refresh from localStorage (important for Drive sync)
+            ytAudioFavorites = JSON.parse(localStorage.getItem('ytAudioFavorites') || '[]');
+
             const container = document.getElementById('ytAudioFavorites');
             if (!container) return;
 
@@ -14881,9 +14885,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             if (countEl) countEl.textContent = ytAudioFavorites.length;
 
             if (ytAudioFavorites.length === 0) {
-                container.innerHTML = '<div
-                style = "color:var(--mac-text-secondary); font-style:italic; width:100%; text-align:center; padding:20px;" >
-                    Chưa có bài hát yêu thích.Nhấn ❤️ để thêm.</div > ';
+                container.innerHTML = '<div style="color:var(--mac-text-secondary); font-style:italic; width:100%; text-align:center; padding:20px;">Chưa có bài hát yêu thích. Nhấn ❤️ để thêm.</div>';
                 return;
             }
 
@@ -15082,6 +15084,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
         function renderYTPlaylists() {
+            // Refresh from localStorage (important for Drive sync)
+            ytAudioPlaylists = JSON.parse(localStorage.getItem('ytAudioPlaylists') || '[]');
+
             const container = document.getElementById('ytAudioPlaylists');
             if (!container) return;
 
@@ -15090,9 +15095,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             if (countEl) countEl.textContent = ytAudioPlaylists.length;
 
             if (ytAudioPlaylists.length === 0) {
-                container.innerHTML = '<div
-                style = "color:var(--mac-text-secondary); font-style:italic; width:100%; text-align:center; padding:20px;" >
-                    Chưa có playlist.Nhấn "+ Thêm Playlist" để import từ YouTube.</div > ';
+                container.innerHTML = '<div style="color:var(--mac-text-secondary); font-style:italic; width:100%; text-align:center; padding:20px;">Chưa có playlist. Nhấn "+ Thêm Playlist" để import từ YouTube.</div>';
                 return;
             }
 
