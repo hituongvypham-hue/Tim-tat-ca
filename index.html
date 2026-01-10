@@ -14880,7 +14880,8 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
         function enterCinemaMode() {
             const playerElement = document.getElementById('ytAudioPlayer');
-            if (!playerElement || !playerElement.querySelector('iframe')) {
+            // Check if player exists and is either an iframe (loaded) or contains one
+            if (!playerElement || (playerElement.tagName !== 'IFRAME' && !playerElement.querySelector('iframe'))) {
                 toast('Vui lòng phát nhạc trước khi bật Cinema Mode');
                 return;
             }
