@@ -11628,9 +11628,9 @@ Trả về JSON (chỉ JSON, không text khác):
             // 5. Update header clock
             // 5. Update header clock (Version Timestamp)
             function updateClock() {
-                // Static version time as requested
-                document.getElementById('headerClock').textContent = `10/01 • 15:30`;
-                document.getElementById('headerClock').title = "Phiên bản cập nhật lúc 15:30, 10/01/2026";
+                // Static version time (Push time)
+                document.getElementById('headerClock').textContent = `10/01 • 15:37`;
+                document.getElementById('headerClock').title = "Cập nhật lần cuối: 15:37, 10/01/2026";
             }
             updateClock(); // Set once
             // setInterval(updateClock, 60000); // Removed dynamic update
