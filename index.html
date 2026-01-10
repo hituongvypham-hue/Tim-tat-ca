@@ -14871,7 +14871,8 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         let cinemaState = {
             pendingRestore: false,
             currentTime: 0,
-            wasPlaying: false
+            wasPlaying: false,
+            videoId: null
         };
         let cinemaSettings = JSON.parse(localStorage.getItem('cinemaSettings') || '{"opacity":0.85,"atmosphere":true}');
 
@@ -14896,6 +14897,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 cinemaState.currentTime = ytPlayer.getCurrentTime();
                 const state = ytPlayer.getPlayerState();
                 cinemaState.wasPlaying = (state === 1 || state === 3); // Playing or buffering
+                cinemaState.videoId = currentVideoId; // Save current video ID
                 cinemaState.pendingRestore = true;
             }
 
@@ -14980,6 +14982,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 cinemaState.currentTime = ytPlayer.getCurrentTime();
                 const state = ytPlayer.getPlayerState();
                 cinemaState.wasPlaying = (state === 1 || state === 3);
+                cinemaState.videoId = currentVideoId; // Save current video ID
                 cinemaState.pendingRestore = true;
             }
 
@@ -15026,17 +15029,34 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
         function onYTPlayerReady(event) {
+            ytPlayer = event.target; // Update global reference on reload/ready
             document.getElementById('ytAudioControls').style.display = 'flex';
 
             // Restore playback state if switching cinema mode
             if (cinemaState.pendingRestore) {
-                if (cinemaState.currentTime > 0) {
-                    event.target.seekTo(cinemaState.currentTime);
-                }
-                if (cinemaState.wasPlaying) {
-                    event.target.playVideo();
+                if (cinemaState.videoId && cinemaState.videoId !== '') {
+                    // Explicitly load the correct video to avoid reverting to initial src
+                    // Use loadVideoById which accepts startSeconds
+                    const loadParams = {
+                        videoId: cinemaState.videoId,
+                        startSeconds: cinemaState.currentTime > 0 ? cinemaState.currentTime : 0
+                    };
+
+                    if (cinemaState.wasPlaying) {
+                        event.target.loadVideoById(loadParams);
+                    } else {
+                        event.target.cueVideoById(loadParams);
+                    }
                 } else {
-                    event.target.pauseVideo();
+                    // Fallback to simple seek if no videoId (shouldn't happen)
+                    if (cinemaState.currentTime > 0) {
+                        event.target.seekTo(cinemaState.currentTime);
+                    }
+                    if (cinemaState.wasPlaying) {
+                        event.target.playVideo();
+                    } else {
+                        event.target.pauseVideo();
+                    }
                 }
                 cinemaState.pendingRestore = false;
             } else {
