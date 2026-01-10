@@ -5919,6 +5919,10 @@
                                 style="flex-shrink:0; padding: 0 20px; background: var(--mac-accent); color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer;">
                                 🔍 Tìm / Phát
                             </button>
+                            <button onclick="fetchTrendingKeywords()" title="Cập nhật từ khóa hot từ YouTube"
+                                style="flex-shrink:0; padding: 0 16px; background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                🔥 Trending
+                            </button>
                         </div>
 
                         <!-- Quota Display -->
@@ -14501,6 +14505,69 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             } catch (err) {
                 console.error('[Related] Error:', err);
                 toast('Lỗi tìm bài liên quan');
+            }
+        }
+
+        async function fetchTrendingKeywords() {
+            if (!ytApiKey) {
+                toast('⚠️ Cần API Key để cập nhật Trending');
+                return;
+            }
+
+            toast('🔥 Đang cập nhật từ khóa Trending...');
+            try {
+                // Fetch most popular music videos in Vietnam
+                // categoryId 10 = Music, regionCode = VN
+                const response = await ytApiFetch(
+                    `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=VN&videoCategoryId=10&maxResults=15&key=${ytApiKey}`,
+                    false // Do not use cache to get latest
+                );
+
+                if (response.error) {
+                    toast('Lỗi API: ' + (response.error.message || 'Unknown error'));
+                    return;
+                }
+
+                if (response.items && response.items.length > 0) {
+                    const newKeywords = new Set();
+
+                    response.items.forEach(item => {
+                        // Extract Artist - Song Title
+                        let title = item.snippet.title;
+
+                        // Clean title for better keywords
+                        // 1. Remove stuff in brackets like [Official], (M/V)
+                        title = title.replace(/[\[\(].*?[\]\)]/g, '');
+                        // 2. Remove "Official Music Video" etc.
+                        title = title.replace(/Official|Video|Music|MV|4K|HD|Cover|Remix/gi, '');
+                        // 3. Trim
+                        title = title.trim();
+                        // 4. Remove leading/trailing " - " or similar
+                        title = title.replace(/^[\s\|\-\.]+|[\s\|\-\.]+$/g, '');
+
+                        if (title.length > 2 && title.length < 40) {
+                            newKeywords.add(title);
+                        }
+                    });
+
+                    // Update UI
+                    if (newKeywords.size > 0) {
+                        // Add some hardcoded hot keywords if needed
+                        newKeywords.add('Nhạc Trẻ Remix 2026');
+                        newKeywords.add('Lofi Chill 2026');
+
+                        // Save to history/display
+                        ytSearchKeywords = Array.from(newKeywords);
+                        localStorage.setItem('ytSearchKeywords', JSON.stringify(ytSearchKeywords));
+                        renderYTKeywordHistory();
+                        toast(`✅ Đã cập nhật ${newKeywords.size} từ khóa Hot nhất!`);
+                    } else {
+                        toast('Không tìm thấy từ khóa phù hợp');
+                    }
+                }
+            } catch (e) {
+                console.error('Trending fetch error:', e);
+                toast('Lỗi khi tải Trending');
             }
         }
 
