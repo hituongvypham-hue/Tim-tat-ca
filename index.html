@@ -5851,6 +5851,8 @@
                                 style="padding:8px 10px;">🔗</button>
                             <button onclick="toggleYTFavorite()" id="ytFavoriteBtn" title="Thêm vào yêu thích"
                                 style="padding:8px 10px;">🤍</button>
+                            <button onclick="toggleCinemaMode()" id="cinemaModeBtn" title="Chế độ Cinema"
+                                style="padding:8px 10px;">🎬</button>
                         </div>
 
 
@@ -14750,6 +14752,167 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
             document.getElementById('ytPlayerContainer').style.display = 'none';
             disableBackgroundPlayback();
+        }
+
+        // ==========================================
+        // CINEMA MODE
+        // ==========================================
+        let cinemaMode = false;
+        let cinemaSettings = JSON.parse(localStorage.getItem('cinemaSettings') || '{"opacity":0.85,"atmosphere":true}');
+
+        function toggleCinemaMode() {
+            if (cinemaMode) {
+                exitCinemaMode();
+            } else {
+                enterCinemaMode();
+            }
+        }
+
+        function enterCinemaMode() {
+            const playerContainer = document.getElementById('ytPlayerContainer');
+            if (!playerContainer || playerContainer.style.display === 'none') {
+                toast('Vui lòng phát nhạc trước khi bật Cinema Mode');
+                return;
+            }
+
+            // Create backdrop if not exists
+            if (!document.getElementById('cinemaBackdrop')) {
+                const backdrop = document.createElement('div');
+                backdrop.id = 'cinemaBackdrop';
+                backdrop.innerHTML = `
+                    <style>
+                        #cinemaBackdrop {
+                            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                            background: rgba(0,0,0,${cinemaSettings.opacity});
+                            display: none; align-items: center; justify-content: center;
+                            flex-direction: column; z-index: 9999; gap: 20px;
+                            transition: background 0.3s;
+                        }
+                        #cinemaBackdrop .cinema-title {
+                            color: white; font-size: 1.5rem; font-weight: 600;
+                            text-align: center; max-width: 80%; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+                        }
+                        #cinemaBackdrop .cinema-controls {
+                            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+                        }
+                        #cinemaBackdrop .cinema-controls button {
+                            padding: 10px 20px; border-radius: 8px; border: none;
+                            background: rgba(255,255,255,0.1); color: white;
+                            cursor: pointer; transition: all 0.2s;
+                        }
+                        #cinemaBackdrop .cinema-controls button:hover {
+                            background: rgba(255,255,255,0.2);
+                        }
+                        #cinemaBackdrop .cinema-exit-btn {
+                            background: var(--mac-accent) !important;
+                        }
+                        #cinemaBackdrop .cinema-settings {
+                            display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+                            justify-content: center; margin-top: 10px;
+                        }
+                        #cinemaBackdrop .cinema-setting-item {
+                            display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.8);
+                            font-size: 13px;
+                        }
+                        #cinemaBackdrop .cinema-setting-item input[type="range"] {
+                            width: 100px;
+                        }
+                        .player-cinema-mode {
+                            position: fixed !important; top: 50% !important; left: 50% !important;
+                            transform: translate(-50%, -50%) scale(1.5) !important;
+                            z-index: 10000 !important; width: 400px !important;
+                            box-shadow: ${cinemaSettings.atmosphere ? '0 0 60px 20px rgba(139, 92, 246, 0.3),' : ''} 0 20px 60px rgba(0,0,0,0.5) !important;
+                            border-radius: 12px !important; overflow: hidden !important;
+                        }
+                        .player-cinema-mode iframe {
+                            border-radius: 12px !important;
+                        }
+                    </style>
+                    <div class="cinema-title">${currentVideoTitle || 'Now Playing'}</div>
+                    <div class="cinema-controls">
+                        <button onclick="playPreviousTrack()">⏮️ Trước</button>
+                        <button onclick="seekBackward()">⏪ -10s</button>
+                        <button onclick="seekForward()">⏩ +10s</button>
+                        <button onclick="playNextTrack()">⏭️ Sau</button>
+                        <button class="cinema-exit-btn" onclick="exitCinemaMode()">✕ Thoát</button>
+                    </div>
+                    <div class="cinema-settings">
+                        <div class="cinema-setting-item">
+                            <span>🌙 Độ tối:</span>
+                            <input type="range" id="cinemaOpacitySlider" min="50" max="100" value="${cinemaSettings.opacity * 100}"
+                                   onchange="updateCinemaOpacity(this.value)">
+                            <span id="cinemaOpacityValue">${Math.round(cinemaSettings.opacity * 100)}%</span>
+                        </div>
+                        <div class="cinema-setting-item">
+                            <input type="checkbox" id="cinemaAtmosphereToggle" ${cinemaSettings.atmosphere ? 'checked' : ''}
+                                   onchange="toggleCinemaAtmosphere(this.checked)">
+                            <span>✨ Atmosphere Glow</span>
+                        </div>
+                    </div>
+                    <div style="color:rgba(255,255,255,0.5); font-size:12px; margin-top:10px;">Click vào nền tối hoặc nhấn ESC để thoát</div>
+                `;
+                backdrop.onclick = function (e) {
+                    if (e.target === backdrop) exitCinemaMode();
+                };
+                document.body.appendChild(backdrop);
+            }
+
+            // Update title
+            const title = document.querySelector('#cinemaBackdrop .cinema-title');
+            if (title) title.textContent = currentVideoTitle || 'Now Playing';
+
+            // Show backdrop and apply cinema class to player
+            document.getElementById('cinemaBackdrop').style.display = 'flex';
+            playerContainer.classList.add('player-cinema-mode');
+
+            cinemaMode = true;
+            document.addEventListener('keydown', handleCinemaEscape);
+            toast('🎬 Cinema Mode bật');
+        }
+
+        function updateCinemaOpacity(value) {
+            const opacity = value / 100;
+            cinemaSettings.opacity = opacity;
+            localStorage.setItem('cinemaSettings', JSON.stringify(cinemaSettings));
+
+            const backdrop = document.getElementById('cinemaBackdrop');
+            if (backdrop) {
+                backdrop.style.background = `rgba(0,0,0,${opacity})`;
+            }
+            const valueEl = document.getElementById('cinemaOpacityValue');
+            if (valueEl) valueEl.textContent = value + '%';
+        }
+
+        function toggleCinemaAtmosphere(enabled) {
+            cinemaSettings.atmosphere = enabled;
+            localStorage.setItem('cinemaSettings', JSON.stringify(cinemaSettings));
+
+            const playerContainer = document.getElementById('ytPlayerContainer');
+            if (playerContainer && playerContainer.classList.contains('player-cinema-mode')) {
+                // Re-apply styles by toggling class
+                playerContainer.classList.remove('player-cinema-mode');
+                setTimeout(() => playerContainer.classList.add('player-cinema-mode'), 10);
+            }
+        }
+
+        function exitCinemaMode() {
+            const backdrop = document.getElementById('cinemaBackdrop');
+            if (backdrop) backdrop.style.display = 'none';
+
+            const playerContainer = document.getElementById('ytPlayerContainer');
+            if (playerContainer) {
+                playerContainer.classList.remove('player-cinema-mode');
+            }
+
+            cinemaMode = false;
+            document.removeEventListener('keydown', handleCinemaEscape);
+            toast('🎬 Cinema Mode tắt');
+        }
+
+        function handleCinemaEscape(e) {
+            if (e.key === 'Escape' && cinemaMode) {
+                toggleCinemaMode();
+            }
         }
 
         function onYTPlayerReady(event) {
