@@ -162,9 +162,14 @@ Các công thức tìm kiếm theo chủ đề:
 
 | Ngày | Commit | Mô tả |
 |------|--------|-------|
+| 10/01/2026 | `e3d9e48` | Fix Cinema Mode CSS global, player display |
+| 10/01/2026 | `0f476d6` | Restore Cinema Mode button và functionality |
+| 10/01/2026 | `512222f` | Refine quota tracking for playlist imports |
+| 10/01/2026 | `4c32270` | Add internal quota tracker + GCloud link |
+| 09/01/2026 | `419a7da` | Add API quota countdown timer (Midnight PT) |
+| 09/01/2026 | `e7671c9` | Remove Delete All buttons, add keyword delete |
 | 09/01/2026 | `2401907` | Xóa multi-key rotation, giữ caching |
 | 09/01/2026 | `da1e101` | Thêm caching + partial response |
-| 09/01/2026 | `479b4a4` | Add multi-API key (sau đó xóa) |
 | 09/01/2026 | `a7d1973` | Tối ưu quota, giảm maxResults |
 | 08/01/2026 | - | Sửa Cinema Mode reload |
 | 07/01/2026 | - | Thêm Personalized Recommendations |

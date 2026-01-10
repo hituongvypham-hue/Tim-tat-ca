@@ -27,6 +27,25 @@
 - **Commit:** `da1e101`
 - **Ngày sửa:** 09/01/2026
 
+### 4. Cinema Mode Player Không Hiển Thị
+- **Triệu chứng:** Bật Cinema Mode chỉ thấy backdrop tối, không thấy player
+- **Nguyên nhân:** CSS cho `.player-cinema-mode` được nhúng trong template literal JS → không được browser load đúng vì style chỉ inject sau khi backdrop tạo
+- **Giải pháp:** 
+  - Chuyển toàn bộ Cinema CSS sang `<style>` global (lines 4773-4854)
+  - Player có `z-index: 10000` (cao hơn backdrop 9999)
+  - Xóa inline styles, chỉ giữ HTML structure trong JS
+- **Bài học:** **KHÔNG nên embed CSS trong template literals** - luôn dùng global CSS hoặc inject style riêng
+- **Commit:** `e3d9e48`
+- **Ngày sửa:** 10/01/2026
+
+### 5. Cinema Mode Code Bị Mất Sau Revert
+- **Triệu chứng:** Nút 🎬 Cinema không có, code bị xóa
+- **Nguyên nhân:** Khi revert code để fix lỗi khác, Cinema Mode code bị mất theo
+- **Giải pháp:** Dùng `git show <commit>:index.html` để xem và khôi phục code cũ
+- **Bài học:** Trước khi revert, kiểm tra xem commit đó có features nào quan trọng không
+- **Commit:** `0f476d6`
+- **Ngày sửa:** 10/01/2026
+
 ---
 
 ## ⚠️ Bugs Cần Lưu Ý Khi Code
