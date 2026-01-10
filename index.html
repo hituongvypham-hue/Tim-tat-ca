@@ -14868,6 +14868,11 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         // CINEMA MODE
         // ==========================================
         let cinemaMode = false;
+        let cinemaState = {
+            pendingRestore: false,
+            currentTime: 0,
+            wasPlaying: false
+        };
         let cinemaSettings = JSON.parse(localStorage.getItem('cinemaSettings') || '{"opacity":0.85,"atmosphere":true}');
 
         function toggleCinemaMode() {
@@ -14884,6 +14889,14 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             if (!playerElement || (playerElement.tagName !== 'IFRAME' && !playerElement.querySelector('iframe'))) {
                 toast('Vui lòng phát nhạc trước khi bật Cinema Mode');
                 return;
+            }
+
+            // Save playback state
+            if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
+                cinemaState.currentTime = ytPlayer.getCurrentTime();
+                const state = ytPlayer.getPlayerState();
+                cinemaState.wasPlaying = (state === 1 || state === 3); // Playing or buffering
+                cinemaState.pendingRestore = true;
             }
 
             // Create cinema container if not exists
@@ -14962,6 +14975,14 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
         function exitCinemaMode() {
+            // Save playback state
+            if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
+                cinemaState.currentTime = ytPlayer.getCurrentTime();
+                const state = ytPlayer.getPlayerState();
+                cinemaState.wasPlaying = (state === 1 || state === 3);
+                cinemaState.pendingRestore = true;
+            }
+
             // Move player back to original container
             const playerElement = document.getElementById('ytAudioPlayer');
             const originalContainer = document.getElementById('ytPlayerContainer');
@@ -15006,7 +15027,21 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
         function onYTPlayerReady(event) {
             document.getElementById('ytAudioControls').style.display = 'flex';
-            event.target.playVideo();
+
+            // Restore playback state if switching cinema mode
+            if (cinemaState.pendingRestore) {
+                if (cinemaState.currentTime > 0) {
+                    event.target.seekTo(cinemaState.currentTime);
+                }
+                if (cinemaState.wasPlaying) {
+                    event.target.playVideo();
+                } else {
+                    event.target.pauseVideo();
+                }
+                cinemaState.pendingRestore = false;
+            } else {
+                event.target.playVideo();
+            }
         }
 
 
