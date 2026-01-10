@@ -29,13 +29,12 @@
 
 ### 4. Cinema Mode Player Không Hiển Thị
 - **Triệu chứng:** Bật Cinema Mode chỉ thấy backdrop tối, không thấy player
-- **Nguyên nhân:** CSS cho `.player-cinema-mode` được nhúng trong template literal JS → không được browser load đúng vì style chỉ inject sau khi backdrop tạo
+- **Nguyên nhân GỐC:** CSS cho `.player-cinema-mode` bị đặt **trong @media (max-width: 768px)** → chỉ hoạt động trên mobile, không hoạt động trên desktop!
 - **Giải pháp:** 
-  - Chuyển toàn bộ Cinema CSS sang `<style>` global (lines 4773-4854)
-  - Player có `z-index: 10000` (cao hơn backdrop 9999)
-  - Xóa inline styles, chỉ giữ HTML structure trong JS
-- **Bài học:** **KHÔNG nên embed CSS trong template literals** - luôn dùng global CSS hoặc inject style riêng
-- **Commit:** `e3d9e48`
+  - Chuyển toàn bộ Cinema CSS ra khỏi media query → global scope (lines 4625-4721)
+  - Xóa duplicate CSS trong media query
+- **Bài học:** **LUÔN kiểm tra xem CSS có nằm trong media query không** khi styles không được áp dụng
+- **Commit:** `8b3fdc6`
 - **Ngày sửa:** 10/01/2026
 
 ### 5. Cinema Mode Code Bị Mất Sau Revert
