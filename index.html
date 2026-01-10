@@ -5919,9 +5919,13 @@
                                 style="flex-shrink:0; padding: 0 20px; background: var(--mac-accent); color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer;">
                                 🔍 Tìm / Phát
                             </button>
-                            <button onclick="fetchTrendingKeywords()" title="Cập nhật từ khóa hot từ YouTube"
+                            <button onclick="fetchTrendingKeywords('VN')" title="Cập nhật từ khóa hot Việt Nam"
                                 style="flex-shrink:0; padding: 0 16px; background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                                🔥 Trending
+                                🔥 VN Top
+                            </button>
+                            <button onclick="fetchTrendingKeywords('US')" title="Cập nhật từ khóa hot Quốc tế (US)"
+                                style="flex-shrink:0; padding: 0 16px; background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%); color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                🌍 Global
                             </button>
                         </div>
 
@@ -11622,14 +11626,14 @@ Trả về JSON (chỉ JSON, không text khác):
             initPlatformDragDrop();
 
             // 5. Update header clock
+            // 5. Update header clock (Version Timestamp)
             function updateClock() {
-                const now = new Date();
-                const time = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-                const date = now.toLocaleDateString('vi-VN', { weekday: 'short', day: 'numeric', month: 'numeric' });
-                document.getElementById('headerClock').textContent = `${date} • ${time}`;
+                // Static version time as requested
+                document.getElementById('headerClock').textContent = `10/01 • 15:30`;
+                document.getElementById('headerClock').title = "Phiên bản cập nhật lúc 15:30, 10/01/2026";
             }
-            updateClock();
-            setInterval(updateClock, 60000);
+            updateClock(); // Set once
+            // setInterval(updateClock, 60000); // Removed dynamic update
 
             // 6. Formula Cards functions
             function toggleFormulaCards() {
@@ -14475,32 +14479,22 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 }
 
                 if (data.items && data.items.length > 0) {
-                    // Filter out recently played videos
-                    const availableVideos = data.items.filter(item =>
-                        item.id.videoId && !recentlyPlayedIds.includes(item.id.videoId)
-                    );
-
-                    if (availableVideos.length > 0) {
-                        // Pick random from available
-                        const randomIndex = Math.floor(Math.random() * Math.min(5, availableVideos.length));
-                        const video = availableVideos[randomIndex];
-
-                        console.log('[Related] Playing:', video.snippet.title);
-                        loadYTAudio(video.id.videoId, video.snippet.title, 'search');
-                        toast('⏭️ Bài liên quan');
-                    } else {
-                        // All results were recently played, clear history and try again
-                        console.log('[Related] All videos recently played, clearing history');
-                        recentlyPlayedIds = [videoId];
-                        const randomIndex = Math.floor(Math.random() * Math.min(5, data.items.length));
-                        const video = data.items[randomIndex];
-                        if (video.id.videoId) {
-                            loadYTAudio(video.id.videoId, video.snippet.title, 'search');
-                            toast('⏭️ Bài liên quan');
-                        }
-                    }
+                    processRelatedVideos(data.items);
                 } else {
-                    toast('Không tìm được bài liên quan');
+                    // Retry with simpler query (first 2 words + "music")
+                    console.log('[Related] No results, retrying with simpler query...');
+                    const simpleQuery = currentVideoTitle.split(' ').slice(0, 2).join(' ') + ' music';
+
+                    const retryResponse = await fetch(
+                        `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(simpleQuery)}&type=video&videoCategoryId=10&order=viewCount&maxResults=15&key=${ytApiKey}`
+                    );
+                    const retryData = await retryResponse.json();
+
+                    if (retryData.items && retryData.items.length > 0) {
+                        processRelatedVideos(retryData.items);
+                    } else {
+                        toast('Không tìm được bài liên quan');
+                    }
                 }
             } catch (err) {
                 console.error('[Related] Error:', err);
@@ -14508,18 +14502,47 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             }
         }
 
-        async function fetchTrendingKeywords() {
+        function processRelatedVideos(items) {
+            // Filter out recently played videos
+            const availableVideos = items.filter(item =>
+                item.id.videoId && !recentlyPlayedIds.includes(item.id.videoId)
+            );
+
+            if (availableVideos.length > 0) {
+                // Pick random from available
+                const randomIndex = Math.floor(Math.random() * Math.min(5, availableVideos.length));
+                const video = availableVideos[randomIndex];
+
+                console.log('[Related] Playing:', video.snippet.title);
+                loadYTAudio(video.id.videoId, video.snippet.title, 'search');
+                toast('⏭️ Bài liên quan');
+            } else {
+                // All results were recently played, clear history and try again
+                console.log('[Related] All videos recently played, clearing history');
+                recentlyPlayedIds = [currentVideoId];
+                const randomIndex = Math.floor(Math.random() * Math.min(5, items.length));
+                const video = items[randomIndex];
+                if (video.id.videoId) {
+                    loadYTAudio(video.id.videoId, video.snippet.title, 'search');
+                    toast('⏭️ Bài liên quan (Replay)');
+                }
+            }
+        }
+
+
+        async function fetchTrendingKeywords(regionCode = 'VN') {
             if (!ytApiKey) {
                 toast('⚠️ Cần API Key để cập nhật Trending');
                 return;
             }
 
-            toast('🔥 Đang cập nhật từ khóa Trending...');
+            const regionName = regionCode === 'VN' ? 'Việt Nam' : 'Quốc tế';
+            toast(`🔥 Đang cập nhật từ khóa Trending (${regionName})...`);
             try {
-                // Fetch most popular music videos in Vietnam
-                // categoryId 10 = Music, regionCode = VN
+                // Fetch most popular music videos
+                // categoryId 10 = Music
                 const response = await ytApiFetch(
-                    `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=VN&videoCategoryId=10&maxResults=15&key=${ytApiKey}`,
+                    `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=${regionCode}&videoCategoryId=10&maxResults=15&key=${ytApiKey}`,
                     false // Do not use cache to get latest
                 );
 
@@ -14855,15 +14878,22 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
         function renderYTSearchResults(items) {
             const container = document.getElementById('ytSearchResults');
-            container.innerHTML = items.map(item => `
-            <div class="yt-search-result-item" onclick="loadYTAudio('${item.id.videoId}', '${item.snippet.title.replace(/'/g, "\\'")}')">
+            container.innerHTML = items.map(item => {
+                // Safe title for HTML attribute
+                const safeTitle = item.snippet.title.replace(/"/g, '&quot;');
+                return `
+            <div class="yt-search-result-item" 
+                 data-id="${item.id.videoId}" 
+                 data-title="${safeTitle}"
+                 onclick="loadYTAudio(this.getAttribute('data-id'), this.getAttribute('data-title'))">
                 <img src="${item.snippet.thumbnails.default.url}" class="yt-thumb">
                 <div class="yt-info">
                     <div class="yt-title">${item.snippet.title}</div>
                     <div class="yt-channel">${item.snippet.channelTitle}</div>
                 </div>
             </div>
-        `).join('');
+            `;
+            }).join('');
         }
 
         function loadYTAudio(videoId, title = '', source = 'search') {
@@ -14894,6 +14924,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             // Create/update player
             if (ytPlayer) {
                 ytPlayer.loadVideoById(videoId);
+                if (typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
             } else {
                 ytPlayer = new YT.Player('ytAudioPlayer', {
                     height: '225',
@@ -15147,6 +15178,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             } else if (state === 0) {
                 // Ended - auto play next track
                 console.log('[YT Player] Ended - playing next track...');
+                toast('Đang chuyển bài tiếp theo...');
                 disableBackgroundPlayback();
                 // Small delay before playing next (isAutoPlay = true)
                 setTimeout(() => {
