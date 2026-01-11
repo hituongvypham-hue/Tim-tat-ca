@@ -5940,6 +5940,34 @@
                                 📈 Xem quota thực tế →
                             </a>
                         </div>
+
+                        <!-- Mood DJ Buttons -->
+                        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
+                            <span
+                                style="color:var(--mac-text-secondary); font-size:12px; display:flex; align-items:center; margin-right:4px;">🎧
+                                Mood:</span>
+                            <button onclick="searchByMood('chill')"
+                                style="padding:6px 14px; background:linear-gradient(135deg, #a78bfa 0%, #818cf8 100%); color:white; border:none; border-radius:20px; font-size:12px; cursor:pointer;">🧘
+                                Chill</button>
+                            <button onclick="searchByMood('sad')"
+                                style="padding:6px 14px; background:linear-gradient(135deg, #64748b 0%, #475569 100%); color:white; border:none; border-radius:20px; font-size:12px; cursor:pointer;">😢
+                                Buồn</button>
+                            <button onclick="searchByMood('happy')"
+                                style="padding:6px 14px; background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color:white; border:none; border-radius:20px; font-size:12px; cursor:pointer;">😊
+                                Vui</button>
+                            <button onclick="searchByMood('workout')"
+                                style="padding:6px 14px; background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color:white; border:none; border-radius:20px; font-size:12px; cursor:pointer;">💪
+                                Workout</button>
+                            <button onclick="searchByMood('party')"
+                                style="padding:6px 14px; background:linear-gradient(135deg, #ec4899 0%, #d946ef 100%); color:white; border:none; border-radius:20px; font-size:12px; cursor:pointer;">🎉
+                                Party</button>
+                            <button onclick="searchByMood('focus')"
+                                style="padding:6px 14px; background:linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color:white; border:none; border-radius:20px; font-size:12px; cursor:pointer;">🎯
+                                Focus</button>
+                            <button onclick="searchByMood('sleep')"
+                                style="padding:6px 14px; background:linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color:white; border:none; border-radius:20px; font-size:12px; cursor:pointer;">😴
+                                Sleep</button>
+                        </div>
                     </div>
 
                     <!-- Search Results -->
@@ -11629,8 +11657,8 @@ Trả về JSON (chỉ JSON, không text khác):
             // 5. Update header clock (Version Timestamp)
             function updateClock() {
                 // Static version time (Push time)
-                document.getElementById('headerClock').textContent = `11/01 • 08:23`;
-                document.getElementById('headerClock').title = "Cập nhật lần cuối: 08:23, 11/01/2026";
+                document.getElementById('headerClock').textContent = `11/01 • 08:50`;
+                document.getElementById('headerClock').title = "Cập nhật lần cuối: 08:50, 11/01/2026";
             }
             updateClock(); // Set once
             // setInterval(updateClock, 60000); // Removed dynamic update
@@ -14723,6 +14751,58 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 }
             }
         });
+
+        // Mood-based music search queries
+        const MOOD_QUERIES = {
+            chill: ['nhạc chill lofi', 'nhạc acoustic nhẹ nhàng', 'nhạc thư giãn 2026', 'cafe music vietnam'],
+            sad: ['nhạc buồn tâm trạng', 'ballad việt buồn', 'nhạc thất tình hay nhất', 'sad songs vietnamese'],
+            happy: ['nhạc vui nhộn', 'nhạc tiktok vui', 'nhạc edm sôi động', 'happy vietnamese songs'],
+            workout: ['nhạc tập gym', 'workout music vietnam', 'nhạc chạy bộ sôi động', 'EDM remix việt'],
+            party: ['nhạc quẩy remix', 'nhạc bar club việt', 'EDM việt remix 2026', 'nhạc sàn hay'],
+            focus: ['nhạc tập trung học bài', 'study music lofi', 'nhạc làm việc hiệu quả', 'focus music'],
+            sleep: ['nhạc ru ngủ', 'nhạc piano nhẹ nhàng', 'relaxing sleep music', 'nhạc ngủ sâu']
+        };
+        var moodQueryIndex = { chill: 0, sad: 0, happy: 0, workout: 0, party: 0, focus: 0, sleep: 0 };
+
+        async function searchByMood(mood) {
+            if (!ytApiKey) {
+                toast('⚠️ Cần API Key để tìm theo mood');
+                return;
+            }
+
+            const queries = MOOD_QUERIES[mood] || MOOD_QUERIES.chill;
+            const queryIndex = moodQueryIndex[mood] % queries.length;
+            const searchQuery = queries[queryIndex];
+            moodQueryIndex[mood]++;
+
+            const moodNames = { chill: 'Chill', sad: 'Buồn', happy: 'Vui', workout: 'Workout', party: 'Party', focus: 'Focus', sleep: 'Sleep' };
+            toast(`🎧 Đang tìm nhạc ${moodNames[mood]}...`);
+
+            try {
+                const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&q=${encodeURIComponent(searchQuery)}&maxResults=10&key=${ytApiKey}`;
+                const response = await ytApiFetch(searchUrl, true);
+
+                if (response.error) {
+                    toast('Lỗi: ' + (response.error.message || 'Unknown'));
+                    return;
+                }
+
+                if (response.items && response.items.length > 0) {
+                    renderYTSearchResults(response.items);
+                    // Auto play first result
+                    const firstItem = response.items[0];
+                    const videoId = firstItem.id.videoId;
+                    const title = firstItem.snippet.title;
+                    loadYTAudio(videoId, title);
+                    toast(`✅ Đang phát: ${moodNames[mood]} mix`);
+                } else {
+                    toast('Không tìm thấy kết quả');
+                }
+            } catch (e) {
+                console.error('Mood search error:', e);
+                toast('Lỗi khi tìm kiếm');
+            }
+        }
 
         function handleYTSearch() {
             const input = document.getElementById('ytAudioInput').value.trim();
