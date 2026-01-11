@@ -11629,8 +11629,8 @@ Trả về JSON (chỉ JSON, không text khác):
             // 5. Update header clock (Version Timestamp)
             function updateClock() {
                 // Static version time (Push time)
-                document.getElementById('headerClock').textContent = `10/01 • 15:37`;
-                document.getElementById('headerClock').title = "Cập nhật lần cuối: 15:37, 10/01/2026";
+                document.getElementById('headerClock').textContent = `11/01 • 08:12`;
+                document.getElementById('headerClock').title = "Cập nhật lần cuối: 08:12, 11/01/2026";
             }
             updateClock(); // Set once
             // setInterval(updateClock, 60000); // Removed dynamic update
@@ -14582,7 +14582,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                         // APPEND to existing keywords (not replace)
                         const existingKeywords = JSON.parse(localStorage.getItem('ytSearchKeywords') || '[]');
                         const mergedSet = new Set([...existingKeywords, ...newKeywords]);
-                        
+
                         // Limit to 30 keywords max
                         ytSearchKeywords = Array.from(mergedSet).slice(0, 30);
                         localStorage.setItem('ytSearchKeywords', JSON.stringify(ytSearchKeywords));
