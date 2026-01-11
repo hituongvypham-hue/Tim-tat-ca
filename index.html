@@ -11629,8 +11629,8 @@ Trả về JSON (chỉ JSON, không text khác):
             // 5. Update header clock (Version Timestamp)
             function updateClock() {
                 // Static version time (Push time)
-                document.getElementById('headerClock').textContent = `11/01 • 08:18`;
-                document.getElementById('headerClock').title = "Cập nhật lần cuối: 08:18, 11/01/2026";
+                document.getElementById('headerClock').textContent = `11/01 • 08:23`;
+                document.getElementById('headerClock').title = "Cập nhật lần cuối: 08:23, 11/01/2026";
             }
             updateClock(); // Set once
             // setInterval(updateClock, 60000); // Removed dynamic update
@@ -14532,6 +14532,13 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
         // Track page tokens for pagination
         var trendingPageTokens = { VN: '', US: '' };
+        var trendingSearchIndex = { VN: 0, US: 0 };
+
+        // Fallback search queries when trending exhausted
+        const FALLBACK_SEARCHES = {
+            VN: ['nhạc trẻ hay nhất 2026', 'nhạc remix 2026', 'ballad việt nam', 'rap việt hot', 'nhạc EDM việt', 'acoustic cover việt', 'nhạc chill 2026', 'top hits vpop', 'nhạc tiktok trending', 'nhạc buồn hay'],
+            US: ['top hits 2026', 'pop music 2026', 'hip hop trending', 'EDM hits', 'acoustic covers', 'R&B songs 2026', 'rock music hits', 'indie music', 'workout music', 'chill vibes playlist']
+        };
 
         async function fetchTrendingKeywords(regionCode = 'VN') {
             if (!ytApiKey) {
@@ -14540,29 +14547,42 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             }
 
             const regionName = regionCode === 'VN' ? 'Việt Nam' : 'Quốc tế';
-            toast(`🔥 Đang tải thêm Trending (${regionName})...`);
 
             try {
-                // Build URL with pageToken if available
-                let apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=${regionCode}&videoCategoryId=10&maxResults=20&key=${ytApiKey}`;
-                if (trendingPageTokens[regionCode]) {
-                    apiUrl += `&pageToken=${trendingPageTokens[regionCode]}`;
-                }
+                let response;
+                let isSearchFallback = false;
 
-                const response = await ytApiFetch(apiUrl, false);
+                // Try trending first if not exhausted
+                if (trendingPageTokens[regionCode] !== 'EXHAUSTED') {
+                    toast(`🔥 Đang tải Trending (${regionName})...`);
+                    let apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=${regionCode}&videoCategoryId=10&maxResults=20&key=${ytApiKey}`;
+                    if (trendingPageTokens[regionCode]) {
+                        apiUrl += `&pageToken=${trendingPageTokens[regionCode]}`;
+                    }
+                    response = await ytApiFetch(apiUrl, false);
+
+                    if (response.nextPageToken) {
+                        trendingPageTokens[regionCode] = response.nextPageToken;
+                    } else {
+                        trendingPageTokens[regionCode] = 'EXHAUSTED';
+                    }
+                } else {
+                    // Fallback: Use search API
+                    isSearchFallback = true;
+                    const searchQueries = FALLBACK_SEARCHES[regionCode] || FALLBACK_SEARCHES.US;
+                    const queryIndex = trendingSearchIndex[regionCode] % searchQueries.length;
+                    const searchQuery = searchQueries[queryIndex];
+                    trendingSearchIndex[regionCode]++;
+
+                    toast(`🔍 Tìm: "${searchQuery}"...`);
+
+                    const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&q=${encodeURIComponent(searchQuery)}&maxResults=15&regionCode=${regionCode}&key=${ytApiKey}`;
+                    response = await ytApiFetch(searchUrl, false);
+                }
 
                 if (response.error) {
                     toast('Lỗi API: ' + (response.error.message || 'Unknown error'));
                     return;
-                }
-
-                // Store next page token for next click
-                if (response.nextPageToken) {
-                    trendingPageTokens[regionCode] = response.nextPageToken;
-                } else {
-                    // No more pages, reset to get first page again
-                    trendingPageTokens[regionCode] = '';
-                    toast(`🔄 Đã hết trang, lần bấm tiếp sẽ về đầu!`);
                 }
 
                 if (response.items && response.items.length > 0) {
@@ -14572,13 +14592,11 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
                     response.items.forEach(item => {
                         let title = item.snippet.title;
-                        // Clean title
                         title = title.replace(/[\[\(].*?[\]\)]/g, '');
                         title = title.replace(/Official|Video|Music|MV|4K|HD|Cover|Remix|Lyric|Lyrics/gi, '');
                         title = title.trim();
                         title = title.replace(/^[\s\|\-\.]+|[\s\|\-\.]+$/g, '');
 
-                        // Only add if truly new (not already in list)
                         if (title.length > 2 && title.length < 40 && !existingSet.has(title.toLowerCase())) {
                             newKeywords.push(title);
                             existingSet.add(title.toLowerCase());
@@ -14586,18 +14604,21 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                     });
 
                     if (newKeywords.length > 0) {
-                        // Append new keywords to front
-                        ytSearchKeywords = [...newKeywords, ...existingKeywords].slice(0, 35);
+                        ytSearchKeywords = [...newKeywords, ...existingKeywords].slice(0, 40);
                         localStorage.setItem('ytSearchKeywords', JSON.stringify(ytSearchKeywords));
                         renderYTKeywordHistory();
-                        toast(`✅ Đã thêm ${newKeywords.length} từ khóa MỚI (${regionCode})!`);
+                        const source = isSearchFallback ? 'tìm kiếm' : 'Trending';
+                        toast(`✅ +${newKeywords.length} từ khóa từ ${source}!`);
+                    } else if (isSearchFallback) {
+                        toast(`🔄 Thử tìm kiếm khác...`);
+                        setTimeout(() => fetchTrendingKeywords(regionCode), 300);
                     } else {
-                        toast(`ℹ️ Không có từ khóa mới (đã có hết rồi)`);
+                        toast(`ℹ️ Hết trending, chuyển sang tìm kiếm...`);
                     }
                 }
             } catch (e) {
                 console.error('Trending fetch error:', e);
-                toast('Lỗi khi tải Trending');
+                toast('Lỗi khi tải');
             }
         }
 
