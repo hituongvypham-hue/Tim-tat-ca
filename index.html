@@ -11629,8 +11629,8 @@ Trả về JSON (chỉ JSON, không text khác):
             // 5. Update header clock (Version Timestamp)
             function updateClock() {
                 // Static version time (Push time)
-                document.getElementById('headerClock').textContent = `11/01 • 08:12`;
-                document.getElementById('headerClock').title = "Cập nhật lần cuối: 08:12, 11/01/2026";
+                document.getElementById('headerClock').textContent = `11/01 • 08:18`;
+                document.getElementById('headerClock').title = "Cập nhật lần cuối: 08:18, 11/01/2026";
             }
             updateClock(); // Set once
             // setInterval(updateClock, 60000); // Removed dynamic update
@@ -14530,6 +14530,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         }
 
 
+        // Track page tokens for pagination
+        var trendingPageTokens = { VN: '', US: '' };
+
         async function fetchTrendingKeywords(regionCode = 'VN') {
             if (!ytApiKey) {
                 toast('⚠️ Cần API Key để cập nhật Trending');
@@ -14537,59 +14540,59 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             }
 
             const regionName = regionCode === 'VN' ? 'Việt Nam' : 'Quốc tế';
-            toast(`🔥 Đang cập nhật từ khóa Trending (${regionName})...`);
+            toast(`🔥 Đang tải thêm Trending (${regionName})...`);
+
             try {
-                // Fetch most popular music videos
-                // categoryId 10 = Music
-                const response = await ytApiFetch(
-                    `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=${regionCode}&videoCategoryId=10&maxResults=15&key=${ytApiKey}`,
-                    false // Do not use cache to get latest
-                );
+                // Build URL with pageToken if available
+                let apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=${regionCode}&videoCategoryId=10&maxResults=20&key=${ytApiKey}`;
+                if (trendingPageTokens[regionCode]) {
+                    apiUrl += `&pageToken=${trendingPageTokens[regionCode]}`;
+                }
+
+                const response = await ytApiFetch(apiUrl, false);
 
                 if (response.error) {
                     toast('Lỗi API: ' + (response.error.message || 'Unknown error'));
                     return;
                 }
 
+                // Store next page token for next click
+                if (response.nextPageToken) {
+                    trendingPageTokens[regionCode] = response.nextPageToken;
+                } else {
+                    // No more pages, reset to get first page again
+                    trendingPageTokens[regionCode] = '';
+                    toast(`🔄 Đã hết trang, lần bấm tiếp sẽ về đầu!`);
+                }
+
                 if (response.items && response.items.length > 0) {
-                    const newKeywords = new Set();
+                    const existingKeywords = JSON.parse(localStorage.getItem('ytSearchKeywords') || '[]');
+                    const existingSet = new Set(existingKeywords.map(k => k.toLowerCase()));
+                    const newKeywords = [];
 
                     response.items.forEach(item => {
-                        // Extract Artist - Song Title
                         let title = item.snippet.title;
-
-                        // Clean title for better keywords
-                        // 1. Remove stuff in brackets like [Official], (M/V)
+                        // Clean title
                         title = title.replace(/[\[\(].*?[\]\)]/g, '');
-                        // 2. Remove "Official Music Video" etc.
-                        title = title.replace(/Official|Video|Music|MV|4K|HD|Cover|Remix/gi, '');
-                        // 3. Trim
+                        title = title.replace(/Official|Video|Music|MV|4K|HD|Cover|Remix|Lyric|Lyrics/gi, '');
                         title = title.trim();
-                        // 4. Remove leading/trailing " - " or similar
                         title = title.replace(/^[\s\|\-\.]+|[\s\|\-\.]+$/g, '');
 
-                        if (title.length > 2 && title.length < 40) {
-                            newKeywords.add(title);
+                        // Only add if truly new (not already in list)
+                        if (title.length > 2 && title.length < 40 && !existingSet.has(title.toLowerCase())) {
+                            newKeywords.push(title);
+                            existingSet.add(title.toLowerCase());
                         }
                     });
 
-                    // Update UI
-                    if (newKeywords.size > 0) {
-                        // Add some hardcoded hot keywords if needed
-                        newKeywords.add(regionCode === 'VN' ? 'Nhạc Trẻ Remix 2026' : 'Top Hits 2026');
-                        newKeywords.add(regionCode === 'VN' ? 'Lofi Chill 2026' : 'Billboard Hot 100');
-
-                        // APPEND to existing keywords (not replace)
-                        const existingKeywords = JSON.parse(localStorage.getItem('ytSearchKeywords') || '[]');
-                        const mergedSet = new Set([...existingKeywords, ...newKeywords]);
-
-                        // Limit to 30 keywords max
-                        ytSearchKeywords = Array.from(mergedSet).slice(0, 30);
+                    if (newKeywords.length > 0) {
+                        // Append new keywords to front
+                        ytSearchKeywords = [...newKeywords, ...existingKeywords].slice(0, 35);
                         localStorage.setItem('ytSearchKeywords', JSON.stringify(ytSearchKeywords));
                         renderYTKeywordHistory();
-                        toast(`✅ Đã thêm ${newKeywords.size} từ khóa Trending (${regionCode})!`);
+                        toast(`✅ Đã thêm ${newKeywords.length} từ khóa MỚI (${regionCode})!`);
                     } else {
-                        toast('Không tìm thấy từ khóa phù hợp');
+                        toast(`ℹ️ Không có từ khóa mới (đã có hết rồi)`);
                     }
                 }
             } catch (e) {
