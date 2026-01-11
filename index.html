@@ -14576,14 +14576,18 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                     // Update UI
                     if (newKeywords.size > 0) {
                         // Add some hardcoded hot keywords if needed
-                        newKeywords.add('Nhạc Trẻ Remix 2026');
-                        newKeywords.add('Lofi Chill 2026');
+                        newKeywords.add(regionCode === 'VN' ? 'Nhạc Trẻ Remix 2026' : 'Top Hits 2026');
+                        newKeywords.add(regionCode === 'VN' ? 'Lofi Chill 2026' : 'Billboard Hot 100');
 
-                        // Save to history/display
-                        ytSearchKeywords = Array.from(newKeywords);
+                        // APPEND to existing keywords (not replace)
+                        const existingKeywords = JSON.parse(localStorage.getItem('ytSearchKeywords') || '[]');
+                        const mergedSet = new Set([...existingKeywords, ...newKeywords]);
+                        
+                        // Limit to 30 keywords max
+                        ytSearchKeywords = Array.from(mergedSet).slice(0, 30);
                         localStorage.setItem('ytSearchKeywords', JSON.stringify(ytSearchKeywords));
                         renderYTKeywordHistory();
-                        toast(`✅ Đã cập nhật ${newKeywords.size} từ khóa Hot nhất!`);
+                        toast(`✅ Đã thêm ${newKeywords.size} từ khóa Trending (${regionCode})!`);
                     } else {
                         toast('Không tìm thấy từ khóa phù hợp');
                     }
