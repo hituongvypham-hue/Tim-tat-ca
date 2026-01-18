@@ -5238,6 +5238,12 @@
                     </div>
                 </div>
 
+                <!-- PROMPT MANAGER TAB -->
+                <div class="tab-content" id="prompt-tab"
+                    style="display: none; height: calc(100vh - 120px); padding: 0;">
+                    <iframe src="prompt_manager.html" style="width: 100%; height: 100%; border: none;"></iframe>
+                </div>
+
                 <!-- VIDEO TAB -->
                 <div class="tab-content active" id="video-tab">
                     <!-- Script Analysis -->
@@ -11472,7 +11478,8 @@ Trả về JSON (chỉ JSON, không text khác):
                         favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
                         ytAudioHistory: JSON.parse(localStorage.getItem('ytAudioHistory') || '[]'),
                         ytAudioFavorites: JSON.parse(localStorage.getItem('ytAudioFavorites') || '[]'),
-                        ytAudioPlaylists: JSON.parse(localStorage.getItem('ytAudioPlaylists') || '[]')
+                        ytAudioPlaylists: JSON.parse(localStorage.getItem('ytAudioPlaylists') || '[]'),
+                        prompt_manager_v4: JSON.parse(localStorage.getItem('prompt_manager_v4') || '{}')
                     };
                 }
 
@@ -11487,7 +11494,7 @@ Trả về JSON (chỉ JSON, không text khác):
 
                     const jsonKeys = ['tabOrder', 'platformOrder', 'customSites', 'customHomepages',
                         'defaultHomepages', 'searchHistory', 'myTools', 'promptLibrary', 'favorites', 'stylePresets',
-                        'ytAudioHistory', 'ytAudioFavorites', 'ytAudioPlaylists'];
+                        'ytAudioHistory', 'ytAudioFavorites', 'ytAudioPlaylists', 'prompt_manager_v4'];
                     jsonKeys.forEach(k => {
                         if (data[k]) localStorage.setItem(k, JSON.stringify(data[k]));
                     });
