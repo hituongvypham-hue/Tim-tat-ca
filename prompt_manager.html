@@ -647,11 +647,13 @@
                                 <input type="text" class="form-input" id="name_${p.id}" 
                                        value="${escapeHtml(p.name)}" 
                                        placeholder="Tên prompt" 
+                                       draggable="false"
                                        style="font-size:16px;font-weight:600;border:none;background:transparent;padding:0;flex:1;"
                                        oninput="autoSavePrompt('${p.id}')">
                             </div>
                             <textarea class="form-textarea" id="content_${p.id}" 
                                       placeholder="Nội dung prompt..." 
+                                      draggable="false"
                                       style="width:100%;min-height:100px;resize:none;background:transparent;border:none;padding:0;line-height:1.6;font-family:inherit;overflow-y:hidden;"
                                       oninput="autoSavePrompt('${p.id}'); autoResize(this)">${escapeHtml(p.content)}</textarea>
                              <div style="color:var(--text-muted);font-size:11px;margin-top:8px;text-align:right;">
@@ -1181,6 +1183,18 @@
         // Drag & Drop
         const attachEvents = () => {
             document.addEventListener('dragstart', (e) => {
+                // Prevent drag if target is input or textarea (allow text selection)
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    // e.preventDefault(); // Don't prevent default, just don't start our custom drag logic
+                    // Actually, to select text, we often want normal behavior. 
+                    // But if parent is draggable, browser might drag parent.
+                    // We must STOP the drag attribute effect or stop propagation if possible if browser supports it.
+                    // Simple hack: if it's text selection, we return and don't set dragItem
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
+
                 if (e.target.dataset.id) {
                     dragItem = { id: e.target.dataset.id, type: e.target.dataset.type };
                     e.target.style.opacity = '0.5';
