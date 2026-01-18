@@ -743,34 +743,33 @@
                     const nameEl = document.getElementById(`name_${id}`);
                     const contentEl = document.getElementById(`content_${id}`);
 
-                    // Fallback to Single View IDs if specific ones missing (though we generally use specific now)
+                    // Fallback to Single View IDs
                     const nameVal = nameEl ? nameEl.value : (document.getElementById('editName')?.value);
                     const contentVal = contentEl ? contentEl.value : (document.getElementById('editContent')?.value);
 
                     let changed = false;
+                    let nameChanged = false;
+
                     if (nameVal !== undefined && nameVal !== prompt.name) {
                         prompt.name = nameVal;
                         changed = true;
+                        nameChanged = true;
                     }
                     if (contentVal !== undefined && contentVal !== prompt.content) {
                         prompt.content = contentVal;
-                        changed = true; // Content change doesn't strictly need sidebar update but safely good
+                        changed = true;
                     }
 
-                    if (changed || contentVal !== undefined) { // Always save if triggered
+                    if (changed || contentVal !== undefined) {
                         saveData();
-                        render(); // Update sidebar
 
-                        // Re-focus logic handling dynamic IDs
-                        const activeElId = document.activeElement?.id;
-                        if (activeElId) {
-                            const el = document.getElementById(activeElId);
-                            const pos = el?.selectionStart;
-                            if (el && pos !== undefined) {
-                                setTimeout(() => {
-                                    el.focus();
-                                    el.selectionStart = el.selectionEnd = pos;
-                                }, 0);
+                        // Smart update: Don't re-render everything to keep Undo history!
+                        // Only update sidebar name if name changed
+                        if (nameChanged) {
+                            // Find sidebar item by data-id attribute to be safe
+                            const sidebarItem = document.querySelector(`.prompt-item[data-id="${id}"] .prompt-name`);
+                            if (sidebarItem) {
+                                sidebarItem.textContent = nameVal;
                             }
                         }
                     }
