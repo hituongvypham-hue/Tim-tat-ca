@@ -5005,9 +5005,6 @@
             <div class="mac-title">Media Search Pro</div>
             <div class="header-actions" style="display: flex; align-items: center; gap: 8px;">
                 <span id="headerClock" style="font-size: 11px; color: var(--mac-text-secondary);"></span>
-                <span class="updated-time"
-                    style="font-size: 11px; color: var(--mac-text-secondary); margin-right: 8px;">Updated: 18/01 •
-                    22:29</span>
                 <div id="apiStatusBadge" class="api-status-badge disconnected" onclick="showApiKeyModal()"
                     style="cursor: pointer;">
                     <span class="status-icon">❌</span>
@@ -11667,8 +11664,8 @@ Trả về JSON (chỉ JSON, không text khác):
             // 5. Update header clock (Version Timestamp)
             function updateClock() {
                 // Static version time (Push time)
-                document.getElementById('headerClock').textContent = `11/01 • 08:50`;
-                document.getElementById('headerClock').title = "Cập nhật lần cuối: 08:50, 11/01/2026";
+                document.getElementById('headerClock').textContent = `Updated: 18/01 • 22:33`;
+                document.getElementById('headerClock').title = "Cập nhật lần cuối: 22:33, 18/01/2026";
             }
             updateClock(); // Set once
             // setInterval(updateClock, 60000); // Removed dynamic update
