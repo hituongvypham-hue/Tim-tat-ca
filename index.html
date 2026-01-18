@@ -5064,12 +5064,8 @@
 
                 <div class="sidebar-section">
                     <div class="sidebar-title">Discover</div>
-                    <div class="sidebar-item" onclick="switchMacTab('discover')">
-                        <span class="icon">🧭</span>Explore
-                    </div>
-                    <div class="sidebar-item" onclick="switchMacTab('knowledge')">
-                        <span class="icon">📖</span>Knowledge
-                    </div>
+
+
                 </div>
                 <div class="sidebar-section">
                     <div class="sidebar-title">Your Tools</div>
@@ -5079,9 +5075,7 @@
                     <div class="sidebar-item" onclick="switchMacTab('mytool')">
                         <span class="icon">🧰</span>My Tools
                     </div>
-                    <div class="sidebar-item" onclick="switchMacTab('wiki')">
-                        <span class="icon">🌐</span>Wiki
-                    </div>
+
                     <div class="sidebar-item" onclick="switchMacTab('director')">
                         <span class="icon">🎬</span>Director
                     </div>
@@ -5191,11 +5185,7 @@
                                 <path
                                     d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79s7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.53-9.11-.02-12.58s9.14-3.47 12.65 0L21 3v7.12zM12.5 8v4.25l3.5 2.08-.72 1.21L11 13V8h1.5z" />
                             </svg> AI</button>
-                        <button class="tab" data-tab="wiki" data-category="knowledge" draggable="true"><svg width="16"
-                                height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-                            </svg> Wiki</button>
+
                         <button class="tab" data-tab="create" data-category="tools" draggable="true"><svg width="16"
                                 height="16" viewBox="0 0 24 24" fill="currentColor">
                                 <path
@@ -5210,11 +5200,7 @@
                                 <path
                                     d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
                             </svg> Reverse</button>
-                        <button class="tab" data-tab="discover" data-category="knowledge" draggable="true"><svg
-                                width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M12 10.9c-.61 0-1.1.49-1.1 1.1s.49 1.1 1.1 1.1c.61 0 1.1-.49 1.1-1.1s-.49-1.1-1.1-1.1zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2.19 12.19L6 18l3.81-8.19L18 6l-3.81 8.19z" />
-                            </svg> Discover</button>
+
                         <button class="tab" data-tab="vision" data-category="tools" draggable="true"><svg width="16"
                                 height="16" viewBox="0 0 24 24" fill="currentColor">
                                 <path
@@ -5230,11 +5216,7 @@
                                 <path
                                     d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
                             </svg> Prompt</button>
-                        <button class="tab" data-tab="knowledge" data-category="knowledge" draggable="true"><svg
-                                width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <path
-                                    d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z" />
-                            </svg> Knowledge</button>
+
                     </div>
                 </div>
 
@@ -7174,183 +7156,7 @@
                     </div>
                 </div>
 
-                <!-- DISCOVER TAB -->
-                <div class="tab-content" id="discover-tab">
-                    <div class="section">
-                        <div class="section-title">📚 Mega Directories <span class="badge hot">HOT</span></div>
-                        <div class="platforms">
-                            <label class="platform"><input type="checkbox" data-p="fmhy"><span
-                                    class="platform-label"><span class="platform-icon">⭐</span>FMHY</span></label>
-                            <label class="platform"><input type="checkbox" data-p="rippedguide"><span
-                                    class="platform-label"><span
-                                        class="platform-icon">📖</span>ripped.guide</span></label>
-                            <label class="platform"><input type="checkbox" data-p="wotaku"><span
-                                    class="platform-label"><span class="platform-icon">🎌</span>Wotaku</span></label>
-                            <label class="platform"><input type="checkbox" data-p="theindex"><span
-                                    class="platform-label"><span class="platform-icon">📑</span>TheIndex</span></label>
-                            <label class="platform"><input type="checkbox" data-p="alternativeto"><span
-                                    class="platform-label"><span
-                                        class="platform-icon">🔄</span>AlternativeTo</span></label>
-                        </div>
-                    </div>
 
-                    <div class="section">
-                        <div class="section-title">🔥 Content Discovery</div>
-                        <div class="platforms">
-                            <label class="platform"><input type="checkbox" data-p="producthunt"><span
-                                    class="platform-label"><span class="platform-icon">🚀</span>Product
-                                    Hunt</span></label>
-                            <label class="platform"><input type="checkbox" data-p="mixcom"><span
-                                    class="platform-label"><span class="platform-icon">🎲</span>Mix.com</span></label>
-                            <label class="platform"><input type="checkbox" data-p="flipboard"><span
-                                    class="platform-label"><span class="platform-icon">📰</span>Flipboard</span></label>
-                            <label class="platform"><input type="checkbox" data-p="digg"><span
-                                    class="platform-label"><span class="platform-icon">📊</span>Digg</span></label>
-                            <label class="platform"><input type="checkbox" data-p="feedly"><span
-                                    class="platform-label"><span class="platform-icon">📡</span>Feedly</span></label>
-                            <label class="platform"><input type="checkbox" data-p="hackernews"><span
-                                    class="platform-label"><span class="platform-icon">🟠</span>Hacker
-                                    News</span></label>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">🎯 Random Discovery</div>
-                        <div class="platforms">
-                            <label class="platform"><input type="checkbox" data-p="discuvver"><span
-                                    class="platform-label"><span class="platform-icon">🎰</span>Discuvver</span></label>
-                            <label class="platform"><input type="checkbox" data-p="cloudhiker"><span
-                                    class="platform-label"><span
-                                        class="platform-icon">☁️</span>CloudHiker</span></label>
-                            <label class="platform"><input type="checkbox" data-p="boredbutton"><span
-                                    class="platform-label"><span class="platform-icon">🔘</span>Bored
-                                    Button</span></label>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">🤖 AI Tool Directories</div>
-                        <div class="platforms">
-                            <label class="platform"><input type="checkbox" data-p="futurepedia"><span
-                                    class="platform-label"><span
-                                        class="platform-icon">🔮</span>Futurepedia</span></label>
-                            <label class="platform"><input type="checkbox" data-p="toolify"><span
-                                    class="platform-label"><span
-                                        class="platform-icon">🛠️</span>Toolify.ai</span></label>
-                            <label class="platform"><input type="checkbox" data-p="theresanai"><span
-                                    class="platform-label"><span class="platform-icon">✨</span>There's An
-                                    AI</span></label>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">🎨 Design Inspiration</div>
-                        <div class="platforms">
-                            <label class="platform"><input type="checkbox" data-p="awwwards"><span
-                                    class="platform-label"><span class="platform-icon">🏆</span>Awwwards</span></label>
-                            <label class="platform"><input type="checkbox" data-p="godlywebsite"><span
-                                    class="platform-label"><span class="platform-icon">✨</span>Godly</span></label>
-                            <label class="platform"><input type="checkbox" data-p="lapaninja"><span
-                                    class="platform-label"><span class="platform-icon">🥷</span>Lapa
-                                    Ninja</span></label>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">📚 Encyclopedia - Global <span class="badge hot">TOP</span></div>
-                        <div class="section-desc">Wikipedia: 62M+ bài • Britannica: Uy tín nhất từ 1768</div>
-                        <div class="platforms">
-                            <label class="platform"><input type="checkbox" data-p="wikipedia"><span
-                                    class="platform-label"><span class="platform-icon">🌐</span>Wikipedia</span></label>
-                            <label class="platform"><input type="checkbox" data-p="britannica"><span
-                                    class="platform-label"><span
-                                        class="platform-icon">📘</span>Britannica</span></label>
-                            <label class="platform"><input type="checkbox" data-p="scholarpedia"><span
-                                    class="platform-label"><span
-                                        class="platform-icon">🎓</span>Scholarpedia</span></label>
-                            <label class="platform"><input type="checkbox" data-p="encyclopedia"><span
-                                    class="platform-label"><span
-                                        class="platform-icon">📖</span>Encyclopedia.com</span></label>
-                            <label class="platform"><input type="checkbox" data-p="stanfordphil"><span
-                                    class="platform-label"><span class="platform-icon">🏛️</span>Stanford
-                                    Phil.</span></label>
-                            <label class="platform"><input type="checkbox" data-p="handwiki"><span
-                                    class="platform-label"><span class="platform-icon">✋</span>HandWiki</span></label>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">🇨🇳 Encyclopedia - China <span class="badge">28M+</span></div>
-                        <div class="section-desc">百度百科: 28.6 triệu bài • 知乎: 220M users</div>
-                        <div class="platforms">
-                            <label class="platform"><input type="checkbox" data-p="baidubaike"><span
-                                    class="platform-label"><span class="platform-icon">📙</span>百度百科</span></label>
-                            <label class="platform"><input type="checkbox" data-p="zhihu"><span
-                                    class="platform-label"><span class="platform-icon">🔵</span>知乎</span></label>
-                            <label class="platform"><input type="checkbox" data-p="sogoubaike"><span
-                                    class="platform-label"><span class="platform-icon">🟠</span>搜狗百科</span></label>
-                            <label class="platform"><input type="checkbox" data-p="360baike"><span
-                                    class="platform-label"><span class="platform-icon">🟢</span>360百科</span></label>
-                            <label class="platform"><input type="checkbox" data-p="kuaidong"><span
-                                    class="platform-label"><span class="platform-icon">📱</span>快懂百科</span></label>
-                            <label class="platform"><input type="checkbox" data-p="zgbk"><span
-                                    class="platform-label"><span class="platform-icon">🏛️</span>中国大百科</span></label>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">🇷🇺 Encyclopedia - Russia <span class="badge">NEW 2024</span>
-                        </div>
-                        <div class="section-desc">Рувики: 2M+ bài, AI YandexGPT • Кругосвет: Bộ GD khuyên dùng</div>
-                        <div class="platforms">
-                            <label class="platform"><input type="checkbox" data-p="ruwiki"><span
-                                    class="platform-label"><span class="platform-icon">📕</span>Рувики</span></label>
-                            <label class="platform"><input type="checkbox" data-p="ruwikipedia"><span
-                                    class="platform-label"><span class="platform-icon">🌐</span>Русская
-                                    Вики</span></label>
-                            <label class="platform"><input type="checkbox" data-p="krugosvet"><span
-                                    class="platform-label"><span class="platform-icon">🌍</span>Кругосвет</span></label>
-                            <label class="platform"><input type="checkbox" data-p="akademik"><span
-                                    class="platform-label"><span class="platform-icon">📚</span>Академик</span></label>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">🇨🇳 China Navigation</div>
-                        <div class="platforms">
-                            <label class="platform"><input type="checkbox" data-p="hao123"><span
-                                    class="platform-label"><span class="platform-icon">🏠</span>hao123</span></label>
-                            <label class="platform"><input type="checkbox" data-p="360nav"><span
-                                    class="platform-label"><span class="platform-icon">🌐</span>360导航</span></label>
-                            <label class="platform"><input type="checkbox" data-p="265nav"><span
-                                    class="platform-label"><span class="platform-icon">📱</span>265导航</span></label>
-                            <label class="platform"><input type="checkbox" data-p="360ai"><span
-                                    class="platform-label"><span class="platform-icon">🤖</span>360AI导航</span></label>
-                            <label class="platform"><input type="checkbox" data-p="uisdc"><span
-                                    class="platform-label"><span class="platform-icon">🎨</span>优设导航</span></label>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">🇷🇺 Russia</div>
-                        <div class="platforms">
-                            <label class="platform"><input type="checkbox" data-p="yandexru"><span
-                                    class="platform-label"><span class="platform-icon">🔴</span>Yandex</span></label>
-                            <label class="platform"><input type="checkbox" data-p="dzen"><span
-                                    class="platform-label"><span class="platform-icon">📰</span>Dzen</span></label>
-                            <label class="platform"><input type="checkbox" data-p="vk"><span
-                                    class="platform-label"><span class="platform-icon">💬</span>VK</span></label>
-                            <label class="platform"><input type="checkbox" data-p="2gis"><span
-                                    class="platform-label"><span class="platform-icon">🗺️</span>2GIS</span></label>
-                        </div>
-                    </div>
-
-                    <div class="actions">
-                        <button class="btn-search" id="discoverSearchBtn">Open<span class="count"
-                                id="discoverCount">0</span></button>
-                        <button class="btn-select" onclick="toggleAll('discover')">Toggle</button>
-                    </div>
-                </div>
 
                 <!-- VISION TAB -->
                 <div class="tab-content" id="vision-tab">
@@ -7577,160 +7383,7 @@
                     </div>
                 </div>
 
-                <!-- KNOWLEDGE BASE TAB -->
-                <div class="tab-content" id="knowledge-tab">
-                    <div class="section">
-                        <div class="section-title">📚 Scriptwriting Knowledge Base</div>
-                        <div class="section-desc">Tài liệu hướng dẫn viết kịch bản YouTube với AI - Click để xem chi
-                            tiết,
-                            copy
-                            nhanh để dùng</div>
 
-                        <!-- Quick Filter Buttons -->
-                        <div class="kb-filter-bar">
-                            <button class="kb-filter-btn active" onclick="filterGuides('all')">📚 Tất cả</button>
-                            <button class="kb-filter-btn" onclick="filterGuides('shorts')">🎬 Shorts</button>
-                            <button class="kb-filter-btn" onclick="filterGuides('longform')">📺 Long-form</button>
-                            <button class="kb-filter-btn" onclick="filterGuides('workflow')">🔄 Workflow</button>
-                            <button class="kb-filter-btn" onclick="filterGuides('tools')">🛠️ Tools</button>
-                        </div>
-
-                        <!-- Guide Cards Grid -->
-                        <div class="kb-cards" id="kbCards">
-                            <!-- Card 1: YouTube Shorts Guide -->
-                            <div class="kb-card" data-category="shorts" onclick="openGuideModal('shorts')">
-                                <div class="kb-card-icon">🎬</div>
-                                <div class="kb-card-content">
-                                    <h3>YouTube Shorts Scriptwriting</h3>
-                                    <p>Hướng dẫn viết kịch bản YouTube Shorts viral với hook mạnh, cấu trúc H-B-C-L
-                                    </p>
-                                    <div class="kb-card-tags">
-                                        <span>Hook</span><span>60s</span><span>Retention</span>
-                                    </div>
-                                </div>
-                                <div class="kb-card-actions">
-                                    <button class="kb-copy-btn" onclick="event.stopPropagation(); copyGuide('shorts')"
-                                        title="Copy toàn bộ">📋</button>
-                                </div>
-                            </div>
-
-                            <!-- Card 2: Long-form Guide -->
-                            <div class="kb-card" data-category="longform" onclick="openGuideModal('longform')">
-                                <div class="kb-card-icon">📺</div>
-                                <div class="kb-card-content">
-                                    <h3>YouTube Long-form Scriptwriting</h3>
-                                    <p>Hướng dẫn viết kịch bản video dài 10-30 phút với cấu trúc H-I-C-C-C</p>
-                                    <div class="kb-card-tags">
-                                        <span>Re-hooks</span><span>10-30min</span><span>Retention</span>
-                                    </div>
-                                </div>
-                                <div class="kb-card-actions">
-                                    <button class="kb-copy-btn" onclick="event.stopPropagation(); copyGuide('longform')"
-                                        title="Copy toàn bộ">📋</button>
-                                </div>
-                            </div>
-
-                            <!-- Card 3: Workflow -->
-                            <div class="kb-card" data-category="workflow" onclick="openGuideModal('workflow')">
-                                <div class="kb-card-icon">🔄</div>
-                                <div class="kb-card-content">
-                                    <h3>AI Scriptwriting Workflow</h3>
-                                    <p>Quy trình 4 phases từ Foundation đến Finalize với prompts chi tiết</p>
-                                    <div class="kb-card-tags">
-                                        <span>4 Phases</span><span>Prompts</span><span>Step-by-step</span>
-                                    </div>
-                                </div>
-                                <div class="kb-card-actions">
-                                    <button class="kb-copy-btn" onclick="event.stopPropagation(); copyGuide('workflow')"
-                                        title="Copy toàn bộ">📋</button>
-                                </div>
-                            </div>
-
-                            <!-- Card 4: Evaluator -->
-                            <div class="kb-card" data-category="tools" onclick="openGuideModal('evaluator')">
-                                <div class="kb-card-icon">🤖</div>
-                                <div class="kb-card-content">
-                                    <h3>AI Script Evaluator System</h3>
-                                    <p>Hệ thống đánh giá script 100 điểm với rubric chi tiết và prompts</p>
-                                    <div class="kb-card-tags">
-                                        <span>100 điểm</span><span>Rubric</span><span>Before/After</span>
-                                    </div>
-                                </div>
-                                <div class="kb-card-actions">
-                                    <button class="kb-copy-btn"
-                                        onclick="event.stopPropagation(); copyGuide('evaluator')"
-                                        title="Copy toàn bộ">📋</button>
-                                </div>
-                            </div>
-
-                            <!-- Card 5: Douyin Guide -->
-                            <div class="kb-card" data-category="shorts" onclick="openGuideModal('douyin')">
-                                <div class="kb-card-icon">🇨🇳</div>
-                                <div class="kb-card-content">
-                                    <h3>Douyin → YouTube Shorts</h3>
-                                    <p>Quy trình 7 bước chuyển đổi video Douyin thành YouTube Shorts VN</p>
-                                    <div class="kb-card-tags">
-                                        <span>Localize</span><span>Adapt</span><span>7 Steps</span>
-                                    </div>
-                                </div>
-                                <div class="kb-card-actions">
-                                    <button class="kb-copy-btn" onclick="event.stopPropagation(); copyGuide('douyin')"
-                                        title="Copy toàn bộ">📋</button>
-                                </div>
-                            </div>
-
-                            <!-- Card 6: Claude Techniques -->
-                            <div class="kb-card" data-category="tools" onclick="openGuideModal('claude')">
-                                <div class="kb-card-icon">🎭</div>
-                                <div class="kb-card-content">
-                                    <h3>Claude Natural Writing</h3>
-                                    <p>Kỹ thuật để Claude viết script tự nhiên, không giọng robot AI</p>
-                                    <div class="kb-card-tags">
-                                        <span>Prompts</span><span>Natural</span><span>Anti-AI</span>
-                                    </div>
-                                </div>
-                                <div class="kb-card-actions">
-                                    <button class="kb-copy-btn" onclick="event.stopPropagation(); copyGuide('claude')"
-                                        title="Copy toàn bộ">📋</button>
-                                </div>
-                            </div>
-
-                            <!-- Card 7: Create Assistant -->
-                            <div class="kb-card" data-category="tools" onclick="openGuideModal('assistant')">
-                                <div class="kb-card-icon">🛠️</div>
-                                <div class="kb-card-content">
-                                    <h3>Tạo AI Script Assistant</h3>
-                                    <p>5 phương pháp tạo AI assistant: Custom GPT, Claude, Gemini, API</p>
-                                    <div class="kb-card-tags">
-                                        <span>GPT</span><span>Claude</span><span>Gemini</span>
-                                    </div>
-                                </div>
-                                <div class="kb-card-actions">
-                                    <button class="kb-copy-btn"
-                                        onclick="event.stopPropagation(); copyGuide('assistant')"
-                                        title="Copy toàn bộ">📋</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Guide Modal -->
-                <div id="guideModal" class="guide-modal-overlay" onclick="if(event.target===this)closeGuideModal()">
-                    <div class="guide-modal">
-                        <div class="guide-modal-header">
-                            <h2 id="guideModalTitle">Guide Title</h2>
-                            <div class="guide-modal-actions">
-                                <button class="guide-copy-all-btn" onclick="copyCurrentGuide()">📋 Copy toàn
-                                    bộ</button>
-                                <button class="guide-close-btn" onclick="closeGuideModal()">✕</button>
-                            </div>
-                        </div>
-                        <div class="guide-modal-body markdown-body" id="guideModalContent">
-                            <!-- Content will be loaded here -->
-                        </div>
-                    </div>
-                </div>
 
                 <!-- DIRECTOR TAB -->
                 <div class="tab-content" id="director-tab">
@@ -8566,6 +8219,9 @@
 
                 // Update global state if available
                 if (typeof currentTab !== 'undefined') currentTab = tabId;
+
+                // Save to localStorage
+                localStorage.setItem('activeTab', tabId);
             }
 
             // --- MOBILE SIDEBAR TOGGLE ---
@@ -8594,6 +8250,16 @@
                     menuBtn.textContent = '☰';
                 }
             }
+
+            // Initialize: show saved tab or video tab by default
+            document.addEventListener('DOMContentLoaded', function () {
+                const savedTab = localStorage.getItem('activeTab');
+                if (savedTab) {
+                    switchMacTab(savedTab);
+                } else {
+                    switchMacTab('video');
+                }
+            });
 
             // Analyze Script - Extract keywords (Pattern + AI)
             async function analyzeScript(type) {
@@ -11103,7 +10769,7 @@ Trả về JSON (chỉ JSON, không text khác):
             }
 
             function addCustomButtonsToAllTabs() {
-                const tabs = ['video-tab', 'image-tab', 'ebook-tab', 'apk-tab', 'ai-tab', 'reverse-tab', 'discover-tab', 'vision-tab'];
+                const tabs = ['video-tab', 'image-tab', 'ebook-tab', 'apk-tab', 'ai-tab', 'reverse-tab', 'vision-tab'];
                 tabs.forEach(tabId => {
                     const tab = document.getElementById(tabId);
                     if (!tab) return;
@@ -13546,140 +13212,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 renderPrompts();
             }
 
-            // ========== KNOWLEDGE BASE FUNCTIONS ==========
-            let knowledgeBase = JSON.parse(localStorage.getItem('knowledgeBase') || '[]');
-            let editingKnowledgeId = null;
 
-            // File Upload Handler
-            function handleFileUpload(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    readFileContent(file);
-                }
-            }
-
-            function readFileContent(file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const content = e.target.result;
-
-                    // Extract title from filename (remove extension)
-                    let title = file.name.replace(/\.(md|txt|markdown)$/i, '');
-
-                    // Or extract from first heading if exists
-                    const headingMatch = content.match(/^#\s+(.+)$/m);
-                    if (headingMatch) {
-                        title = headingMatch[1].replace(/[🎯📝🎬🤖📢🔍📋📁]/g, '').trim();
-                    }
-
-                    // Auto-detect category from content
-                    let category = '';
-                    const contentLower = content.toLowerCase();
-                    if (contentLower.includes('script') || contentLower.includes('kịch bản') || contentLower.includes('hook')) {
-                        category = 'Scriptwriting';
-                    } else if (contentLower.includes('video') || contentLower.includes('edit')) {
-                        category = 'Video Editing';
-                    } else if (contentLower.includes('prompt') || contentLower.includes('ai')) {
-                        category = 'AI Prompts';
-                    }
-
-                    // Fill form
-                    document.getElementById('knowledgeName').value = title;
-                    document.getElementById('knowledgeCategory').value = category;
-                    document.getElementById('knowledgeContent').value = content;
-
-                    toast('✅ Đã tải file: ' + file.name);
-                };
-                reader.onerror = function () {
-                    toast('❌ Không thể đọc file!');
-                };
-                reader.readAsText(file);
-            }
-
-            // Drag and Drop handlers
-            document.addEventListener('DOMContentLoaded', function () {
-                const uploadArea = document.getElementById('knowledgeUploadArea');
-                if (uploadArea) {
-                    uploadArea.addEventListener('dragover', function (e) {
-                        e.preventDefault();
-                        uploadArea.classList.add('dragover');
-                    });
-
-                    uploadArea.addEventListener('dragleave', function (e) {
-                        e.preventDefault();
-                        uploadArea.classList.remove('dragover');
-                    });
-
-                    uploadArea.addEventListener('drop', function (e) {
-                        e.preventDefault();
-                        uploadArea.classList.remove('dragover');
-
-                        const files = e.dataTransfer.files;
-                        if (files.length > 0) {
-                            const file = files[0];
-                            if (file.name.match(/\.(md|txt|markdown)$/i)) {
-                                readFileContent(file);
-                            } else {
-                                toast('⚠️ Chỉ hỗ trợ file .md, .txt');
-                            }
-                        }
-                    });
-                }
-
-                renderKnowledge();
-            });
-
-            function renderKnowledge() {
-                const list = document.getElementById('knowledgeList');
-                const search = document.getElementById('knowledgeSearch').value.toLowerCase();
-                const category = document.getElementById('knowledgeCategoryFilter').value;
-
-                const filtered = knowledgeBase.filter(item => {
-                    const matchSearch = item.title.toLowerCase().includes(search) ||
-                        item.content.toLowerCase().includes(search) ||
-                        (item.tags && item.tags.some(t => t.toLowerCase().includes(search)));
-                    const matchCategory = !category || item.category === category;
-                    return matchSearch && matchCategory;
-                });
-
-                document.getElementById('knowledgeCount').textContent = `${filtered.length} tài liệu`;
-
-                if (filtered.length === 0) {
-                    list.innerHTML = '<div class="knowledge-empty">Không tìm thấy tài liệu nào. Thêm mới ở trên! 👆</div>';
-                    return;
-                }
-
-                list.innerHTML = filtered.map((item, idx) => {
-                    const tagsHtml = item.tags && item.tags.length > 0
-                        ? item.tags.map(t => `<span class="knowledge-item-tag">${t}</span>`).join('')
-                        : '';
-                    const previewContent = item.content.substring(0, 150) + (item.content.length > 150 ? '...' : '');
-
-                    return `
-                    <div class="knowledge-item" data-id="${item.id}">
-                        <div class="knowledge-item-header" onclick="toggleKnowledgeItem('${item.id}')">
-                            <div class="knowledge-item-expand">▶</div>
-                            <div class="knowledge-item-info">
-                                <div class="knowledge-item-title">${escapeHtml(item.title)}</div>
-                                <div class="knowledge-item-meta">
-                                    ${item.category ? `<span class="knowledge-item-category">${item.category}</span>` : ''}
-                                    ${tagsHtml}
-                                </div>
-                            </div>
-                            <div class="knowledge-item-actions" onclick="event.stopPropagation()">
-                                <button class="knowledge-action-btn copy" onclick="copyKnowledge('${item.id}')" title="Copy">📋</button>
-                                <button class="knowledge-action-btn edit" onclick="editKnowledge('${item.id}')" title="Sửa">✏️</button>
-                                <button class="knowledge-action-btn delete" onclick="deleteKnowledge('${item.id}')" title="Xóa">🗑️</button>
-                            </div>
-                        </div>
-                        <div class="knowledge-item-body">
-                            <div class="knowledge-item-content markdown-body">${renderMarkdown(item.content)}</div>
-                            <button class="knowledge-item-copy-full" onclick="copyKnowledge('${item.id}')">📋 Copy toàn bộ nội dung</button>
-                        </div>
-                    </div>
-                `;
-                }).join('');
-            }
 
             function escapeHtml(text) {
                 const div = document.createElement('div');
@@ -13687,296 +13220,9 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 return div.innerHTML;
             }
 
-            function renderMarkdown(text) {
-                // Use marked.js if available, otherwise fallback to basic formatting
-                if (typeof marked !== 'undefined') {
-                    return marked.parse(text);
-                }
-                // Fallback: basic formatting
-                return text
-                    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-                    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-                    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-                    .replace(/^\- (.+)$/gm, '<li>$1</li>')
-                    .replace(/^\* (.+)$/gm, '<li>$1</li>')
-                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                    .replace(/`(.+?)`/g, '<code>$1</code>')
-                    .replace(/\n/g, '<br>');
-            }
 
-            function toggleKnowledgeItem(id) {
-                const item = document.querySelector(`.knowledge-item[data-id="${id}"]`);
-                if (item) {
-                    item.classList.toggle('expanded');
-                }
-            }
 
-            function addKnowledge() {
-                const title = document.getElementById('knowledgeName').value.trim();
-                const category = document.getElementById('knowledgeCategory').value;
-                const content = document.getElementById('knowledgeContent').value.trim();
-                const tagsInput = document.getElementById('knowledgeTags').value.trim();
 
-                if (!title || !content) {
-                    toast('⚠️ Vui lòng nhập tiêu đề và nội dung!');
-                    return;
-                }
-
-                const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
-
-                if (editingKnowledgeId) {
-                    // Update existing
-                    const idx = knowledgeBase.findIndex(k => k.id === editingKnowledgeId);
-                    if (idx !== -1) {
-                        knowledgeBase[idx] = {
-                            ...knowledgeBase[idx],
-                            title,
-                            category,
-                            content,
-                            tags,
-                            updatedAt: new Date().toISOString()
-                        };
-                    }
-                    editingKnowledgeId = null;
-                    document.getElementById('btnCancelKnowledge').style.display = 'none';
-                    document.querySelector('.btn-add-knowledge').textContent = '➕ Thêm tài liệu';
-                    toast('✅ Đã cập nhật tài liệu!');
-                } else {
-                    // Add new
-                    const newItem = {
-                        id: Date.now().toString(),
-                        title,
-                        category,
-                        content,
-                        tags,
-                        createdAt: new Date().toISOString()
-                    };
-                    knowledgeBase.unshift(newItem);
-                    toast('✅ Đã thêm tài liệu!');
-                }
-
-                // Save and render
-                localStorage.setItem('knowledgeBase', JSON.stringify(knowledgeBase));
-                autoSyncToDrive();
-                clearKnowledgeForm();
-                renderKnowledge();
-            }
-
-            function editKnowledge(id) {
-                const item = knowledgeBase.find(k => k.id === id);
-                if (!item) return;
-
-                editingKnowledgeId = id;
-                document.getElementById('knowledgeName').value = item.title;
-                document.getElementById('knowledgeCategory').value = item.category || '';
-                document.getElementById('knowledgeContent').value = item.content;
-                document.getElementById('knowledgeTags').value = item.tags ? item.tags.join(', ') : '';
-
-                document.getElementById('btnCancelKnowledge').style.display = 'inline-block';
-                document.querySelector('.btn-add-knowledge').textContent = '💾 Cập nhật';
-
-                // Scroll to form
-                document.getElementById('knowledgeForm').scrollIntoView({ behavior: 'smooth' });
-            }
-
-            function cancelEditKnowledge() {
-                editingKnowledgeId = null;
-                clearKnowledgeForm();
-                document.getElementById('btnCancelKnowledge').style.display = 'none';
-                document.querySelector('.btn-add-knowledge').textContent = '➕ Thêm tài liệu';
-            }
-
-            function clearKnowledgeForm() {
-                document.getElementById('knowledgeName').value = '';
-                document.getElementById('knowledgeCategory').value = '';
-                document.getElementById('knowledgeContent').value = '';
-                document.getElementById('knowledgeTags').value = '';
-            }
-
-            function deleteKnowledge(id) {
-                if (!confirm('Bạn có chắc muốn xóa tài liệu này?')) return;
-
-                knowledgeBase = knowledgeBase.filter(k => k.id !== id);
-                localStorage.setItem('knowledgeBase', JSON.stringify(knowledgeBase));
-                autoSyncToDrive();
-                renderKnowledge();
-                toast('🗑️ Đã xóa tài liệu!');
-            }
-
-            function copyKnowledge(id) {
-                const item = knowledgeBase.find(k => k.id === id);
-                if (!item) return;
-
-                navigator.clipboard.writeText(item.content).then(() => {
-                    toast('📋 Đã copy nội dung!');
-                });
-            }
-
-            function filterKnowledge() {
-                renderKnowledge();
-            }
-
-            // ========== NEW KNOWLEDGE BASE GUIDES ==========
-            let currentGuideId = null;
-
-            // Guide URLs - cached content will be fetched from GitHub raw files or embedded
-            const guideUrls = {
-                shorts: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/AI_YouTube_Shorts_Scriptwriting_Guide.md',
-                longform: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/AI_YouTube_LongForm_Scriptwriting_Guide.md',
-                workflow: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/AI_Scriptwriting_Workflow.md',
-                evaluator: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/AI_Script_Evaluator_System.md',
-                douyin: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/Douyin_to_YouTube_Shorts_Guide.md',
-                claude: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/Claude_Natural_Writing_Techniques.md',
-                assistant: 'https://raw.githubusercontent.com/hituongvypham-hue/Tim-tat-ca/main/guides/How_To_Create_AI_Script_Assistant.md'
-            };
-
-            const guideTitles = {
-                shorts: '🎬 YouTube Shorts Scriptwriting Guide',
-                longform: '📺 YouTube Long-form Scriptwriting Guide',
-                workflow: '🔄 AI Scriptwriting Workflow',
-                evaluator: '🤖 AI Script Evaluator System',
-                douyin: '🇨🇳 Douyin → YouTube Shorts Guide',
-                claude: '🎭 Claude Natural Writing Techniques',
-                assistant: '🛠️ Hướng dẫn Tạo AI Script Assistant'
-            };
-
-            // Cache for guide content
-            const guideCache = {};
-
-            function filterGuides(category) {
-                // Update active button
-                document.querySelectorAll('.kb-filter-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.textContent.toLowerCase().includes(category) ||
-                        (category === 'all' && btn.textContent.includes('Tất cả'))) {
-                        btn.classList.add('active');
-                    }
-                });
-
-                // Filter cards
-                document.querySelectorAll('.kb-card').forEach(card => {
-                    const cardCategory = card.dataset.category;
-                    if (category === 'all' || cardCategory === category) {
-                        card.classList.remove('hidden');
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                });
-            }
-
-            async function openGuideModal(guideId) {
-                currentGuideId = guideId;
-                const modal = document.getElementById('guideModal');
-                const titleEl = document.getElementById('guideModalTitle');
-                const contentEl = document.getElementById('guideModalContent');
-
-                titleEl.textContent = guideTitles[guideId] || 'Guide';
-                contentEl.innerHTML = '<div style="text-align:center;padding:3rem;"><div style="font-size:2rem;">⏳</div><p>Đang tải nội dung...</p></div>';
-                modal.classList.add('show');
-                document.body.style.overflow = 'hidden';
-
-                try {
-                    let content = '';
-                    if (guideCache[guideId]) {
-                        content = guideCache[guideId];
-                    } else {
-                        const res = await fetch(guideUrls[guideId]);
-                        if (res.ok) {
-                            content = await res.text();
-                            guideCache[guideId] = content;
-                        } else {
-                            throw new Error('Failed to fetch');
-                        }
-                    }
-
-                    // Render markdown
-                    if (typeof marked !== 'undefined') {
-                        contentEl.innerHTML = marked.parse(content);
-                    } else {
-                        contentEl.innerHTML = '<pre style="white-space:pre-wrap;">' + content + '</pre>';
-                    }
-                } catch (e) {
-                    contentEl.innerHTML = '<div style="text-align:center;padding:3rem;color:#ef4444;"><div style="font-size:2rem;">❌</div><p>Không thể tải nội dung. Vui lòng kiểm tra kết nối mạng.</p><p style="font-size:0.8rem;color:#666;">Nội dung sẽ được tải từ GitHub repository.</p></div>';
-                    console.error('Error loading guide:', e);
-                }
-            }
-
-            function closeGuideModal() {
-                document.getElementById('guideModal').classList.remove('show');
-                document.body.style.overflow = '';
-                currentGuideId = null;
-            }
-
-            async function copyGuide(guideId) {
-                try {
-                    let content = '';
-                    if (guideCache[guideId]) {
-                        content = guideCache[guideId];
-                    } else {
-                        const res = await fetch(guideUrls[guideId]);
-                        if (res.ok) {
-                            content = await res.text();
-                            guideCache[guideId] = content;
-                        }
-                    }
-                    await navigator.clipboard.writeText(content);
-                    toast('📋 Đã copy toàn bộ guide!');
-                } catch (e) {
-                    toast('❌ Không thể copy. Vui lòng thử lại.');
-                }
-            }
-
-            // Tab Filtering Logic
-            function filterTabs(category) {
-                // Update filter buttons
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    const btnCat = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
-                    if (btnCat === category) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-
-                // Show/Hide tabs
-                const tabs = document.querySelectorAll('.tab');
-                let firstVisibleTab = null;
-                let activeTabVisible = false;
-
-                tabs.forEach(tab => {
-                    const tabCategory = tab.getAttribute('data-category');
-                    const shouldShow = category === 'all' || tabCategory === category;
-
-                    if (shouldShow) {
-                        tab.style.display = 'flex';
-                        if (!firstVisibleTab) firstVisibleTab = tab;
-                        if (tab.classList.contains('active')) activeTabVisible = true;
-                    } else {
-                        tab.style.display = 'none';
-                    }
-                });
-
-                // If active tab is hidden, switch to first visible
-                if (!activeTabVisible && firstVisibleTab) {
-                    // Ensure we don't trigger if it's just 'all' view and everything is visible
-                    // But here we want to ensure user sees a valid tab for the new category
-                    firstVisibleTab.click();
-                }
-            }
-
-            function copyCurrentGuide() {
-                if (currentGuideId) {
-                    copyGuide(currentGuideId);
-                }
-            }
-
-            // Close modal on Escape key
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && document.getElementById('guideModal').classList.contains('show')) {
-                    closeGuideModal();
-                }
-            });
         </script>
 
 
@@ -14077,14 +13323,8 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         // macOS Sidebar Tab Switching - Removed duplicate
 
 
-        // Initialize: show video tab by default
-        document.addEventListener('DOMContentLoaded', function () {
-            const videoTab = document.getElementById('video-tab');
-            if (videoTab) {
-                videoTab.style.display = 'block';
-                videoTab.classList.add('active');
-            }
-        });
+        // Initialize: show video tab by default - Removed duplicate
+
 
         // Close Copy Style Modal
         function closeCopyStyleModal() {
