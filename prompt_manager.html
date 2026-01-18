@@ -623,29 +623,40 @@
             const folder = data.folders.find(f => f.id === id);
             const childPrompts = data.prompts.filter(p => p.folder === id);
 
-            // Sequential full content view
             let html = `
                 <div class="prompt-title">
                     <span>📁 ${escapeHtml(folder?.name || 'Root')}</span>
                     <span style="font-size:13px;color:var(--text-muted);margin-left:auto;">${childPrompts.length} prompts</span>
                 </div>
-                <div style="display:flex;flex-direction:column;gap:16px;padding-bottom:40px;">
+                <div style="display:flex;flex-direction:column;gap:24px;padding-bottom:100px;">
             `;
 
             if (childPrompts.length === 0) {
-                html += '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">Thư mục trống</div>';
+                html += '<div style="text-align:center;color:var(--text-muted);padding:20px;">Thư mục trống</div>';
             } else {
                 childPrompts.forEach(p => {
                     html += `
-                        <div class="prompt-content" style="cursor:pointer;border:1px solid var(--border);position:relative;" 
-                             onclick="selectPrompt('${p.id}')"
-                             draggable="true"
+                        <div class="prompt-content" style="position:relative; border:1px solid var(--border);" 
                              data-id="${p.id}"
                              data-type="prompt"
+                             draggable="true"
                              ondragstart="handleGridDragStart(event)"
                         >
-                            <div style="font-weight:600;margin-bottom:8px;font-size:14px;color:var(--accent);">📄 ${escapeHtml(p.name)}</div>
-                            <div style="font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.6;">${escapeHtml(p.content)}</div>
+                            <div style="margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                                <span style="font-size:16px;">📄</span>
+                                <input type="text" class="form-input" id="name_${p.id}" 
+                                       value="${escapeHtml(p.name)}" 
+                                       placeholder="Tên prompt" 
+                                       style="font-size:16px;font-weight:600;border:none;background:transparent;padding:0;flex:1;"
+                                       oninput="autoSavePrompt('${p.id}')">
+                            </div>
+                            <textarea class="form-textarea" id="content_${p.id}" 
+                                      placeholder="Nội dung prompt..." 
+                                      style="width:100%;min-height:300px;resize:vertical;background:transparent;border:none;padding:0;line-height:1.6;font-family:inherit;"
+                                      oninput="autoSavePrompt('${p.id}')">${escapeHtml(p.content)}</textarea>
+                             <div style="color:var(--text-muted);font-size:11px;margin-top:8px;text-align:right;">
+                                💾 Auto-save
+                            </div>
                         </div>
                     `;
                 });
@@ -694,20 +705,40 @@
             saveTimeout = setTimeout(() => {
                 const prompt = data.prompts.find(p => p.id === id);
                 if (prompt) {
-                    const name = document.getElementById('editName')?.value || prompt.name;
-                    const content = document.getElementById('editContent')?.value || prompt.content;
-                    prompt.name = name;
-                    prompt.content = content;
-                    saveData();
-                    render();
-                    // Re-focus
-                    const activeEl = document.activeElement?.id;
-                    if (activeEl === 'editContent') {
-                        const pos = document.getElementById('editContent')?.selectionStart;
-                        setTimeout(() => {
-                            const el = document.getElementById('editContent');
-                            if (el) { el.focus(); el.selectionStart = el.selectionEnd = pos; }
-                        }, 0);
+                    // Try to find specific inputs (Folder View)
+                    const nameEl = document.getElementById(`name_${id}`);
+                    const contentEl = document.getElementById(`content_${id}`);
+
+                    // Fallback to Single View IDs if specific ones missing (though we generally use specific now)
+                    const nameVal = nameEl ? nameEl.value : (document.getElementById('editName')?.value);
+                    const contentVal = contentEl ? contentEl.value : (document.getElementById('editContent')?.value);
+
+                    let changed = false;
+                    if (nameVal !== undefined && nameVal !== prompt.name) {
+                        prompt.name = nameVal;
+                        changed = true;
+                    }
+                    if (contentVal !== undefined && contentVal !== prompt.content) {
+                        prompt.content = contentVal;
+                        changed = true; // Content change doesn't strictly need sidebar update but safely good
+                    }
+
+                    if (changed || contentVal !== undefined) { // Always save if triggered
+                        saveData();
+                        render(); // Update sidebar
+
+                        // Re-focus logic handling dynamic IDs
+                        const activeElId = document.activeElement?.id;
+                        if (activeElId) {
+                            const el = document.getElementById(activeElId);
+                            const pos = el?.selectionStart;
+                            if (el && pos !== undefined) {
+                                setTimeout(() => {
+                                    el.focus();
+                                    el.selectionStart = el.selectionEnd = pos;
+                                }, 0);
+                            }
+                        }
                     }
                 }
             }, 500);
