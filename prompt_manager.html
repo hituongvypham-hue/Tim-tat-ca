@@ -686,6 +686,12 @@
 
         // Separate drag handler for grid items to avoid conflict
         const handleGridDragStart = (e) => {
+            // CRITICAL: Ignore drag if touching inputs
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
             e.dataTransfer.setData('text/plain', e.target.dataset.id);
             // Allow normal dragstart to bubble up or handle manually if needed
         };
