@@ -652,8 +652,8 @@
                             </div>
                             <textarea class="form-textarea" id="content_${p.id}" 
                                       placeholder="Nội dung prompt..." 
-                                      style="width:100%;min-height:300px;resize:vertical;background:transparent;border:none;padding:0;line-height:1.6;font-family:inherit;"
-                                      oninput="autoSavePrompt('${p.id}')">${escapeHtml(p.content)}</textarea>
+                                      style="width:100%;min-height:100px;resize:none;background:transparent;border:none;padding:0;line-height:1.6;font-family:inherit;overflow-y:hidden;"
+                                      oninput="autoSavePrompt('${p.id}'); autoResize(this)">${escapeHtml(p.content)}</textarea>
                              <div style="color:var(--text-muted);font-size:11px;margin-top:8px;text-align:right;">
                                 💾 Auto-save
                             </div>
@@ -667,6 +667,17 @@
             const view = document.getElementById('promptView');
             view.innerHTML = html;
             view.classList.remove('empty');
+
+            // Auto resize all textareas
+            childPrompts.forEach(p => {
+                const el = document.getElementById(`content_${p.id}`);
+                if (el) autoResize(el);
+            });
+        };
+
+        const autoResize = (el) => {
+            el.style.height = 'auto';
+            el.style.height = el.scrollHeight + 'px';
         };
 
         // Separate drag handler for grid items to avoid conflict
