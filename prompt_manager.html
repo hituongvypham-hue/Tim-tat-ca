@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📁 Prompt Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Mammoth.js for DOCX import -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -499,7 +501,7 @@
     <div class="toast" id="toast"></div>
 
     <!-- Import -->
-    <input type="file" id="importFile" accept=".json" style="display:none">
+    <input type="file" id="importFile" accept=".json, .txt, .docx" multiple style="display:none">
 
     <script>
         const STORAGE_KEY = 'prompt_manager_v4';
@@ -1021,62 +1023,119 @@
 
         const importData = () => document.getElementById('importFile').click();
 
-        document.getElementById('importFile').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                try {
-                    const imported = JSON.parse(ev.target.result);
+        document.getElementById('importFile').addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            if (!files.length) return;
 
-                    // Handle old format (v3.0 with categories)
-                    if (imported.prompts && Array.isArray(imported.prompts)) {
-                        if (imported.prompts[0]?.steps) {
-                            // Convert steps to single content
-                            imported.prompts.forEach(p => {
-                                const folder = data.folders.find(f => f.name === (p.category || 'Imported'));
-                                let folderId = folder?.id;
-                                if (!folderId && p.category) {
-                                    folderId = 'f_' + Date.now() + Math.random();
-                                    data.folders.push({ id: folderId, name: p.category, parent: 'root' });
-                                }
+            let importedCount = 0;
+            const promises = files.map(file => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
 
-                                if (p.steps) {
-                                    p.steps.forEach(step => {
-                                        data.prompts.push({
-                                            id: 'p_' + Date.now() + Math.random(),
-                                            name: step.title || p.name,
-                                            content: step.content,
-                                            folder: folderId || 'root'
+                    if (file.name.endsWith('.json')) {
+                        reader.onload = (ev) => {
+                            try {
+                                const imported = JSON.parse(ev.target.result);
+                                // Handle old format (v3.0 with categories)
+                                if (imported.prompts && Array.isArray(imported.prompts)) {
+                                    if (imported.prompts[0]?.steps) {
+                                        imported.prompts.forEach(p => {
+                                            const folder = data.folders.find(f => f.name === (p.category || 'Imported'));
+                                            let folderId = folder?.id;
+                                            if (!folderId && p.category) {
+                                                folderId = 'f_' + Date.now() + Math.random();
+                                                data.folders.push({ id: folderId, name: p.category, parent: 'root' });
+                                            }
+                                            if (p.steps) {
+                                                p.steps.forEach(step => {
+                                                    data.prompts.push({
+                                                        id: 'p_' + Date.now() + Math.random(),
+                                                        name: step.title || p.name,
+                                                        content: step.content,
+                                                        folder: folderId || 'root'
+                                                    });
+                                                });
+                                            }
                                         });
+                                    } else {
+                                        imported.prompts.forEach(p => {
+                                            if (!data.prompts.find(x => x.id === p.id)) {
+                                                data.prompts.push(p);
+                                            }
+                                        });
+                                    }
+                                }
+                                if (imported.folders) {
+                                    imported.folders.forEach(f => {
+                                        if (!data.folders.find(x => x.id === f.id)) {
+                                            data.folders.push(f);
+                                        }
                                     });
                                 }
-                            });
-                        } else {
-                            imported.prompts.forEach(p => {
-                                if (!data.prompts.find(x => x.id === p.id)) {
-                                    data.prompts.push(p);
-                                }
-                            });
-                        }
-                    }
-
-                    if (imported.folders) {
-                        imported.folders.forEach(f => {
-                            if (!data.folders.find(x => x.id === f.id)) {
-                                data.folders.push(f);
+                                importedCount++;
+                                resolve();
+                            } catch (err) {
+                                console.error('JSON Import Error:', err);
+                                resolve();
                             }
-                        });
-                    }
+                        };
+                        reader.readAsText(file);
 
-                    saveData();
-                    render();
-                    showToast('📥 Đã import!');
-                } catch (err) {
-                    showToast('❌ File không hợp lệ!');
-                }
-            };
-            reader.readAsText(file);
+                    } else if (file.name.endsWith('.txt')) {
+                        reader.onload = (ev) => {
+                            const content = ev.target.result;
+                            data.prompts.push({
+                                id: 'p_' + Date.now() + Math.random(),
+                                name: file.name.replace('.txt', ''),
+                                content: content,
+                                folder: 'root'
+                            });
+                            importedCount++;
+                            resolve();
+                        };
+                        reader.readAsText(file);
+
+                    } else if (file.name.endsWith('.docx')) {
+                        reader.onload = (ev) => {
+                            const arrayBuffer = ev.target.result;
+                            if (window.mammoth) {
+                                mammoth.extractRawText({ arrayBuffer: arrayBuffer })
+                                    .then(result => {
+                                        data.prompts.push({
+                                            id: 'p_' + Date.now() + Math.random(),
+                                            name: file.name.replace('.docx', ''),
+                                            content: result.value, // The raw text
+                                            folder: 'root'
+                                        });
+                                        importedCount++;
+                                        resolve();
+                                    })
+                                    .catch(err => {
+                                        console.error('Docx Import Error:', err);
+                                        resolve();
+                                    });
+                            } else {
+                                console.error('Mammoth.js not loaded');
+                                resolve();
+                            }
+                        };
+                        reader.readAsArrayBuffer(file);
+                    } else {
+                        resolve();
+                    }
+                });
+            });
+
+            await Promise.all(promises);
+
+            if (importedCount > 0) {
+                saveData();
+                render();
+                showToast(`📥 Đã import ${importedCount} file!`);
+            } else {
+                showToast('❌ Không import được file nào');
+            }
+
             e.target.value = '';
         });
 
