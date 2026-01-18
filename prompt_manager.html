@@ -45,6 +45,25 @@
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
+            /* Prevent shrinking */
+        }
+
+        .resizer {
+            width: 5px;
+            background: transparent;
+            cursor: col-resize;
+            border-right: 1px solid transparent;
+            transition: background 0.2s;
+            z-index: 10;
+            margin-left: -2px;
+            /* Overlap border */
+        }
+
+        .resizer:hover,
+        .resizer.resizing {
+            background: var(--accent);
+            opacity: 0.5;
         }
 
         .sidebar-header {
@@ -406,6 +425,7 @@
         </div>
         <div class="folder-tree" id="folderTree"></div>
     </div>
+    <div class="resizer" id="resizer"></div>
 
     <div class="main">
         <div class="toolbar">
@@ -535,8 +555,15 @@
                 if (!data.folders) data.folders = [{ id: 'root', name: 'Root', parent: null }];
                 if (!data.prompts) data.prompts = [];
                 if (!data.trash) data.trash = [];
+                if (!data.trash) data.trash = [];
                 if (!data.settings) data.settings = { autoDeleteDays: 7 };
+                if (!data.sidebarWidth) data.sidebarWidth = 250; // Default width
                 // History is not saved to localStorage, it's session-based
+            }
+
+            // Apply saved width
+            if (data.sidebarWidth) {
+                document.querySelector('.sidebar').style.width = data.sidebarWidth + 'px';
             }
         };
 
@@ -587,6 +614,12 @@
                          data-type="folder"
                          draggable="true"
                          onclick="selectFolder('${folderId}')"
+                    <div class="folder-item ${selectedId === folderId ? 'selected' : ''}" 
+                         data-id="${folderId}" 
+                         data-type="folder"
+                         title="${escapeHtml(folder.name)}"
+                         draggable="true"
+                         onclick="selectFolder('${folderId}')"
                          oncontextmenu="showContext(event, '${folderId}', 'folder')">
                         <span class="folder-toggle" onclick="event.stopPropagation(); toggleFolder('${folderId}')">${isCollapsed ? '▶' : '▼'}</span>
                         <span class="folder-icon">📁</span>
@@ -607,6 +640,12 @@
                     <div class="prompt-item ${selectedId === p.id ? 'selected' : ''}"
                          data-id="${p.id}"
                          data-type="prompt"
+                         draggable="true"
+                         onclick="selectPrompt('${p.id}')"
+                    <div class="prompt-item ${selectedId === p.id ? 'selected' : ''}"
+                         data-id="${p.id}"
+                         data-type="prompt"
+                         title="${escapeHtml(p.name)}"
                          draggable="true"
                          onclick="selectPrompt('${p.id}')"
                          oncontextmenu="showContext(event, '${p.id}', 'prompt')">
@@ -1338,6 +1377,37 @@
 
             // Init
             document.addEventListener('DOMContentLoaded', init);
+
+            // Resizer Logic
+            const resizer = document.getElementById('resizer');
+            const sidebar = document.querySelector('.sidebar');
+            let isResizing = false;
+
+            resizer.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                resizer.classList.add('resizing');
+                document.body.style.cursor = 'col-resize';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+                const newWidth = e.clientX;
+                if (newWidth > 150 && newWidth < 600) { // Min/Max limits
+                    sidebar.style.width = newWidth + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isResizing) {
+                    isResizing = false;
+                    resizer.classList.remove('resizing');
+                    document.body.style.cursor = 'default';
+                    // Save width
+                    data.sidebarWidth = parseInt(sidebar.style.width);
+                    saveData();
+                }
+            });
             document.addEventListener('dragend', (e) => {
                 if (e.target.dataset.id) {
                     e.target.style.opacity = '1';
