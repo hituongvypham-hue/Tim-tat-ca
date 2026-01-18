@@ -518,6 +518,7 @@
         let contextTarget = null;
         let dragItem = null;
         let isTrashView = false;
+        let actionHistory = []; // History stack for Undo
 
         // Init
         const init = () => {
@@ -535,6 +536,7 @@
                 if (!data.prompts) data.prompts = [];
                 if (!data.trash) data.trash = [];
                 if (!data.settings) data.settings = { autoDeleteDays: 7 };
+                // History is not saved to localStorage, it's session-based
             }
         };
 
@@ -553,7 +555,10 @@
             const trashCount = data.trash.length;
             html += `
                 <div style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px;">
-                    <div class="folder-item ${isTrashView ? 'selected' : ''}" onclick="showTrash()">
+                    <div class="folder-item ${isTrashView ? 'selected' : ''}" 
+                         onclick="showTrash()"
+                         ondragover="handleTrashDragOver(event)"
+                         ondrop="handleTrashDrop(event)">
                         <span class="folder-toggle"></span>
                         <span class="folder-icon">🗑️</span>
                         <span class="folder-name">Thùng rác ${trashCount > 0 ? '(' + trashCount + ')' : ''}</span>
@@ -857,35 +862,132 @@
             hideContext();
         };
 
-        const deleteItem = () => {
-            if (!contextTarget) return;
-            const { id, type } = contextTarget;
-            hideContext();
+        const deleteItem = (targetId = null, targetType = null) => {
+            let id, type;
+
+            if (targetId && targetType) {
+                id = targetId;
+                type = targetType;
+            } else if (contextTarget) {
+                id = contextTarget.id;
+                type = contextTarget.type;
+                hideContext();
+            } else {
+                return;
+            }
+
+            const deletedItems = [];
 
             if (type === 'folder' && id !== 'root') {
                 const folder = data.folders.find(f => f.id === id);
                 if (folder) {
-                    // Move folder and its children to trash
+                    // Record children first
                     data.prompts.filter(p => p.folder === id).forEach(p => {
+                        deletedItems.push({ ...p, type: 'prompt' });
                         data.trash.push({ ...p, deletedAt: Date.now(), type: 'prompt' });
                     });
+                    deletedItems.push({ ...folder, type: 'folder' });
+
                     data.prompts = data.prompts.filter(p => p.folder !== id);
                     data.trash.push({ ...folder, deletedAt: Date.now(), type: 'folder' });
                     data.folders = data.folders.filter(f => f.id !== id);
-                    saveData();
-                    render();
-                    showToast('🗑️ Đã chuyển vào thùng rác!');
                 }
             } else if (type === 'prompt') {
                 const prompt = data.prompts.find(p => p.id === id);
                 if (prompt) {
+                    deletedItems.push({ ...prompt, type: 'prompt' });
                     data.trash.push({ ...prompt, deletedAt: Date.now(), type: 'prompt' });
                     data.prompts = data.prompts.filter(p => p.id !== id);
-                    saveData();
-                    render();
-                    showToast('🗑️ Đã chuyển vào thùng rác!');
                 }
             }
+
+            if (deletedItems.length > 0) {
+                // Push to history
+                actionHistory.push({
+                    type: 'BATCH_DELETE',
+                    items: deletedItems, // Store copies of items
+                    timestamp: Date.now()
+                });
+
+                saveData();
+                render();
+                showToast('🗑️ Đã chuyển ' + deletedItems.length + ' mục vào thùng rác!');
+            }
+        };
+
+        // Undo Logic
+        const undoLastAction = () => {
+            if (actionHistory.length === 0) {
+                showToast('Không có gì để Undo');
+                return;
+            }
+
+            const action = actionHistory.pop();
+
+            if (action.type === 'BATCH_DELETE') {
+                let restoredCount = 0;
+                action.items.forEach(oldItem => {
+                    // Find in trash (match by ID)
+                    const trashIndex = data.trash.findIndex(t => t.id === oldItem.id);
+                    if (trashIndex !== -1) {
+                        data.trash.splice(trashIndex, 1);
+
+                        if (oldItem.type === 'folder') {
+                            // Verify parent exists, if not, move to root (safety)
+                            const parentExists = data.folders.find(f => f.id === oldItem.parent);
+                            const folderToRestore = {
+                                id: oldItem.id,
+                                name: oldItem.name,
+                                parent: parentExists ? oldItem.parent : 'root',
+                                collapsed: oldItem.collapsed
+                            };
+                            data.folders.push(folderToRestore);
+                        } else {
+                            const parentExists = data.folders.find(f => f.id === oldItem.folder);
+                            const promptToRestore = {
+                                id: oldItem.id,
+                                name: oldItem.name,
+                                content: oldItem.content,
+                                folder: parentExists ? oldItem.folder : 'root'
+                            };
+                            data.prompts.push(promptToRestore);
+                        }
+                        restoredCount++;
+                    }
+                });
+
+                if (restoredCount > 0) {
+                    saveData();
+                    render();
+                    showToast('♻️ Đã hoàn tác xóa ' + restoredCount + ' mục!');
+                } else {
+                    showToast('⚠️ Không thể hoàn tác (Mục đã bị xóa vĩnh viễn?)');
+                }
+            }
+        };
+
+        // Drag to Trash handlers
+        const handleTrashDragOver = (e) => {
+            e.preventDefault(); // Allow drop
+            e.currentTarget.classList.add('drag-over');
+        };
+
+        const handleTrashDrop = (e) => {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            const id = e.dataTransfer.getData('text/plain');
+
+            // Determine type by checking data
+            let type = 'prompt';
+            if (data.folders.find(f => f.id === id)) {
+                type = 'folder';
+            } else if (data.prompts.find(p => p.id === id)) {
+                type = 'prompt';
+            } else {
+                return; // Unknown ID
+            }
+
+            deleteItem(id, type);
         };
 
         // Trash functions
@@ -1221,6 +1323,21 @@
                 }
             });
 
+            // Global Key Listener for Ctrl+Z
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                    // Ignore if focusing input/textarea (browser handles text undo)
+                    if (document.activeElement.tagName === 'INPUT' ||
+                        document.activeElement.tagName === 'TEXTAREA') {
+                        return;
+                    }
+                    e.preventDefault();
+                    undoLastAction();
+                }
+            });
+
+            // Init
+            document.addEventListener('DOMContentLoaded', init);
             document.addEventListener('dragend', (e) => {
                 if (e.target.dataset.id) {
                     e.target.style.opacity = '1';
