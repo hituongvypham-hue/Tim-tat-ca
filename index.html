@@ -148,6 +148,14 @@
             width: 52px;
         }
 
+        .mac-clock {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--mac-text);
+            min-width: 120px;
+            text-align: right;
+        }
+
         /* macOS Main Layout */
         .mac-layout {
             display: flex;
@@ -13347,7 +13355,25 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             if (modal) {
                 modal.style.display = 'none';
             }
+            // Start Clock
+            updateMacClock();
+            setInterval(updateMacClock, 1000);
         });
+
+        function updateMacClock() {
+            const now = new Date();
+            // Format: T2 18/1 23:45
+            const days = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+            const day = days[now.getDay()];
+            const date = now.getDate();
+            const month = now.getMonth() + 1;
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+
+            const timeStr = `${day} ${date}/${month} ${hours}:${minutes}`;
+            const clockEl = document.getElementById('headerClock');
+            if (clockEl) clockEl.textContent = timeStr;
+        }
     </script>
 
     <!-- Load app.js -->
