@@ -455,7 +455,8 @@
 
     <!-- Context Menu -->
     <div class="context-menu" id="contextMenu">
-        <div class="context-item" onclick="editItem()">✏️ Sửa</div>
+        <div class="context-item" onclick="editItem()">✏️ Đổi tên/Nội dung</div>
+        <div class="context-item" onclick="moveToRoot()">⬆️ Chuyển ra Root</div>
         <div class="context-item" onclick="duplicateItem()">📋 Nhân bản</div>
         <div class="context-item danger" onclick="deleteItem()">🗑️ Xóa</div>
     </div>
@@ -1154,6 +1155,13 @@
 
             document.addEventListener('dragover', (e) => {
                 e.preventDefault();
+                // Explicitly check for Sidebar Header
+                if (e.target.closest('.sidebar-header')) {
+                    e.target.closest('.sidebar-header').style.background = 'var(--item-selected)';
+                } else {
+                    document.querySelector('.sidebar-header').style.background = '';
+                }
+
                 const target = e.target.closest('.folder-item, .folder-children');
                 if (target) {
                     document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
@@ -1161,9 +1169,30 @@
                 }
             });
 
+            document.addEventListener('dragleave', (e) => {
+                if (e.target.closest('.sidebar-header')) {
+                    document.querySelector('.sidebar-header').style.background = '';
+                }
+            });
+
             document.addEventListener('drop', (e) => {
                 e.preventDefault();
+                document.querySelector('.sidebar-header').style.background = '';
+
                 if (!dragItem) return;
+
+                // 1. Check for DROP on Sidebar Header (Explicit Root)
+                if (e.target.closest('.sidebar-header')) {
+                    handleMoveToRoot();
+                    return;
+                }
+
+                // 2. Fallback: Sidebar background drop (if confusing, this at least covers 'empty space')
+                const isSidebarBg = e.target.classList.contains('sidebar') || e.target.id === 'folderTree';
+                if (isSidebarBg && !e.target.closest('.folder-item')) {
+                    handleMoveToRoot();
+                    return;
+                }
 
                 const target = e.target.closest('.folder-item, .folder-children, .prompt-item');
                 // Allow dropping on folder-children (empty space in folder) or items
@@ -1290,6 +1319,33 @@
             const d = document.createElement('div');
             d.textContent = text;
             return d.innerHTML;
+        };
+
+        const handleMoveToRoot = () => {
+            if (dragItem.type === 'prompt') {
+                const p = data.prompts.find(x => x.id === dragItem.id);
+                if (p && p.folder !== 'root') {
+                    p.folder = 'root';
+                    saveData();
+                    render();
+                    showToast('Đã chuyển ra Root!');
+                }
+            } else if (dragItem.type === 'folder') {
+                const f = data.folders.find(x => x.id === dragItem.id);
+                if (f && f.parent !== 'root') {
+                    f.parent = 'root';
+                    saveData();
+                    render();
+                    showToast('Đã chuyển ra Root!');
+                }
+            }
+        };
+
+        const moveToRoot = () => {
+            if (!contextTarget) return;
+            dragItem = { ...contextTarget }; // Mock dragItem for reuse
+            handleMoveToRoot();
+            hideContext();
         };
 
         const showToast = (msg) => {
