@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📁 Prompt Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f3f3f3;
+            --sidebar: #ffffff;
+            --item: #ffffff;
+            --item-hover: #e5e5e5;
+            --item-selected: #cce8ff;
+            --border: #e0e0e0;
+            --text: #1a1a1a;
+            --text-muted: #666666;
+            --accent: #0078d4;
+            --folder: #dcb67a;
+            --file: #519aba;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            font-size: 13px;
+        }
+
+        /* Sidebar - Folder Tree */
+        .sidebar {
+            width: 250px;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            font-size: 14px;
+        }
+
+        .sidebar-header button:hover {
+            color: var(--text);
+        }
+
+        .folder-tree {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .folder-item,
+        .prompt-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 16px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .folder-item:hover,
+        .prompt-item:hover {
+            background: var(--item-hover);
+        }
+
+        .folder-item.selected,
+        .prompt-item.selected {
+            background: var(--item-selected);
+        }
+
+        .folder-item.drag-over {
+            background: var(--accent);
+        }
+
+        .folder-icon,
+        .prompt-icon {
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .folder-icon {
+            color: var(--folder);
+        }
+
+        .prompt-icon {
+            color: var(--file);
+        }
+
+        .folder-name,
+        .prompt-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .folder-children {
+            padding-left: 16px;
+        }
+
+        .folder-children.collapsed {
+            display: none;
+        }
+
+        .folder-toggle {
+            width: 16px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toolbar {
+            padding: 8px 16px;
+            background: var(--sidebar);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+
+        .toolbar button {
+            padding: 6px 12px;
+            background: var(--item);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .toolbar button:hover {
+            background: var(--item-hover);
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+        }
+
+        /* Prompt Content */
+        .prompt-view {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .prompt-view.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .prompt-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .prompt-content {
+            background: var(--item);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 16px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .copy-btn {
+            padding: 8px 16px;
+            background: var(--accent);
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .copy-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--sidebar);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 14px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .modal-body {
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+            font-family: 'Consolas', monospace;
+        }
+
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            border: 1px solid var(--border);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--item);
+            color: var(--text);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--accent);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: var(--sidebar);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px 0;
+            min-width: 150px;
+            display: none;
+            z-index: 200;
+        }
+
+        .context-menu.active {
+            display: block;
+        }
+
+        .context-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .context-item:hover {
+            background: var(--item-hover);
+        }
+
+        .context-item.danger {
+            color: #f44336;
+        }
+
+        /* Drag ghost */
+        .drag-ghost {
+            position: fixed;
+            pointer-events: none;
+            padding: 6px 12px;
+            background: var(--accent);
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 1000;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <span>📁 Prompts</span>
+            <div>
+                <button onclick="createFolder()" title="New Folder">📁+</button>
+                <button onclick="createPrompt()" title="New Prompt">📄+</button>
+            </div>
+        </div>
+        <div class="folder-tree" id="folderTree"></div>
+    </div>
+
+    <div class="main">
+        <div class="toolbar">
+            <button onclick="createPrompt()">📄 New Prompt</button>
+            <button onclick="createFolder()">📁 New Folder</button>
+            <button onclick="importData()">📥 Import</button>
+            <button onclick="exportData()">📤 Export</button>
+            <button onclick="openSettings()">⚙️ Cài đặt</button>
+        </div>
+        <div class="content">
+            <div class="prompt-view empty" id="promptView">
+                <span>Chọn một prompt để xem</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">New Prompt</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editId">
+                <input type="hidden" id="editType">
+                <div class="form-group">
+                    <label class="form-label">Tên</label>
+                    <input type="text" class="form-input" id="itemName" placeholder="Tên prompt hoặc folder">
+                </div>
+                <div class="form-group" id="contentGroup">
+                    <label class="form-label">Nội dung Prompt</label>
+                    <textarea class="form-textarea" id="itemContent"
+                        placeholder="Paste prompt của bạn vào đây..."></textarea>
+                </div>
+                <div class="form-group" id="folderGroup">
+                    <label class="form-label">Folder</label>
+                    <select class="form-select" id="parentFolder"></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Hủy</button>
+                <button class="btn btn-primary" onclick="saveItem()">💾 Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-item" onclick="editItem()">✏️ Sửa</div>
+        <div class="context-item" onclick="duplicateItem()">📋 Nhân bản</div>
+        <div class="context-item danger" onclick="deleteItem()">🗑️ Xóa</div>
+    </div>
+
+    <!-- Trash Context Menu -->
+    <div class="context-menu" id="trashContextMenu">
+        <div class="context-item" onclick="restoreItem()">♻️ Khôi phục</div>
+        <div class="context-item danger" onclick="permanentDelete()">❌ Xóa vĩnh viễn</div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚙️ Cài đặt Thùng rác</h3>
+                <button class="modal-close" onclick="closeSettings()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Tự động xóa vĩnh viễn sau</label>
+                    <select class="form-select" id="autoDeleteDays">
+                        <option value="0">Không tự động xóa</option>
+                        <option value="1">1 ngày</option>
+                        <option value="3">3 ngày</option>
+                        <option value="7">7 ngày</option>
+                        <option value="30">30 ngày</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-secondary" onclick="emptyTrash()" style="width:100%">🗑️ Dọn sạch thùng
+                        rác</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="saveSettings()">💾 Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Import -->
+    <input type="file" id="importFile" accept=".json" style="display:none">
+
+    <script>
+        const STORAGE_KEY = 'prompt_manager_v4';
+
+        let data = {
+            folders: [
+                { id: 'root', name: 'Root', parent: null }
+            ],
+            prompts: [],
+            trash: [],
+            settings: { autoDeleteDays: 7 }
+        };
+
+        let selectedId = null;
+        let contextTarget = null;
+        let dragItem = null;
+        let isTrashView = false;
+
+        // Init
+        const init = () => {
+            loadData();
+            cleanupTrash();
+            render();
+            attachEvents();
+        };
+
+        const loadData = () => {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                data = JSON.parse(saved);
+                if (!data.folders) data.folders = [{ id: 'root', name: 'Root', parent: null }];
+                if (!data.prompts) data.prompts = [];
+                if (!data.trash) data.trash = [];
+                if (!data.settings) data.settings = { autoDeleteDays: 7 };
+            }
+        };
+
+        const saveData = () => {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        };
+
+        // Render
+        const render = () => {
+            const tree = document.getElementById('folderTree');
+            let html = renderFolder('root');
+
+            // Add trash section
+            const trashCount = data.trash.length;
+            html += `
+                <div style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px;">
+                    <div class="folder-item ${isTrashView ? 'selected' : ''}" onclick="showTrash()">
+                        <span class="folder-toggle"></span>
+                        <span class="folder-icon">🗑️</span>
+                        <span class="folder-name">Thùng rác ${trashCount > 0 ? '(' + trashCount + ')' : ''}</span>
+                    </div>
+                </div>
+            `;
+
+            tree.innerHTML = html;
+        };
+
+        const renderFolder = (folderId, level = 0) => {
+            const folder = data.folders.find(f => f.id === folderId);
+            if (!folder) return '';
+
+            const childFolders = data.folders.filter(f => f.parent === folderId);
+            const childPrompts = data.prompts.filter(p => (p.folder || 'root') === folderId);
+            const isCollapsed = folder.collapsed;
+            const isRoot = folderId === 'root';
+
+            let html = '';
+
+            if (!isRoot) {
+                html += `
+                    <div class="folder-item ${selectedId === folderId ? 'selected' : ''}" 
+                         data-id="${folderId}" 
+                         data-type="folder"
+                         draggable="true"
+                         onclick="selectFolder('${folderId}')"
+                         oncontextmenu="showContext(event, '${folderId}', 'folder')">
+                        <span class="folder-toggle" onclick="event.stopPropagation(); toggleFolder('${folderId}')">${isCollapsed ? '▶' : '▼'}</span>
+                        <span class="folder-icon">📁</span>
+                        <span class="folder-name">${escapeHtml(folder.name)}</span>
+                    </div>
+                `;
+            }
+
+            const childrenClass = isCollapsed && !isRoot ? 'collapsed' : '';
+            html += `<div class="folder-children ${childrenClass}" data-folder="${folderId}">`;
+
+            childFolders.forEach(cf => {
+                html += renderFolder(cf.id, level + 1);
+            });
+
+            childPrompts.forEach(p => {
+                html += `
+                    <div class="prompt-item ${selectedId === p.id ? 'selected' : ''}"
+                         data-id="${p.id}"
+                         data-type="prompt"
+                         draggable="true"
+                         onclick="selectPrompt('${p.id}')"
+                         oncontextmenu="showContext(event, '${p.id}', 'prompt')">
+                        <span class="folder-toggle"></span>
+                        <span class="prompt-icon">📄</span>
+                        <span class="prompt-name">${escapeHtml(p.name)}</span>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            return html;
+        };
+
+        // Selection
+        const selectFolder = (id) => {
+            selectedId = id;
+            render();
+            document.getElementById('promptView').innerHTML = '<span>Folder: ' + escapeHtml(data.folders.find(f => f.id === id)?.name || '') + '</span>';
+            document.getElementById('promptView').classList.add('empty');
+        };
+
+        const selectPrompt = (id) => {
+            selectedId = id;
+            isTrashView = false;
+            render();
+            const prompt = data.prompts.find(p => p.id === id);
+            if (prompt) {
+                document.getElementById('promptView').innerHTML = `
+                    <div class="prompt-title" style="margin-bottom:12px;">
+                        <input type="text" class="form-input" id="editName" value="${escapeHtml(prompt.name)}" 
+                               placeholder="Tên prompt" style="font-size:16px;font-weight:600;"
+                               oninput="autoSavePrompt('${id}')">
+                        <button class="copy-btn" onclick="copyPrompt('${id}')">📋 Copy</button>
+                    </div>
+                    <textarea class="form-textarea" id="editContent" 
+                              placeholder="Nội dung prompt..." 
+                              style="width:100%;min-height:calc(100vh - 180px);resize:none;"
+                              oninput="autoSavePrompt('${id}')">${escapeHtml(prompt.content)}</textarea>
+                    <div style="color:var(--text-muted);font-size:11px;margin-top:8px;">
+                        💾 Tự động lưu khi chỉnh sửa
+                    </div>
+                `;
+                document.getElementById('promptView').classList.remove('empty');
+            }
+        };
+
+        let saveTimeout = null;
+        const autoSavePrompt = (id) => {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                const prompt = data.prompts.find(p => p.id === id);
+                if (prompt) {
+                    const name = document.getElementById('editName')?.value || prompt.name;
+                    const content = document.getElementById('editContent')?.value || prompt.content;
+                    prompt.name = name;
+                    prompt.content = content;
+                    saveData();
+                    render();
+                    // Re-focus
+                    const activeEl = document.activeElement?.id;
+                    if (activeEl === 'editContent') {
+                        const pos = document.getElementById('editContent')?.selectionStart;
+                        setTimeout(() => {
+                            const el = document.getElementById('editContent');
+                            if (el) { el.focus(); el.selectionStart = el.selectionEnd = pos; }
+                        }, 0);
+                    }
+                }
+            }, 500);
+        };
+
+        const toggleFolder = (id) => {
+            const folder = data.folders.find(f => f.id === id);
+            if (folder) {
+                folder.collapsed = !folder.collapsed;
+                saveData();
+                render();
+            }
+        };
+
+        // CRUD
+        const createFolder = () => {
+            document.getElementById('modalTitle').textContent = 'New Folder';
+            document.getElementById('editId').value = '';
+            document.getElementById('editType').value = 'folder';
+            document.getElementById('itemName').value = '';
+            document.getElementById('contentGroup').style.display = 'none';
+            populateFolderSelect();
+            openModal();
+        };
+
+        const createPrompt = () => {
+            document.getElementById('modalTitle').textContent = 'New Prompt';
+            document.getElementById('editId').value = '';
+            document.getElementById('editType').value = 'prompt';
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemContent').value = '';
+            document.getElementById('contentGroup').style.display = 'block';
+            populateFolderSelect();
+            openModal();
+        };
+
+        const editItem = () => {
+            if (!contextTarget) return;
+            const { id, type } = contextTarget;
+
+            if (type === 'folder') {
+                const folder = data.folders.find(f => f.id === id);
+                if (!folder || id === 'root') return;
+                document.getElementById('modalTitle').textContent = 'Edit Folder';
+                document.getElementById('editId').value = id;
+                document.getElementById('editType').value = 'folder';
+                document.getElementById('itemName').value = folder.name;
+                document.getElementById('contentGroup').style.display = 'none';
+            } else {
+                const prompt = data.prompts.find(p => p.id === id);
+                if (!prompt) return;
+                document.getElementById('modalTitle').textContent = 'Edit Prompt';
+                document.getElementById('editId').value = id;
+                document.getElementById('editType').value = 'prompt';
+                document.getElementById('itemName').value = prompt.name;
+                document.getElementById('itemContent').value = prompt.content;
+                document.getElementById('contentGroup').style.display = 'block';
+            }
+
+            populateFolderSelect();
+            openModal();
+            hideContext();
+        };
+
+        const duplicateItem = () => {
+            if (!contextTarget) return;
+            const { id, type } = contextTarget;
+
+            if (type === 'prompt') {
+                const prompt = data.prompts.find(p => p.id === id);
+                if (prompt) {
+                    data.prompts.push({
+                        id: 'p_' + Date.now(),
+                        name: prompt.name + ' (copy)',
+                        content: prompt.content,
+                        folder: prompt.folder
+                    });
+                    saveData();
+                    render();
+                    showToast('Đã nhân bản!');
+                }
+            }
+            hideContext();
+        };
+
+        const deleteItem = () => {
+            if (!contextTarget) return;
+            const { id, type } = contextTarget;
+            hideContext();
+
+            if (type === 'folder' && id !== 'root') {
+                const folder = data.folders.find(f => f.id === id);
+                if (folder) {
+                    // Move folder and its children to trash
+                    data.prompts.filter(p => p.folder === id).forEach(p => {
+                        data.trash.push({ ...p, deletedAt: Date.now(), type: 'prompt' });
+                    });
+                    data.prompts = data.prompts.filter(p => p.folder !== id);
+                    data.trash.push({ ...folder, deletedAt: Date.now(), type: 'folder' });
+                    data.folders = data.folders.filter(f => f.id !== id);
+                    saveData();
+                    render();
+                    showToast('🗑️ Đã chuyển vào thùng rác!');
+                }
+            } else if (type === 'prompt') {
+                const prompt = data.prompts.find(p => p.id === id);
+                if (prompt) {
+                    data.trash.push({ ...prompt, deletedAt: Date.now(), type: 'prompt' });
+                    data.prompts = data.prompts.filter(p => p.id !== id);
+                    saveData();
+                    render();
+                    showToast('🗑️ Đã chuyển vào thùng rác!');
+                }
+            }
+        };
+
+        // Trash functions
+        const showTrash = () => {
+            isTrashView = true;
+            selectedId = null;
+            render();
+
+            const view = document.getElementById('promptView');
+            if (data.trash.length === 0) {
+                view.innerHTML = '<span>🗑️ Thùng rác trống</span>';
+                view.classList.add('empty');
+            } else {
+                view.innerHTML = `
+                    <div class="prompt-title">
+                        <span>🗑️ Thùng rác (${data.trash.length} items)</span>
+                        <button class="copy-btn" onclick="emptyTrash()" style="background:#dc3545">🗑️ Dọn sạch</button>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        ${data.trash.map(item => {
+                    const daysAgo = Math.floor((Date.now() - item.deletedAt) / (1000 * 60 * 60 * 24));
+                    return `
+                                <div class="prompt-content" style="padding:12px;cursor:pointer;" 
+                                     oncontextmenu="showTrashContext(event, '${item.id}')">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                                        <span>${item.type === 'folder' ? '📁' : '📄'} ${escapeHtml(item.name)}</span>
+                                        <span style="color:var(--text-muted);font-size:11px;">${daysAgo === 0 ? 'Hôm nay' : daysAgo + ' ngày trước'}</span>
+                                    </div>
+                                </div>
+                            `;
+                }).join('')}
+                    </div>
+                `;
+                view.classList.remove('empty');
+            }
+        };
+
+        const showTrashContext = (e, id) => {
+            e.preventDefault();
+            e.stopPropagation();
+            contextTarget = { id, type: 'trash' };
+            const menu = document.getElementById('trashContextMenu');
+            menu.style.left = e.pageX + 'px';
+            menu.style.top = e.pageY + 'px';
+            menu.classList.add('active');
+        };
+
+        const restoreItem = () => {
+            if (!contextTarget) return;
+            const { id } = contextTarget;
+            hideTrashContext();
+
+            const item = data.trash.find(t => t.id === id);
+            if (item) {
+                if (item.type === 'folder') {
+                    data.folders.push({ id: item.id, name: item.name, parent: 'root' });
+                } else {
+                    data.prompts.push({ id: item.id, name: item.name, content: item.content, folder: 'root' });
+                }
+                data.trash = data.trash.filter(t => t.id !== id);
+                saveData();
+                render();
+                showTrash();
+                showToast('♻️ Đã khôi phục!');
+            }
+        };
+
+        const permanentDelete = () => {
+            if (!contextTarget) return;
+            const { id } = contextTarget;
+            hideTrashContext();
+
+            data.trash = data.trash.filter(t => t.id !== id);
+            saveData();
+            render();
+            showTrash();
+            showToast('❌ Đã xóa vĩnh viễn!');
+        };
+
+        const emptyTrash = () => {
+            data.trash = [];
+            saveData();
+            render();
+            showTrash();
+            showToast('🗑️ Đã dọn sạch thùng rác!');
+        };
+
+        const hideTrashContext = () => {
+            document.getElementById('trashContextMenu').classList.remove('active');
+        };
+
+        const cleanupTrash = () => {
+            if (data.settings.autoDeleteDays === 0) return;
+            const cutoff = Date.now() - (data.settings.autoDeleteDays * 24 * 60 * 60 * 1000);
+            const before = data.trash.length;
+            data.trash = data.trash.filter(t => t.deletedAt > cutoff);
+            if (data.trash.length < before) {
+                saveData();
+                showToast('🗑️ Đã tự động xóa ' + (before - data.trash.length) + ' items cũ');
+            }
+        };
+
+        // Settings
+        const openSettings = () => {
+            document.getElementById('autoDeleteDays').value = data.settings.autoDeleteDays;
+            document.getElementById('settingsModal').classList.add('active');
+        };
+
+        const closeSettings = () => {
+            document.getElementById('settingsModal').classList.remove('active');
+        };
+
+        const saveSettings = () => {
+            data.settings.autoDeleteDays = parseInt(document.getElementById('autoDeleteDays').value);
+            saveData();
+            closeSettings();
+            showToast('⚙️ Đã lưu cài đặt!');
+        };
+
+        const saveItem = () => {
+            const id = document.getElementById('editId').value;
+            const type = document.getElementById('editType').value;
+            const name = document.getElementById('itemName').value.trim();
+            const content = document.getElementById('itemContent').value;
+            const parentId = document.getElementById('parentFolder').value;
+
+            if (!name) {
+                showToast('Cần nhập tên!');
+                return;
+            }
+
+            if (type === 'folder') {
+                if (id) {
+                    const folder = data.folders.find(f => f.id === id);
+                    if (folder) {
+                        folder.name = name;
+                        folder.parent = parentId;
+                    }
+                } else {
+                    data.folders.push({
+                        id: 'f_' + Date.now(),
+                        name,
+                        parent: parentId
+                    });
+                }
+            } else {
+                if (id) {
+                    const prompt = data.prompts.find(p => p.id === id);
+                    if (prompt) {
+                        prompt.name = name;
+                        prompt.content = content;
+                        prompt.folder = parentId;
+                    }
+                } else {
+                    data.prompts.push({
+                        id: 'p_' + Date.now(),
+                        name,
+                        content,
+                        folder: parentId
+                    });
+                }
+            }
+
+            saveData();
+            render();
+            closeModal();
+            showToast('Đã lưu!');
+        };
+
+        const populateFolderSelect = () => {
+            const select = document.getElementById('parentFolder');
+            select.innerHTML = '<option value="root">📁 Root</option>';
+            data.folders.filter(f => f.id !== 'root').forEach(f => {
+                select.innerHTML += `<option value="${f.id}">📁 ${escapeHtml(f.name)}</option>`;
+            });
+        };
+
+        // Copy
+        const copyPrompt = (id) => {
+            const prompt = data.prompts.find(p => p.id === id);
+            if (prompt) {
+                navigator.clipboard.writeText(prompt.content);
+                showToast('✅ Đã copy!');
+            }
+        };
+
+        // Import/Export
+        const exportData = () => {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `prompts_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            showToast('📤 Đã export!');
+        };
+
+        const importData = () => document.getElementById('importFile').click();
+
+        document.getElementById('importFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const imported = JSON.parse(ev.target.result);
+
+                    // Handle old format (v3.0 with categories)
+                    if (imported.prompts && Array.isArray(imported.prompts)) {
+                        if (imported.prompts[0]?.steps) {
+                            // Convert steps to single content
+                            imported.prompts.forEach(p => {
+                                const folder = data.folders.find(f => f.name === (p.category || 'Imported'));
+                                let folderId = folder?.id;
+                                if (!folderId && p.category) {
+                                    folderId = 'f_' + Date.now() + Math.random();
+                                    data.folders.push({ id: folderId, name: p.category, parent: 'root' });
+                                }
+
+                                if (p.steps) {
+                                    p.steps.forEach(step => {
+                                        data.prompts.push({
+                                            id: 'p_' + Date.now() + Math.random(),
+                                            name: step.title || p.name,
+                                            content: step.content,
+                                            folder: folderId || 'root'
+                                        });
+                                    });
+                                }
+                            });
+                        } else {
+                            imported.prompts.forEach(p => {
+                                if (!data.prompts.find(x => x.id === p.id)) {
+                                    data.prompts.push(p);
+                                }
+                            });
+                        }
+                    }
+
+                    if (imported.folders) {
+                        imported.folders.forEach(f => {
+                            if (!data.folders.find(x => x.id === f.id)) {
+                                data.folders.push(f);
+                            }
+                        });
+                    }
+
+                    saveData();
+                    render();
+                    showToast('📥 Đã import!');
+                } catch (err) {
+                    showToast('❌ File không hợp lệ!');
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+        });
+
+        // Drag & Drop
+        const attachEvents = () => {
+            document.addEventListener('dragstart', (e) => {
+                if (e.target.dataset.id) {
+                    dragItem = { id: e.target.dataset.id, type: e.target.dataset.type };
+                    e.target.style.opacity = '0.5';
+                }
+            });
+
+            document.addEventListener('dragend', (e) => {
+                if (e.target.dataset.id) {
+                    e.target.style.opacity = '1';
+                    dragItem = null;
+                    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                }
+            });
+
+            document.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const target = e.target.closest('.folder-item, .folder-children');
+                if (target) {
+                    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                    target.classList.add('drag-over');
+                }
+            });
+
+            document.addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (!dragItem) return;
+
+                const target = e.target.closest('.folder-item, .folder-children');
+                if (!target) return;
+
+                let targetFolderId = target.dataset.folder || target.dataset.id;
+                if (!targetFolderId) return;
+
+                if (dragItem.type === 'prompt') {
+                    const prompt = data.prompts.find(p => p.id === dragItem.id);
+                    if (prompt) {
+                        prompt.folder = targetFolderId;
+                        saveData();
+                        render();
+                        showToast('Đã di chuyển!');
+                    }
+                } else if (dragItem.type === 'folder' && dragItem.id !== targetFolderId) {
+                    const folder = data.folders.find(f => f.id === dragItem.id);
+                    if (folder && folder.id !== 'root') {
+                        folder.parent = targetFolderId;
+                        saveData();
+                        render();
+                        showToast('Đã di chuyển!');
+                    }
+                }
+
+                document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.context-menu')) {
+                    hideContext();
+                    hideTrashContext();
+                }
+            });
+        };
+
+        // Context Menu
+        const showContext = (e, id, type) => {
+            e.preventDefault();
+            e.stopPropagation();
+            contextTarget = { id, type };
+            const menu = document.getElementById('contextMenu');
+            menu.style.left = e.pageX + 'px';
+            menu.style.top = e.pageY + 'px';
+            menu.classList.add('active');
+        };
+
+        const hideContext = () => {
+            document.getElementById('contextMenu').classList.remove('active');
+        };
+
+        // Modal
+        const openModal = () => document.getElementById('modal').classList.add('active');
+        const closeModal = () => document.getElementById('modal').classList.remove('active');
+
+        // Utils
+        const escapeHtml = (text) => {
+            if (!text) return '';
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        };
+
+        const showToast = (msg) => {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        };
+
+        init();
+    </script>
+</body>
+
+</html>
