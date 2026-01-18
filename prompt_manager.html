@@ -539,6 +539,8 @@
 
         const saveData = () => {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            // Notify parent to sync
+            window.parent.postMessage({ type: 'SYNC_DRIVE' }, '*');
         };
 
         // Render
@@ -617,8 +619,49 @@
         const selectFolder = (id) => {
             selectedId = id;
             render();
-            document.getElementById('promptView').innerHTML = '<span>Folder: ' + escapeHtml(data.folders.find(f => f.id === id)?.name || '') + '</span>';
-            document.getElementById('promptView').classList.add('empty');
+            const folder = data.folders.find(f => f.id === id);
+            const childPrompts = data.prompts.filter(p => p.folder === id);
+
+            let html = `
+                <div class="prompt-title">
+                    <span>📁 ${escapeHtml(folder?.name || 'Root')}</span>
+                    <span style="font-size:13px;color:var(--text-muted);margin-left:auto;">${childPrompts.length} prompts</span>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));gap:12px;">
+            `;
+
+            if (childPrompts.length === 0) {
+                html += '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">Thư mục trống</div>';
+            } else {
+                childPrompts.forEach(p => {
+                    html += `
+                        <div class="prompt-content" style="cursor:pointer;height:100%;transition:all 0.2s;border:1px solid var(--border);" 
+                             onclick="selectPrompt('${p.id}')"
+                             draggable="true"
+                             data-id="${p.id}"
+                             data-type="prompt"
+                             ondragstart="handleGridDragStart(event)"
+                        >
+                            <div style="font-weight:600;margin-bottom:8px;">📄 ${escapeHtml(p.name)}</div>
+                            <div style="font-size:12px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">
+                                ${escapeHtml(p.content)}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            html += '</div>';
+
+            const view = document.getElementById('promptView');
+            view.innerHTML = html;
+            view.classList.remove('empty');
+        };
+
+        // Separate drag handler for grid items to avoid conflict
+        const handleGridDragStart = (e) => {
+            e.dataTransfer.setData('text/plain', e.target.dataset.id);
+            // Allow normal dragstart to bubble up or handle manually if needed
         };
 
         const selectPrompt = (id) => {
@@ -1067,32 +1110,92 @@
                 e.preventDefault();
                 if (!dragItem) return;
 
-                const target = e.target.closest('.folder-item, .folder-children');
+                const target = e.target.closest('.folder-item, .folder-children, .prompt-item');
+                // Allow dropping on folder-children (empty space in folder) or items
+
                 if (!target) return;
 
+                // REORDER LOGIC
+                // Check if dropping onto an item of the SAME type to reorder
+                const targetId = target.dataset.id;
+                const targetType = target.dataset.type;
+
+                if (targetId && targetType === dragItem.type && targetId !== dragItem.id) {
+                    // Reorder
+                    // We need to find the array and swap/move
+                    let array = dragItem.type === 'folder' ? data.folders : data.prompts;
+                    // Find indices
+                    const fromIndex = array.findIndex(x => x.id === dragItem.id);
+                    const toIndex = array.findIndex(x => x.id === targetId);
+
+                    if (fromIndex > -1 && toIndex > -1) {
+                        // If folders, ensure they share same parent (optional, but good for tree)
+                        // Actually for simple reorder list, just move in array
+                        // Remove from old pos
+                        const [movedItem] = array.splice(fromIndex, 1);
+                        // Insert at new pos
+                        array.splice(toIndex, 0, movedItem);
+
+                        saveData();
+                        render();
+                        // If we are in folder view and reordered prompts, refresh folder view
+                        if (selectedId && dragItem.type === 'prompt') {
+                            const p = array.find(x => x.id === dragItem.id);
+                            if (p && p.folder === selectedId) selectFolder(selectedId);
+                        }
+                        showToast('Đã sắp xếp!');
+                        document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                        return; // Done
+                    }
+                }
+
+                // MOVE TO FOLDER LOGIC (Existing)
                 let targetFolderId = target.dataset.folder || target.dataset.id;
+                // If dropping on a prompt, put in its folder? Or if hovering prompt-item which is inside a folder..
+                if (targetType === 'prompt') {
+                    // Get that prompt's folder
+                    const targetPrompt = data.prompts.find(p => p.id === targetId);
+                    if (targetPrompt) targetFolderId = targetPrompt.folder;
+                }
+
                 if (!targetFolderId) return;
 
+                // Logic to move item to folder
                 if (dragItem.type === 'prompt') {
                     const prompt = data.prompts.find(p => p.id === dragItem.id);
-                    if (prompt) {
+                    if (prompt && prompt.folder !== targetFolderId) {
                         prompt.folder = targetFolderId;
                         saveData();
                         render();
+                        if (selectedId === targetFolderId) selectFolder(selectedId);
                         showToast('Đã di chuyển!');
                     }
                 } else if (dragItem.type === 'folder' && dragItem.id !== targetFolderId) {
                     const folder = data.folders.find(f => f.id === dragItem.id);
-                    if (folder && folder.id !== 'root') {
-                        folder.parent = targetFolderId;
-                        saveData();
-                        render();
-                        showToast('Đã di chuyển!');
+                    // Prevent circular move
+                    if (folder && folder.id !== 'root' && targetFolderId !== folder.id) {
+                        // Check if target is a child of source (circular)
+                        if (!isChildOf(targetFolderId, folder.id)) {
+                            folder.parent = targetFolderId;
+                            saveData();
+                            render();
+                            showToast('Đã di chuyển!');
+                        }
                     }
                 }
 
                 document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
             });
+
+            // Helper for circular check
+            const isChildOf = (childId, parentId) => {
+                let curr = data.folders.find(f => f.id === childId);
+                while (curr && curr.parent) {
+                    if (curr.parent === parentId) return true;
+                    curr = data.folders.find(f => f.id === curr.parent);
+                }
+                return false;
+            };
 
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.context-menu')) {
