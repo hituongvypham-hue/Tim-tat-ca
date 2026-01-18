@@ -624,12 +624,13 @@
             const folder = data.folders.find(f => f.id === id);
             const childPrompts = data.prompts.filter(p => p.folder === id);
 
+            // Sequential full content view
             let html = `
                 <div class="prompt-title">
                     <span>📁 ${escapeHtml(folder?.name || 'Root')}</span>
                     <span style="font-size:13px;color:var(--text-muted);margin-left:auto;">${childPrompts.length} prompts</span>
                 </div>
-                <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));gap:12px;">
+                <div style="display:flex;flex-direction:column;gap:16px;padding-bottom:40px;">
             `;
 
             if (childPrompts.length === 0) {
@@ -637,17 +638,15 @@
             } else {
                 childPrompts.forEach(p => {
                     html += `
-                        <div class="prompt-content" style="cursor:pointer;height:100%;transition:all 0.2s;border:1px solid var(--border);" 
+                        <div class="prompt-content" style="cursor:pointer;border:1px solid var(--border);position:relative;" 
                              onclick="selectPrompt('${p.id}')"
                              draggable="true"
                              data-id="${p.id}"
                              data-type="prompt"
                              ondragstart="handleGridDragStart(event)"
                         >
-                            <div style="font-weight:600;margin-bottom:8px;">📄 ${escapeHtml(p.name)}</div>
-                            <div style="font-size:12px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">
-                                ${escapeHtml(p.content)}
-                            </div>
+                            <div style="font-weight:600;margin-bottom:8px;font-size:14px;color:var(--accent);">📄 ${escapeHtml(p.name)}</div>
+                            <div style="font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.6;">${escapeHtml(p.content)}</div>
                         </div>
                     `;
                 });
@@ -677,7 +676,6 @@
                         <input type="text" class="form-input" id="editName" value="${escapeHtml(prompt.name)}" 
                                placeholder="Tên prompt" style="font-size:16px;font-weight:600;"
                                oninput="autoSavePrompt('${id}')">
-                        <button class="copy-btn" onclick="copyPrompt('${id}')">📋 Copy</button>
                     </div>
                     <textarea class="form-textarea" id="editContent" 
                               placeholder="Nội dung prompt..." 
@@ -1208,13 +1206,18 @@
                     }
                 }
 
-                // MOVE TO FOLDER LOGIC (Existing)
+                // MOVE TO FOLDER LOGIC
                 let targetFolderId = target.dataset.folder || target.dataset.id;
-                // If dropping on a prompt, put in its folder? Or if hovering prompt-item which is inside a folder..
+
+                // If target is a Prompt, move to its parent folder
                 if (targetType === 'prompt') {
-                    // Get that prompt's folder
                     const targetPrompt = data.prompts.find(p => p.id === targetId);
                     if (targetPrompt) targetFolderId = targetPrompt.folder;
+                }
+
+                // If dropping directly on a FOLDER item -> that folder is the target
+                if (targetType === 'folder') {
+                    targetFolderId = targetId;
                 }
 
                 if (!targetFolderId) return;
