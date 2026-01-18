@@ -650,7 +650,7 @@
                                        draggable="false"
                                        onmouseenter="disableDrag(this)"
                                        onmouseleave="enableDrag(this)"
-                                       style="font-size:16px;font-weight:600;border:none;background:transparent;padding:0;flex:1;"
+                                       style="font-size:16px;font-weight:600;border:none;outline:none;box-shadow:none;background:transparent;padding:0;flex:1;"
                                        oninput="autoSavePrompt('${p.id}')">
                             </div>
                             <textarea class="form-textarea" id="content_${p.id}" 
@@ -658,7 +658,7 @@
                                       draggable="false"
                                       onmouseenter="disableDrag(this)"
                                       onmouseleave="enableDrag(this)"
-                                      style="width:100%;min-height:100px;resize:none;background:transparent;border:none;padding:0;line-height:1.6;font-family:inherit;overflow-y:hidden;"
+                                      style="width:100%;min-height:100px;resize:none;background:transparent;border:none;outline:none;box-shadow:none;padding:0;line-height:1.6;font-family:inherit;overflow-y:hidden;"
                                       oninput="autoSavePrompt('${p.id}'); autoResize(this)">${escapeHtml(p.content)}</textarea>
                              <div style="color:var(--text-muted);font-size:11px;margin-top:8px;text-align:right;">
                                 💾 Auto-save
