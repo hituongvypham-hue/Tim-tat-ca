@@ -648,14 +648,16 @@
                                        value="${escapeHtml(p.name)}" 
                                        placeholder="Tên prompt" 
                                        draggable="false"
-                                       onmousedown="event.stopPropagation()"
+                                       onmouseenter="disableDrag(this)"
+                                       onmouseleave="enableDrag(this)"
                                        style="font-size:16px;font-weight:600;border:none;background:transparent;padding:0;flex:1;"
                                        oninput="autoSavePrompt('${p.id}')">
                             </div>
                             <textarea class="form-textarea" id="content_${p.id}" 
                                       placeholder="Nội dung prompt..." 
                                       draggable="false"
-                                      onmousedown="event.stopPropagation()"
+                                      onmouseenter="disableDrag(this)"
+                                      onmouseleave="enableDrag(this)"
                                       style="width:100%;min-height:100px;resize:none;background:transparent;border:none;padding:0;line-height:1.6;font-family:inherit;overflow-y:hidden;"
                                       oninput="autoSavePrompt('${p.id}'); autoResize(this)">${escapeHtml(p.content)}</textarea>
                              <div style="color:var(--text-muted);font-size:11px;margin-top:8px;text-align:right;">
@@ -682,6 +684,17 @@
         const autoResize = (el) => {
             el.style.height = 'auto';
             el.style.height = el.scrollHeight + 'px';
+        };
+
+        // Hover Lock: Disable drag on parent when hovering input
+        const disableDrag = (el) => {
+            const card = el.closest('.prompt-content');
+            if (card) card.setAttribute('draggable', 'false');
+        };
+
+        const enableDrag = (el) => {
+            const card = el.closest('.prompt-content');
+            if (card) card.setAttribute('draggable', 'true');
         };
 
         // Separate drag handler for grid items to avoid conflict
