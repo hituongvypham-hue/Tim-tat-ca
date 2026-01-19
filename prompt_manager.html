@@ -537,7 +537,9 @@
             settings: { autoDeleteDays: 7 }
         };
 
-        let selectedId = null;
+        let selectedIds = new Set();
+        let primarySelectedId = null;
+        let lastClickedId = null; // For Shift+Click range
         let contextTarget = null;
         let dragItem = null;
         let isTrashView = false;
@@ -611,18 +613,14 @@
             let html = '';
 
             if (!isRoot) {
+                const isSelected = selectedIds.has(folderId);
                 html += `
-                    <div class="folder-item ${selectedId === folderId ? 'selected' : ''}" 
-                         data-id="${folderId}" 
-                         data-type="folder"
-                         draggable="true"
-                         onclick="selectFolder('${folderId}')"
-                    <div class="folder-item ${selectedId === folderId ? 'selected' : ''}" 
+                    <div class="folder-item ${isSelected ? 'selected' : ''}" 
                          data-id="${folderId}" 
                          data-type="folder"
                          title="${escapeHtml(folder.name)}"
                          draggable="true"
-                         onclick="selectFolder('${folderId}')"
+                         onclick="selectFolder('${folderId}', event)"
                          oncontextmenu="showContext(event, '${folderId}', 'folder')">
                         <span class="folder-toggle" onclick="event.stopPropagation(); toggleFolder('${folderId}')">${isCollapsed ? '▶' : '▼'}</span>
                         <span class="folder-icon">📁</span>
@@ -639,18 +637,14 @@
             });
 
             childPrompts.forEach(p => {
+                const isSelected = selectedIds.has(p.id);
                 html += `
-                    <div class="prompt-item ${selectedId === p.id ? 'selected' : ''}"
-                         data-id="${p.id}"
-                         data-type="prompt"
-                         draggable="true"
-                         onclick="selectPrompt('${p.id}')"
-                    <div class="prompt-item ${selectedId === p.id ? 'selected' : ''}"
+                    <div class="prompt-item ${isSelected ? 'selected' : ''}"
                          data-id="${p.id}"
                          data-type="prompt"
                          title="${escapeHtml(p.name)}"
                          draggable="true"
-                         onclick="selectPrompt('${p.id}')"
+                         onclick="selectPrompt('${p.id}', event)"
                          oncontextmenu="showContext(event, '${p.id}', 'prompt')">
                         <span class="folder-toggle"></span>
                         <span class="prompt-icon">📄</span>
@@ -663,10 +657,77 @@
             return html;
         };
 
-        // Selection
-        const selectFolder = (id) => {
-            selectedId = id;
-            render();
+        // Selection Logic
+        const handleSelection = (id, type, event) => {
+            if (event && (event.ctrlKey || event.metaKey)) {
+                // Toggle
+                if (selectedIds.has(id)) {
+                    selectedIds.delete(id);
+                    if (primarySelectedId === id) {
+                        primarySelectedId = Array.from(selectedIds).pop() || null;
+                    }
+                } else {
+                    selectedIds.add(id);
+                    primarySelectedId = id;
+                }
+            } else if (event && event.shiftKey && lastClickedId) {
+                // Range Selection (Simple implementation: Select everything between in current flatten view is hard in tree)
+                // Fallback: Just add to selection for now, accurate range in tree is complex without linear index
+                // Better approach: Get all visible items in tree order and select range
+                const allVisible = getAllVisibleItems();
+                const startIdx = allVisible.findIndex(item => item.id === lastClickedId);
+                const endIdx = allVisible.findIndex(item => item.id === id);
+
+                if (startIdx !== -1 && endIdx !== -1) {
+                    const min = Math.min(startIdx, endIdx);
+                    const max = Math.max(startIdx, endIdx);
+                    // If not holding ctrl, clear others? Standard behavior is usually yes
+                    if (!event.ctrlKey) selectedIds.clear();
+
+                    for (let i = min; i <= max; i++) {
+                        selectedIds.add(allVisible[i].id);
+                    }
+                    primarySelectedId = id;
+                } else {
+                    selectedIds.add(id);
+                    primarySelectedId = id;
+                }
+            } else {
+                // Single select
+                selectedIds.clear();
+                selectedIds.add(id);
+                primarySelectedId = id;
+            }
+
+            lastClickedId = id;
+            render(); // Re-render tree highlights
+
+            // Render View Pane based on Primary Selection
+            if (primarySelectedId) {
+                if (type === 'folder') renderFolderView(primarySelectedId);
+                else renderPromptView(primarySelectedId);
+            } else {
+                document.getElementById('promptView').innerHTML = '<span>Chọn một prompt để xem</span>';
+                document.getElementById('promptView').classList.add('empty');
+            }
+        };
+
+        const getAllVisibleItems = () => {
+            // Helper to get linear list of currently visible items for Shift+Click
+            // We can traverse the DOM or data. DOM is easier for visual order.
+            const items = [];
+            document.querySelectorAll('.folder-item, .prompt-item').forEach(el => {
+                // Skip trash and root header if needed, but they usually aren't .folder-item in tree
+                if (el.dataset.id) items.push({ id: el.dataset.id, type: el.dataset.type });
+            });
+            return items;
+        };
+
+        const selectFolder = (id, event) => {
+            handleSelection(id, 'folder', event);
+        };
+
+        const renderFolderView = (id) => {
             const folder = data.folders.find(f => f.id === id);
             const childPrompts = data.prompts.filter(p => p.folder === id);
 
@@ -756,10 +817,13 @@
             // Allow normal dragstart to bubble up or handle manually if needed
         };
 
-        const selectPrompt = (id) => {
-            selectedId = id;
+        const selectPrompt = (id, event) => {
+            handleSelection(id, 'prompt', event);
+        };
+
+        const renderPromptView = (id) => {
             isTrashView = false;
-            render();
+            // render(); // Already called in handleSelection
             const prompt = data.prompts.find(p => p.id === id);
             if (prompt) {
                 document.getElementById('promptView').innerHTML = `
@@ -905,43 +969,74 @@
         };
 
         const deleteItem = (targetId = null, targetType = null) => {
-            let id, type;
+            let itemsToDelete = [];
 
             if (targetId && targetType) {
-                id = targetId;
-                type = targetType;
+                // Direct delete (drag drop single, or context menu single)
+                itemsToDelete.push({ id: targetId, type: targetType });
             } else if (contextTarget) {
-                id = contextTarget.id;
-                type = contextTarget.type;
+                // Context menu
+                // If context target is NOT in selection, we delete just context target
+                // If it IS in selection, we specificially delete the context target? 
+                // No, usually context menu on selection implies batch action.
+                // But let's check if contextTarget.id is in selectedIds.
+                if (selectedIds.has(contextTarget.id) && selectedIds.size > 1) {
+                    // Batch delete
+                    selectedIds.forEach(id => {
+                        // Determine type for each selected id
+                        const f = data.folders.find(x => x.id === id);
+                        const p = data.prompts.find(x => x.id === id);
+                        if (f) itemsToDelete.push({ id, type: 'folder' });
+                        if (p) itemsToDelete.push({ id, type: 'prompt' });
+                    });
+                } else {
+                    itemsToDelete.push({ id: contextTarget.id, type: contextTarget.type });
+                }
                 hideContext();
             } else {
-                return;
-            }
-
-            const deletedItems = [];
-
-            if (type === 'folder' && id !== 'root') {
-                const folder = data.folders.find(f => f.id === id);
-                if (folder) {
-                    // Record children first
-                    data.prompts.filter(p => p.folder === id).forEach(p => {
-                        deletedItems.push({ ...p, type: 'prompt' });
-                        data.trash.push({ ...p, deletedAt: Date.now(), type: 'prompt' });
+                // Called via keyboard or toolbar?
+                if (selectedIds.size > 0) {
+                    selectedIds.forEach(id => {
+                        const f = data.folders.find(x => x.id === id);
+                        const p = data.prompts.find(x => x.id === id);
+                        if (f) itemsToDelete.push({ id, type: 'folder' });
+                        if (p) itemsToDelete.push({ id, type: 'prompt' });
                     });
-                    deletedItems.push({ ...folder, type: 'folder' });
-
-                    data.prompts = data.prompts.filter(p => p.folder !== id);
-                    data.trash.push({ ...folder, deletedAt: Date.now(), type: 'folder' });
-                    data.folders = data.folders.filter(f => f.id !== id);
-                }
-            } else if (type === 'prompt') {
-                const prompt = data.prompts.find(p => p.id === id);
-                if (prompt) {
-                    deletedItems.push({ ...prompt, type: 'prompt' });
-                    data.trash.push({ ...prompt, deletedAt: Date.now(), type: 'prompt' });
-                    data.prompts = data.prompts.filter(p => p.id !== id);
+                } else {
+                    return;
                 }
             }
+
+            if (itemsToDelete.length === 0) return;
+
+            const deletedItems = []; // For history tracking
+
+            itemsToDelete.forEach(item => {
+                const { id, type } = item;
+
+                if (type === 'folder' && id !== 'root') {
+                    const folder = data.folders.find(f => f.id === id);
+                    if (folder) {
+                        // Record children first
+                        data.prompts.filter(p => p.folder === id).forEach(p => {
+                            deletedItems.push({ ...p, type: 'prompt' });
+                            data.trash.push({ ...p, deletedAt: Date.now(), type: 'prompt' });
+                        });
+                        deletedItems.push({ ...folder, type: 'folder' });
+
+                        data.prompts = data.prompts.filter(p => p.folder !== id);
+                        data.trash.push({ ...folder, deletedAt: Date.now(), type: 'folder' });
+                        data.folders = data.folders.filter(f => f.id !== id);
+                    }
+                } else if (type === 'prompt') {
+                    const prompt = data.prompts.find(p => p.id === id);
+                    if (prompt) {
+                        deletedItems.push({ ...prompt, type: 'prompt' });
+                        data.trash.push({ ...prompt, deletedAt: Date.now(), type: 'prompt' });
+                        data.prompts = data.prompts.filter(p => p.id !== id);
+                    }
+                }
+            });
 
             if (deletedItems.length > 0) {
                 // Push to history
@@ -951,8 +1046,16 @@
                     timestamp: Date.now()
                 });
 
+                selectedIds.clear();
+                primarySelectedId = null;
+
                 saveData();
                 render();
+                // Clear view pane if deleted
+                const view = document.getElementById('promptView');
+                view.innerHTML = '<span>Chọn một prompt để xem</span>';
+                view.classList.add('empty');
+
                 showToast('🗑️ Đã chuyển ' + deletedItems.length + ' mục vào thùng rác!');
             }
         };
@@ -1019,23 +1122,29 @@
             e.currentTarget.classList.remove('drag-over');
             const id = e.dataTransfer.getData('text/plain');
 
-            // Determine type by checking data
-            let type = 'prompt';
-            if (data.folders.find(f => f.id === id)) {
-                type = 'folder';
-            } else if (data.prompts.find(p => p.id === id)) {
-                type = 'prompt';
+            // Check if dragged item is part of selection
+            if (id && selectedIds.has(id)) {
+                // Batch delete
+                deleteItem(); // Calls deleteItem with no args, which triggers batch delete logic
             } else {
-                return; // Unknown ID
+                // Single delete
+                let type = 'prompt';
+                if (data.folders.find(f => f.id === id)) {
+                    type = 'folder';
+                } else if (data.prompts.find(p => p.id === id)) {
+                    type = 'prompt';
+                } else {
+                    return; // Unknown ID
+                }
+                deleteItem(id, type);
             }
-
-            deleteItem(id, type);
         };
 
         // Trash functions
         const showTrash = () => {
             isTrashView = true;
-            selectedId = null;
+            selectedIds.clear();
+            primarySelectedId = 'trash';
             render();
 
             const view = document.getElementById('promptView');
@@ -1380,6 +1489,26 @@
 
                 if (e.target.dataset.id) {
                     dragItem = { id: e.target.dataset.id, type: e.target.dataset.type };
+
+                    // If not selected, select it (unless ctrl pressed, but drag starts selection usually)
+                    // Simplified: If dragging something NOT in selection, update selection to just this
+                    if (!selectedIds.has(dragItem.id)) {
+                        handleSelection(dragItem.id, dragItem.type, { ctrlKey: false, shiftKey: false });
+                    }
+
+                    e.dataTransfer.setData('text/plain', dragItem.id);
+                    e.dataTransfer.effectAllowed = 'move';
+
+                    // Custom ghost if multiple
+                    if (selectedIds.size > 1) {
+                        const ghost = document.createElement('div');
+                        ghost.classList.add('drag-ghost');
+                        ghost.textContent = `Moving ${selectedIds.size} items...`;
+                        document.body.appendChild(ghost);
+                        e.dataTransfer.setDragImage(ghost, 0, 0);
+                        setTimeout(() => document.body.removeChild(ghost), 0);
+                    }
+
                     e.target.style.opacity = '0.5';
                 }
             });
@@ -1508,9 +1637,9 @@
                         saveData();
                         render();
                         // If we are in folder view and reordered prompts, refresh folder view
-                        if (selectedId && dragItem.type === 'prompt') {
+                        if (primarySelectedId && dragItem.type === 'prompt') {
                             const p = array.find(x => x.id === dragItem.id);
-                            if (p && p.folder === selectedId) selectFolder(selectedId);
+                            if (p && p.folder === primarySelectedId) renderFolderView(primarySelectedId);
                         }
                         showToast('Đã sắp xếp!');
                         document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
@@ -1541,7 +1670,8 @@
                         prompt.folder = targetFolderId;
                         saveData();
                         render();
-                        if (selectedId === targetFolderId) selectFolder(selectedId);
+                        render();
+                        if (primarySelectedId === targetFolderId) renderFolderView(primarySelectedId);
                         showToast('Đã di chuyển!');
                     }
                 } else if (dragItem.type === 'folder' && dragItem.id !== targetFolderId) {
