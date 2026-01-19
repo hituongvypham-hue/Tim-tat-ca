@@ -15819,10 +15819,10 @@ Trả về JSON:`;
             if (result.brollSuggestions && result.brollSuggestions.length > 0) {
                 html += `
                     <div style="margin-bottom: 16px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
-                        <div style="font-weight: 600; margin-bottom: 8px;">🎥 B-roll Keywords (click để tìm)</div>
+                        <div style="font-weight: 600; margin-bottom: 8px;">🎥 B-roll Keywords (click để copy)</div>
                         <div style="display: flex; flex-wrap: wrap; gap: 6px;">
                             ${result.brollSuggestions.map(kw =>
-                    `<span onclick="searchFromDirector('${escapeHtml(kw)}')" style="padding: 4px 10px; background: var(--mac-accent); color: white; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: transform 0.1s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">${escapeHtml(kw)}</span>`
+                    `<span class="keyword-chip copyable" onclick="copyKeyword(this, '${escapeHtml(kw)}')" title="Click to copy">${escapeHtml(kw)}</span>`
                 ).join('')}
                         </div>
                     </div>
@@ -15863,7 +15863,7 @@ Trả về JSON:`;
                         ${showStock && shot.stockKeywords && shot.stockKeywords.length > 0 ? `
                         <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px;">
                             ${shot.stockKeywords.map(kw =>
-                    `<span onclick="searchFromDirector('${escapeHtml(kw)}')" style="padding: 3px 8px; background: #374151; color: #e5e7eb; border-radius: 4px; font-size: 0.75rem; cursor: pointer;" title="Click để tìm kiếm">${escapeHtml(kw)}</span>`
+                    `<span class="keyword-chip copyable" onclick="copyKeyword(this, '${escapeHtml(kw)}')" title="Click to copy">${escapeHtml(kw)}</span>`
                 ).join('')}
                         </div>
                         ` : ''}
@@ -16074,7 +16074,7 @@ Trả về JSON:`;
             if (clock) {
                 // Formatting based on user request: vYYYY.MM.DD HH:MM
                 // v2026.01.19 16:55 - Director Tab Redesign
-                const version = `v2026.01.19 17:15`;
+                const version = `v2026.01.19 17:40`;
                 clock.textContent = version;
             }
         }
