@@ -5840,6 +5840,135 @@
             font-size: 0.85rem;
         }
 
+        /* Context Input */
+        .director-context-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--mac-border);
+            border-radius: 8px;
+            background: var(--mac-bg);
+            color: var(--mac-text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 60px;
+            transition: all 0.2s;
+        }
+
+        .director-context-input:focus {
+            outline: none;
+            border-color: var(--mac-accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .director-context-input::placeholder {
+            color: var(--mac-text-secondary);
+            opacity: 0.7;
+            font-size: 0.85rem;
+        }
+
+        /* File Upload Zone */
+        .file-upload-zone {
+            border: 2px dashed var(--mac-border);
+            border-radius: 10px;
+            background: rgba(99, 102, 241, 0.03);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .file-upload-zone:hover {
+            border-color: var(--mac-accent);
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        .file-upload-zone.dragover {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            transform: scale(1.01);
+        }
+
+        .file-upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            gap: 6px;
+        }
+
+        .file-upload-icon {
+            font-size: 1.8rem;
+            opacity: 0.7;
+        }
+
+        .file-upload-text {
+            font-size: 0.9rem;
+            color: var(--mac-text);
+            font-weight: 500;
+        }
+
+        .file-upload-hint {
+            font-size: 0.75rem;
+            color: var(--mac-text-secondary);
+        }
+
+        /* Uploaded Files List */
+        .uploaded-files-list {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .uploaded-file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .uploaded-file-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .uploaded-file-icon {
+            font-size: 1rem;
+        }
+
+        .uploaded-file-name {
+            font-weight: 500;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .uploaded-file-size {
+            font-size: 0.75rem;
+            color: var(--mac-text-secondary);
+        }
+
+        .uploaded-file-remove {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .uploaded-file-remove:hover {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
         /* Results Header */
         .director-results-header {
             display: flex;
@@ -8360,6 +8489,25 @@ Con hổ Bengal là loài mèo lớn thứ hai thế giới, chỉ sau hổ Sibe
                                         <span class="toggle-text">🎨 Mood/Tone</span>
                                     </label>
                                 </div>
+                            </div>
+                            <div class="settings-group">
+                                <label class="settings-label">💬 Ghi chú bổ sung cho AI</label>
+                                <textarea id="directorContext" class="director-context-input" rows="3"
+                                    placeholder="Ví dụ: Video này cho kênh du lịch, ưu tiên cảnh thiên nhiên; Tập trung vào cảm xúc ấm áp; Dùng nhiều góc cận..."></textarea>
+                            </div>
+                            <div class="settings-group">
+                                <label class="settings-label">📎 File tham khảo (văn bản)</label>
+                                <div class="file-upload-zone" id="directorFileZone">
+                                    <input type="file" id="directorFileInput" accept=".txt,.md,.doc,.docx" multiple
+                                        style="display: none;" onchange="handleDirectorFiles(event)">
+                                    <div class="file-upload-content"
+                                        onclick="document.getElementById('directorFileInput').click()">
+                                        <span class="file-upload-icon">📄</span>
+                                        <span class="file-upload-text">Click để chọn file hoặc kéo thả vào đây</span>
+                                        <span class="file-upload-hint">.txt, .md (tối đa 3 file)</span>
+                                    </div>
+                                </div>
+                                <div id="directorFileList" class="uploaded-files-list"></div>
                             </div>
                         </div>
                     </div>
@@ -16513,6 +16661,84 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
         // DIRECTOR TAB LOGIC
         // ==========================================
         let directorShotData = [];
+        let directorFileContents = [];
+
+        // File handling for Director context
+        function handleDirectorFiles(event) {
+            const files = event.target.files;
+            processDirectorFiles(files);
+        }
+
+        function processDirectorFiles(files) {
+            if (directorFileContents.length + files.length > 3) {
+                toast('⚠️ Tối đa 3 file!');
+                return;
+            }
+
+            Array.from(files).forEach(file => {
+                if (file.size > 100 * 1024) {  // 100KB limit
+                    toast(`⚠️ File "${file.name}" quá lớn (>100KB)`);
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    directorFileContents.push({
+                        name: file.name,
+                        size: file.size,
+                        content: e.target.result
+                    });
+                    renderDirectorFileList();
+                };
+                reader.readAsText(file);
+            });
+        }
+
+        function renderDirectorFileList() {
+            const listEl = document.getElementById('directorFileList');
+            if (!listEl) return;
+
+            if (directorFileContents.length === 0) {
+                listEl.innerHTML = '';
+                return;
+            }
+
+            listEl.innerHTML = directorFileContents.map((file, index) => `
+                <div class="uploaded-file-item">
+                    <div class="uploaded-file-info">
+                        <span class="uploaded-file-icon">📄</span>
+                        <span class="uploaded-file-name">${escapeHtml(file.name)}</span>
+                        <span class="uploaded-file-size">(${(file.size / 1024).toFixed(1)}KB)</span>
+                    </div>
+                    <button class="uploaded-file-remove" onclick="removeDirectorFile(${index})" title="Xóa file">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function removeDirectorFile(index) {
+            directorFileContents.splice(index, 1);
+            renderDirectorFileList();
+            toast('Đã xóa file');
+        }
+
+        // Drag and drop support
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropZone = document.getElementById('directorFileZone');
+            if (dropZone) {
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('dragover');
+                });
+                dropZone.addEventListener('dragleave', () => {
+                    dropZone.classList.remove('dragover');
+                });
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                    processDirectorFiles(e.dataTransfer.files);
+                });
+            }
+        });
 
         function toggleDirectorSettings() {
             const settings = document.getElementById('directorSettings');
@@ -16552,6 +16778,10 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             const showCamera = document.getElementById('directorShowCamera').checked;
             const showMood = document.getElementById('directorShowMood').checked;
 
+            // Get user context and file contents
+            const userContext = document.getElementById('directorContext')?.value.trim() || '';
+            const fileContextParts = directorFileContents.map(f => `[File: ${f.name}]\n${f.content}`).join('\n\n');
+
             const loadingEl = document.getElementById('directorLoading');
             const resultsEl = document.getElementById('directorResults');
             const shotListEl = document.getElementById('directorShotList');
@@ -16559,13 +16789,26 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             loadingEl.style.display = 'block';
             resultsEl.style.display = 'none';
 
+            // Build context section for prompt
+            let contextSection = '';
+            if (userContext || fileContextParts) {
+                contextSection = `\n\nNGƯỜI DÙNG YÊU CẦU BỔ SUNG:\n`;
+                if (userContext) {
+                    contextSection += `"${userContext}"\n`;
+                }
+                if (fileContextParts) {
+                    contextSection += `\nTÀI LIỆU THAM KHẢO:\n${fileContextParts}\n`;
+                }
+                contextSection += `\nHãy điều chỉnh shot breakdown theo các yêu cầu và tài liệu trên.\n`;
+            }
+
             const directorPrompt = `Bạn là một đạo diễn hình ảnh chuyên nghiệp (Visual Director) cho video YouTube/phim tài liệu.
 
 PHONG CÁCH: ${style === 'documentary' ? 'Phim tài liệu - chuyên nghiệp, nhiều B-roll' :
                     style === 'cinematic' ? 'Điện ảnh - góc máy đẹp, ánh sáng nghệ thuật' :
                         style === 'youtube' ? 'YouTube casual - năng động, nhiều cutaway' :
                             style === 'news' ? 'Tin tức - rõ ràng, thông tin' : 'Giáo dục - minh họa dễ hiểu'}
-
+${contextSection}
 NHIỆM VỤ: Phân tích kịch bản voice-over dưới đây và tạo SHOT BREAKDOWN chi tiết.
 
 KỊCH BẢN:
