@@ -5147,6 +5147,113 @@
             transform: translateX(0);
         }
 
+        /* Director Tab Redesign */
+        .ai-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .ai-card {
+            background: var(--mac-bg);
+            border: 1px solid var(--mac-border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .ai-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: var(--mac-accent);
+        }
+
+        .ai-card-header {
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.03);
+            border-bottom: 1px solid var(--mac-border);
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--mac-text);
+        }
+
+        .ai-card-body {
+            padding: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .keyword-chip.copyable {
+            cursor: copy;
+            transition: all 0.2s;
+            user-select: none;
+            position: relative;
+            padding-right: 26px;
+            /* Space for icon */
+        }
+
+        .keyword-chip.copyable:hover {
+            background-color: var(--mac-accent);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .keyword-chip.copyable::after {
+            content: '📋';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            opacity: 0.5;
+        }
+
+        .keyword-chip.copyable:hover::after {
+            opacity: 1;
+            filter: grayscale(1) brightness(2);
+            /* Make icon white on hover */
+        }
+
+        .keyword-chip.copied {
+            background-color: #10b981 !important;
+            /* Green */
+            color: white !important;
+            border-color: #10b981 !important;
+        }
+
+        .keyword-chip.copied::after {
+            content: '✓';
+            filter: brightness(2);
+        }
+
+        .ai-context-box {
+            background: rgba(33, 150, 243, 0.08);
+            border-left: 4px solid #2196f3;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--mac-text);
+        }
+
+        .ai-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         /* Toggle Button for Zen Mode */
         .zen-toggle-btn {
             display: none;
@@ -9297,44 +9404,82 @@ Trả về JSON (chỉ JSON, không text khác):
                 }
             }
 
-            // Display deep dive suggestions
+            // Display deep dive suggestions (Redesigned)
             function displayDeepDiveSuggestions(type, aiResult) {
                 const content = document.getElementById('aiSuggestionContent');
 
                 let html = `
                 <div class="ai-section">
-                    <div class="ai-section-title" style="color: var(--google-blue);">🔬 Phân tích sâu: ${escapeHtml(aiResult.topic || '')}</div>
-                    ${aiResult.context ? `<p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.75rem;line-height:1.5;">${escapeHtml(aiResult.context)}</p>` : ''}
+                    <div class="ai-section-title" style="color: var(--google-blue);">
+                        <span>🔬</span> ${escapeHtml(aiResult.topic || 'Phân tích dự án')}
+                    </div>
+                    ${aiResult.context ? `
+                        <div class="ai-context-box">
+                            <strong>Context:</strong> ${escapeHtml(aiResult.context)}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="ai-grid">
             `;
 
                 const categories = [
-                    { key: 'main', label: '📌 Chi tiết dự án' },
-                    { key: 'phases', label: '📅 Các giai đoạn' },
-                    { key: 'companies', label: '🏢 Công ty tham gia' },
-                    { key: 'impacts', label: '💥 Tác động' },
-                    { key: 'controversy', label: '⚠️ Tranh cãi' },
-                    { key: 'related', label: '🔗 Dự án liên quan' },
-                    { key: 'broll', label: '🎬 B-roll footage' },
-                    { key: 'news', label: '📰 Tin tức mới nhất' }
+                    { key: 'main', label: '📌 Chi tiết dự án', icon: '📝' },
+                    { key: 'phases', label: '📅 Các giai đoạn', icon: '⏳' },
+                    { key: 'companies', label: '🏢 Công ty tham gia', icon: '🏗️' },
+                    { key: 'impacts', label: '💥 Tác động', icon: '🌍' },
+                    { key: 'controversy', label: '⚠️ Tranh cãi / Vấn đề', icon: '❗' },
+                    { key: 'related', label: '🔗 Dự án liên quan', icon: '🤝' },
+                    { key: 'broll', label: '🎬 B-roll Footage', icon: '🎥' },
+                    { key: 'news', label: '📰 Tin tức & Keywords', icon: '🗞️' }
                 ];
 
                 categories.forEach(cat => {
                     const kws = aiResult.keywords?.[cat.key] || [];
                     if (kws.length > 0) {
                         html += `
-                        <div class="suggestion-group">
-                            <div class="suggestion-label">${cat.label}</div>
-                            <div class="suggestion-keywords">
-                                ${kws.map(k => `<span class="keyword-chip ai" onclick="useKeyword('${type}', '${escapeHtml(k)}')">${escapeHtml(k)}</span>`).join('')}
+                        <div class="ai-card">
+                            <div class="ai-card-header">
+                                <span>${cat.icon}</span> ${cat.label}
+                            </div>
+                            <div class="ai-card-body">
+                                ${kws.map(k => `
+                                    <span class="keyword-chip ai copyable" 
+                                          onclick="copyKeyword(this, '${escapeHtml(k)}')"
+                                          title="Click to copy">
+                                        ${escapeHtml(k)}
+                                    </span>
+                                `).join('')}
                             </div>
                         </div>
                     `;
                     }
                 });
 
-                html += '</div>';
+                html += `
+                    </div> <!-- End grid -->
+                </div>`;
+
                 content.innerHTML = html;
             }
+
+            // Copy keyword to clipboard
+            window.copyKeyword = function (element, text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    // Visual feedback on element
+                    element.classList.add('copied');
+
+                    // Show small toast
+                    toast(`📋 Copied: "${text}"`);
+
+                    // Reset after 1.5s
+                    setTimeout(() => {
+                        element.classList.remove('copied');
+                    }, 1500);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    toast('❌ Lỗi copy');
+                });
+            };
 
             // Translate and use
             window.translateAndUse = async function (type, keyword, lang) {
