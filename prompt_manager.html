@@ -411,6 +411,45 @@
             z-index: 1000;
             opacity: 0.9;
         }
+
+        /* Search Input */
+        #searchPrompt {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: white;
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        #searchPrompt:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+        }
+
+        /* Search Highlights */
+        mark {
+            background-color: #ffd700;
+            color: black;
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+
+        .search-badge {
+            font-size: 10px;
+            background: #e0e0e0;
+            color: #333;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 6px;
+            white-space: nowrap;
+        }
+
+        .search-match-content {
+            background: #d4edda;
+            color: #155724;
+        }
     </style>
 </head>
 
