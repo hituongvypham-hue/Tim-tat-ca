@@ -11345,6 +11345,14 @@ Trả về JSON (chỉ JSON, không text khác):
                             });
                         }
 
+                        // Listen for sync requests from iframe
+                        window.addEventListener('message', (event) => {
+                            if (event.data && event.data.type === 'SYNC_DRIVE') {
+                                console.log('[GDrive] External sync request received');
+                                GDriveSync.scheduleAutoSync('prompt_manager_v4');
+                            }
+                        });
+
                         initGDrive();
                         console.log('[GDrive] Module loaded. signInGoogle defined:', typeof window.signInGoogle === 'function');
 
