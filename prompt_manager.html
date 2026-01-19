@@ -941,23 +941,57 @@
             handleSelection(id, 'prompt', event);
         };
 
+        const escapeRegExp = (string) => {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        };
+
+        const enableEditMode = (id) => {
+            const displayEl = document.getElementById('highlightContent');
+            const editEl = document.getElementById('editContent');
+            if (displayEl && editEl) {
+                displayEl.style.display = 'none';
+                editEl.style.display = 'block';
+                editEl.focus();
+            }
+        };
+
         const renderPromptView = (id) => {
             isTrashView = false;
-            // render(); // Already called in handleSelection
             const prompt = data.prompts.find(p => p.id === id);
             if (prompt) {
+                let contentHtml = '';
+                // If searching, show highlighted div. Else show textarea.
+                if (searchTerm) {
+                    const safeTerm = escapeRegExp(searchTerm);
+                    const highlighted = escapeHtml(prompt.content).replace(new RegExp(safeTerm, 'gi'), match => `<mark>${match}</mark>`);
+                    contentHtml = `
+                        <div id="highlightContent" class="form-textarea" 
+                             style="width:100%;min-height:calc(100vh - 180px);resize:none;overflow-y:auto;background:white;border:1px solid var(--border);white-space:pre-wrap;cursor:text;"
+                             onclick="enableEditMode('${id}')" 
+                             title="Click to edit">
+                            ${highlighted}
+                        </div>
+                        <textarea class="form-textarea" id="editContent" 
+                                  placeholder="Nội dung prompt..." 
+                                  style="display:none;width:100%;min-height:calc(100vh - 180px);resize:none;"
+                                  oninput="autoSavePrompt('${id}')">${escapeHtml(prompt.content)}</textarea>
+                     `;
+                } else {
+                    contentHtml = `<textarea class="form-textarea" id="editContent" 
+                                      placeholder="Nội dung prompt..." 
+                                      style="width:100%;min-height:calc(100vh - 180px);resize:none;"
+                                      oninput="autoSavePrompt('${id}')">${escapeHtml(prompt.content)}</textarea>`;
+                }
+
                 document.getElementById('promptView').innerHTML = `
                     <div class="prompt-title" style="margin-bottom:12px;">
                         <input type="text" class="form-input" id="editName" value="${escapeHtml(prompt.name)}" 
                                placeholder="Tên prompt" style="font-size:16px;font-weight:600;"
                                oninput="autoSavePrompt('${id}')">
                     </div>
-                    <textarea class="form-textarea" id="editContent" 
-                              placeholder="Nội dung prompt..." 
-                              style="width:100%;min-height:calc(100vh - 180px);resize:none;"
-                              oninput="autoSavePrompt('${id}')">${escapeHtml(prompt.content)}</textarea>
+                    ${contentHtml}
                     <div style="color:var(--text-muted);font-size:11px;margin-top:8px;">
-                        💾 Tự động lưu khi chỉnh sửa
+                        ${searchTerm ? '🔍 Click vào nội dung để chỉnh sửa' : '💾 Tự động lưu khi chỉnh sửa'}
                     </div>
                 `;
                 document.getElementById('promptView').classList.remove('empty');
