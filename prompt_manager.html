@@ -508,6 +508,9 @@
                 <div class="form-group">
                     <button class="btn btn-secondary" onclick="emptyTrash()" style="width:100%">🗑️ Dọn sạch thùng
                         rác</button>
+                    <button class="btn btn-secondary" onclick="resetAllData()"
+                        style="width:100%; margin-top: 10px; background-color: #dc3545; color: white; border-color: #dc3545;">⚠️
+                        Xóa toàn bộ dữ liệu (Reset)</button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1112,6 +1115,25 @@
             render();
             showTrash();
             showToast('🗑️ Đã dọn sạch thùng rác!');
+        };
+
+        const resetAllData = () => {
+            if (confirm('⚠️ CẢNH BÁO: Hành động này sẽ xóa TOÀN BỘ prompts, folders và settings của bạn.\n\nDữ liệu sẽ trở về trạng thái ban đầu (trống rỗng).\n\nBạn có chắc chắn muốn tiếp tục?')) {
+                // Reset to default
+                data = {
+                    folders: [
+                        { id: 'root', name: 'Root', parent: null }
+                    ],
+                    prompts: [],
+                    trash: [],
+                    settings: { autoDeleteDays: 7 },
+                    sidebarWidth: 250
+                };
+                saveData();
+                render();
+                closeSettings();
+                showToast('✅ Đã reset toàn bộ dữ liệu!');
+            }
         };
 
         const hideTrashContext = () => {
