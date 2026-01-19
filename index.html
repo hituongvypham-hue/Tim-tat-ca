@@ -6016,6 +6016,18 @@
 
         .drive-recent-section {
             margin-top: 12px;
+            border-top: 1px dashed var(--mac-border);
+            padding-top: 12px;
+        }
+
+        .sync-badge {
+            font-size: 0.7rem;
+            color: #34a853;
+            background: rgba(52, 168, 83, 0.1);
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-left: 6px;
+            font-weight: 500;
         }
 
         .recent-chips {
@@ -8652,27 +8664,18 @@ Con hổ Bengal là loài mèo lớn thứ hai thế giới, chỉ sau hổ Sibe
                                 <div id="directorFileList" class="uploaded-files-list"></div>
                             </div>
 
-                            <!-- Google Drive Sync Section -->
-                            <div class="settings-group drive-sync-section">
-                                <label class="settings-label">☁️ Đồng bộ Google Drive</label>
-                                <div class="drive-connect-row">
-                                    <button id="driveConnectBtn" class="drive-connect-btn">
-                                        ⚙️ Cấu hình Google Drive
-                                    </button>
-                                    <span id="driveStatus" class="drive-status-unconfigured">Chưa cấu hình</span>
-                                </div>
-                            </div>
-
-                            <!-- Recent Items Section (hidden until connected) -->
-                            <div id="driveRecentSection" class="drive-recent-section" style="display: none;">
+                            <!-- Recent Items Section (synced with existing GDrive) -->
+                            <div class="drive-recent-section">
                                 <div class="settings-group">
-                                    <label class="settings-label">📝 Ghi chú gần đây</label>
+                                    <label class="settings-label">📝 Ghi chú gần đây <span class="sync-badge">☁️
+                                            Auto-sync</span></label>
                                     <div id="recentNotesList" class="recent-chips">
                                         <span class="recent-empty">Chưa có ghi chú nào</span>
                                     </div>
                                 </div>
                                 <div class="settings-group">
-                                    <label class="settings-label">📁 File gần đây</label>
+                                    <label class="settings-label">📁 File gần đây <span class="sync-badge">☁️
+                                            Auto-sync</span></label>
                                     <div id="recentFilesList" class="recent-chips">
                                         <span class="recent-empty">Chưa có file nào</span>
                                     </div>
@@ -12111,7 +12114,7 @@ Trả về JSON (chỉ JSON, không text khác):
                                     'tabOrder', 'platformOrder', 'customSites', 'customHomepages',
                                     'defaultHomepages', 'searchHistory', 'myTools', 'promptLibrary',
                                     'stylePresets', 'favorites', 'ytAudioHistory', 'ytAudioFavorites',
-                                    'ytAudioPlaylists', 'prompt_manager_v4'
+                                    'ytAudioPlaylists', 'prompt_manager_v4', 'directorRecentNotes', 'directorRecentFiles'
                                 ]
                             },
 
@@ -16907,7 +16910,128 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                     processDirectorFiles(e.dataTransfer.files);
                 });
             }
+            // Load recent items on startup
+            renderRecentNotes();
+            renderRecentFiles();
         });
+
+        // ========== RECENT NOTES/FILES MANAGEMENT ==========
+        // Uses localStorage + auto-synced via existing GDrive module
+        const MAX_RECENT_NOTES = 10;
+        const MAX_RECENT_FILES = 10;
+
+        function getRecentNotes() {
+            try {
+                return JSON.parse(localStorage.getItem('directorRecentNotes') || '[]');
+            } catch { return []; }
+        }
+
+        function saveRecentNote(text) {
+            if (!text || text.trim().length < 5) return;
+            let notes = getRecentNotes();
+            // Avoid duplicates
+            notes = notes.filter(n => n.text !== text);
+            notes.unshift({ text: text.substring(0, 500), timestamp: Date.now() });
+            notes = notes.slice(0, MAX_RECENT_NOTES);
+            localStorage.setItem('directorRecentNotes', JSON.stringify(notes));
+            renderRecentNotes();
+        }
+
+        function deleteRecentNote(index) {
+            let notes = getRecentNotes();
+            notes.splice(index, 1);
+            localStorage.setItem('directorRecentNotes', JSON.stringify(notes));
+            renderRecentNotes();
+            toast('Đã xóa ghi chú');
+        }
+
+        function useRecentNote(index) {
+            const notes = getRecentNotes();
+            if (notes[index]) {
+                const textarea = document.getElementById('directorContext');
+                if (textarea) {
+                    textarea.value = notes[index].text;
+                    toast('Đã load ghi chú');
+                }
+            }
+        }
+
+        function renderRecentNotes() {
+            const el = document.getElementById('recentNotesList');
+            if (!el) return;
+            const notes = getRecentNotes();
+            if (notes.length === 0) {
+                el.innerHTML = '<span class="recent-empty">Chưa có ghi chú nào</span>';
+                return;
+            }
+            el.innerHTML = notes.map((n, i) => `
+                <div class="recent-chip" onclick="useRecentNote(${i})" title="${escapeHtml(n.text)}">
+                    <span class="recent-chip-icon">📝</span>
+                    <span class="recent-chip-text">${escapeHtml(n.text.substring(0, 30))}${n.text.length > 30 ? '...' : ''}</span>
+                    <button class="recent-chip-delete" onclick="event.stopPropagation(); deleteRecentNote(${i})" title="Xóa">×</button>
+                </div>
+            `).join('');
+        }
+
+        function getRecentFiles() {
+            try {
+                return JSON.parse(localStorage.getItem('directorRecentFiles') || '[]');
+            } catch { return []; }
+        }
+
+        function saveRecentFile(name, content) {
+            if (!name || !content) return;
+            let files = getRecentFiles();
+            files = files.filter(f => f.name !== name);
+            files.unshift({ name, content: content.substring(0, 50000), timestamp: Date.now() });
+            files = files.slice(0, MAX_RECENT_FILES);
+            localStorage.setItem('directorRecentFiles', JSON.stringify(files));
+            renderRecentFiles();
+        }
+
+        function deleteRecentFile(index) {
+            let files = getRecentFiles();
+            files.splice(index, 1);
+            localStorage.setItem('directorRecentFiles', JSON.stringify(files));
+            renderRecentFiles();
+            toast('Đã xóa file');
+        }
+
+        function useRecentFile(index) {
+            const files = getRecentFiles();
+            if (files[index]) {
+                const file = files[index];
+                // Check if already in current list
+                if (!directorFileContents.find(f => f.name === file.name)) {
+                    if (directorFileContents.length >= 3) {
+                        toast('⚠️ Tối đa 3 file!');
+                        return;
+                    }
+                    directorFileContents.push({ name: file.name, size: file.content.length, content: file.content });
+                    renderDirectorFileList();
+                    toast('Đã thêm file: ' + file.name);
+                } else {
+                    toast('File này đã có trong danh sách');
+                }
+            }
+        }
+
+        function renderRecentFiles() {
+            const el = document.getElementById('recentFilesList');
+            if (!el) return;
+            const files = getRecentFiles();
+            if (files.length === 0) {
+                el.innerHTML = '<span class="recent-empty">Chưa có file nào</span>';
+                return;
+            }
+            el.innerHTML = files.map((f, i) => `
+                <div class="recent-chip recent-chip-file" onclick="useRecentFile(${i})" title="${escapeHtml(f.name)}">
+                    <span class="recent-chip-icon">📄</span>
+                    <span class="recent-chip-text">${escapeHtml(f.name)}</span>
+                    <button class="recent-chip-delete" onclick="event.stopPropagation(); deleteRecentFile(${i})" title="Xóa">×</button>
+                </div>
+            `).join('');
+        }
 
         function toggleDirectorSettings() {
             const settings = document.getElementById('directorSettings');
@@ -17057,15 +17181,13 @@ Trả về JSON:`;
                 resultsEl.style.display = 'block';
                 toast('✅ Đã phân tích xong ' + result.totalShots + ' shots!');
 
-                // Auto-save to Google Drive if connected
-                if (typeof DriveSync !== 'undefined' && DriveSync.isSignedIn) {
-                    if (userContext) {
-                        DriveSync.saveNote(userContext);
-                    }
-                    directorFileContents.forEach(file => {
-                        DriveSync.saveFile(file.name, file.content);
-                    });
+                // Auto-save to recent items (localStorage + GDrive auto-sync)
+                if (userContext) {
+                    saveRecentNote(userContext);
                 }
+                directorFileContents.forEach(file => {
+                    saveRecentFile(file.name, file.content);
+                });
 
             } catch (error) {
                 console.error('Director analysis error:', error);
@@ -17398,7 +17520,7 @@ Trả về JSON:`;
             if (clock) {
                 // Formatting based on user request: vYYYY.MM.DD HH:MM
                 // v2026.01.19 16:55 - Director Tab Redesign
-                const version = `v2026.01.19 18:25`;
+                const version = `v2026.01.19 18:40`;
                 clock.textContent = version;
             }
         }
@@ -17414,48 +17536,9 @@ Trả về JSON:`;
         });
     </script>
 
-    <!-- Google Drive Settings Modal -->
-    <div class="modal" id="driveSettingsModal">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3>☁️ Cấu hình Google Drive</h3>
-                <button class="modal-close"
-                    onclick="document.getElementById('driveSettingsModal').classList.remove('show')">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="drive-setup-guide">
-                    <p><strong>Hướng dẫn lấy credentials:</strong></p>
-                    <ol>
-                        <li>Vào <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a></li>
-                        <li>Tạo Project mới (hoặc chọn project có sẵn)</li>
-                        <li>Vào APIs & Services → Enable Google Drive API</li>
-                        <li>Vào Credentials → Create Credentials → OAuth Client ID</li>
-                        <li>Chọn Web Application, thêm domain hiện tại vào Authorized JavaScript origins</li>
-                        <li>Copy Client ID và API Key vào đây</li>
-                    </ol>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Client ID</label>
-                    <input type="text" class="form-input" id="googleClientIdInput"
-                        placeholder="xxx.apps.googleusercontent.com"
-                        style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--mac-border); background: var(--mac-input-bg); color: var(--mac-text);">
-                </div>
-                <div class="form-group" style="margin-top: 12px;">
-                    <label class="form-label">API Key</label>
-                    <input type="text" class="form-input" id="googleApiKeyInput" placeholder="AIza..."
-                        style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--mac-border); background: var(--mac-input-bg); color: var(--mac-text);">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary"
-                    onclick="document.getElementById('driveSettingsModal').classList.remove('show')">Hủy</button>
-                <button class="btn btn-primary" onclick="DriveSync.saveCredentials()">Lưu & Kết nối</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- DriveSync Script -->
-    <script src="driveSync.js"></script>
+
+
 </body>
 
 
