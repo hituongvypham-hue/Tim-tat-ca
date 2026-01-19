@@ -26,6 +26,7 @@
 
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js"></script>
 
     <!-- Markdown Parser for Knowledge Base -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -8667,15 +8668,17 @@ Con hổ Bengal là loài mèo lớn thứ hai thế giới, chỉ sau hổ Sibe
                             <!-- Recent Items Section (synced with existing GDrive) -->
                             <div class="drive-recent-section">
                                 <div class="settings-group">
-                                    <label class="settings-label">📝 Ghi chú gần đây <span class="sync-badge">☁️
-                                            Auto-sync</span></label>
+                                    <label class="settings-label">📝 Ghi chú gần đây <span class="sync-badge"
+                                            onclick="GDriveSync.showConfig()" style="cursor: pointer;"
+                                            title="Cấu hình đồng bộ">☁️ Auto-sync</span></label>
                                     <div id="recentNotesList" class="recent-chips">
                                         <span class="recent-empty">Chưa có ghi chú nào</span>
                                     </div>
                                 </div>
                                 <div class="settings-group">
-                                    <label class="settings-label">📁 File gần đây <span class="sync-badge">☁️
-                                            Auto-sync</span></label>
+                                    <label class="settings-label">📁 File gần đây <span class="sync-badge"
+                                            onclick="GDriveSync.showConfig()" style="cursor: pointer;"
+                                            title="Cấu hình đồng bộ">☁️ Auto-sync</span></label>
                                     <div id="recentFilesList" class="recent-chips">
                                         <span class="recent-empty">Chưa có file nào</span>
                                     </div>
@@ -17539,6 +17542,347 @@ Trả về JSON:`;
 
 
 
+
+    <!-- Simplified Drive Config Modal -->
+    <div class="modal" id="driveConfigModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3>☁️ Google Drive Sync</h3>
+                <button class="modal-close"
+                    onclick="document.getElementById('driveConfigModal').classList.remove('show')">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="driveAuthSection" style="text-align: center; padding: 20px;">
+                    <div id="driveUserInfo" style="margin-bottom: 15px; font-weight: 500;">Chưa kết nối</div>
+                    <button id="driveAuthBtn" class="btn btn-primary" onclick="GDriveSync.signIn()">🔗 Kết nối Google
+                        Drive</button>
+                    <p style="margin-top: 10px; font-size: 0.8rem; color: var(--mac-text-secondary);">
+                        Token sẽ hết hạn sau 1h (Bảo mật của Google).<br>Hệ thống sẽ thử tự động gia hạn, hoặc bạn cần
+                        đăng nhập lại.
+                    </p>
+                </div>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px solid var(--mac-border);">
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 0.85rem;">Client ID (Bắt buộc cho App riêng)</label>
+                    <input type="text" class="form-input" id="gDriveClientId"
+                        placeholder="xxx.apps.googleusercontent.com">
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label class="form-label" style="font-size: 0.85rem;">API Key (Optional)</label>
+                    <input type="text" class="form-input" id="gDriveApiKey" placeholder="AIza...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary"
+                    onclick="document.getElementById('driveConfigModal').classList.remove('show')">Đóng</button>
+                <button class="btn btn-primary" onclick="GDriveSync.saveConfig()">Lưu cấu hình</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GDrive Sync Logic -->
+    <script>
+        const GDriveSync = {
+            CLIENT_ID: '',
+            API_KEY: '',
+            SCOPES: 'https://www.googleapis.com/auth/drive.appdata',
+            tokenClient: null,
+            userEmail: '',
+            tokenExpiry: 0,
+            refreshTimer: null,
+
+            init() {
+                this.CLIENT_ID = localStorage.getItem('gDrive_clientId') || '';
+                this.API_KEY = localStorage.getItem('gDrive_apiKey') || '';
+
+                // UI Init
+                const clientIdInput = document.getElementById('gDriveClientId');
+                if (clientIdInput) clientIdInput.value = this.CLIENT_ID;
+                const apiKeyInput = document.getElementById('gDriveApiKey');
+                if (apiKeyInput) apiKeyInput.value = this.API_KEY;
+
+                // Load GAPI
+                if (typeof gapi !== 'undefined') {
+                    gapi.load('client', () => {
+                        if (this.API_KEY) gapi.client.setApiKey(this.API_KEY);
+                        this.checkAuthRestoration();
+                    });
+                }
+
+                // Check Auto-Save loop
+                setInterval(() => this.autoSaveToDrive(), 60000); // Check every minute
+            },
+
+            checkAuthRestoration() {
+                const savedToken = localStorage.getItem('gDrive_accessToken');
+                const savedExpiry = localStorage.getItem('gDrive_tokenExpiry');
+                const savedEmail = localStorage.getItem('gDrive_userEmail');
+
+                if (savedToken && savedExpiry && Date.now() < parseInt(savedExpiry)) {
+                    // Restore session
+                    this.userEmail = savedEmail;
+                    this.tokenExpiry = parseInt(savedExpiry);
+                    gapi.client.setToken({ access_token: savedToken });
+                    this.updateUI(true);
+                    this.scheduleRefresh();
+                } else {
+                    this.updateUI(false);
+                }
+            },
+
+            initTokenClient() {
+                if (this.tokenClient) return;
+                if (!this.CLIENT_ID) {
+                    toast('⚠️ Cần nhập Client ID trong cấu hình!');
+                    return;
+                }
+                this.tokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: this.CLIENT_ID,
+                    scope: this.SCOPES,
+                    callback: (resp) => {
+                        if (resp.error) {
+                            console.error(resp);
+                            return;
+                        }
+                        this.handleAuthSuccess(resp);
+                    },
+                });
+            },
+
+            signIn() {
+                this.initTokenClient();
+                if (this.tokenClient) {
+                    // Request explicit consent ensures refresh token in newer flows (but implicit is standard for client-side)
+                    // We mainly want to force a prompt if expired
+                    this.tokenClient.requestAccessToken({ prompt: 'consent' });
+                }
+            },
+
+            handleAuthSuccess(resp) {
+                const expiresIn = resp.expires_in; // seconds
+                const expiryTime = Date.now() + (expiresIn * 1000);
+
+                localStorage.setItem('gDrive_accessToken', resp.access_token);
+                localStorage.setItem('gDrive_tokenExpiry', expiryTime);
+
+                this.tokenExpiry = expiryTime;
+
+                // Get User Info (Profile)
+                this.fetchProfile();
+                this.scheduleRefresh();
+            },
+
+            async fetchProfile() {
+                try {
+                    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                        headers: { Authorization: `Bearer ${gapi.client.getToken().access_token}` }
+                    });
+                    const data = await res.json();
+                    this.userEmail = data.email;
+                    localStorage.setItem('gDrive_userEmail', this.userEmail);
+                    this.updateUI(true);
+                    toast(`✅ Đã kết nối: ${this.userEmail}`);
+
+                    // Trigger an initial sync
+                    this.loadFromDrive();
+                } catch (e) {
+                    console.error('Profile fetch error', e);
+                }
+            },
+
+            updateUI(isSignedIn) {
+                const authBtn = document.getElementById('driveAuthBtn');
+                const infoDiv = document.getElementById('driveUserInfo');
+                const badges = document.querySelectorAll('.sync-badge');
+
+                if (isSignedIn) {
+                    if (authBtn) {
+                        authBtn.textContent = '🔓 Ngắt kết nối';
+                        authBtn.className = 'btn btn-secondary';
+                        authBtn.onclick = () => this.signOut();
+                    }
+                    if (infoDiv) infoDiv.textContent = `🟢 ${this.userEmail}`;
+                    badges.forEach(b => {
+                        b.style.color = '#34a853';
+                        b.style.background = 'rgba(52, 168, 83, 0.1)';
+                        b.textContent = '☁️ Đã đồng bộ';
+                    });
+                } else {
+                    if (authBtn) {
+                        authBtn.textContent = '🔗 Kết nối Google Drive';
+                        authBtn.className = 'btn btn-primary';
+                        authBtn.onclick = () => this.signIn();
+                    }
+                    if (infoDiv) infoDiv.textContent = '⚪ Chưa kết nối';
+                    badges.forEach(b => {
+                        b.style.color = '#86868b';
+                        b.style.background = 'rgba(0,0,0,0.05)';
+                        b.title = 'Click để kết nối';
+                        b.textContent = '☁️ Offline';
+                    });
+                }
+            },
+
+            signOut() {
+                const token = gapi.client.getToken();
+                if (token !== null) {
+                    google.accounts.oauth2.revoke(token.access_token);
+                }
+                gapi.client.setToken('');
+                localStorage.removeItem('gDrive_accessToken');
+                localStorage.removeItem('gDrive_tokenExpiry');
+                localStorage.removeItem('gDrive_userEmail');
+                this.userEmail = '';
+                this.updateUI(false);
+                toast('Đã ngắt kết nối Google Drive');
+            },
+
+            scheduleRefresh() {
+                if (this.refreshTimer) clearTimeout(this.refreshTimer);
+                const timeLeft = this.tokenExpiry - Date.now();
+                // Refresh 5 minutes before expiry
+                const refreshDelay = Math.max(0, timeLeft - (5 * 60 * 1000));
+
+                this.refreshTimer = setTimeout(() => {
+                    this.trySilentRefresh();
+                }, refreshDelay);
+            },
+
+            trySilentRefresh() {
+                // Attempt to refresh silently (only works if 3rd party cookies allowed)
+                // Or just notify user
+                // In pure implicit flow, we can try requesting with prompt='none'
+                if (this.tokenClient) {
+                    this.tokenClient.requestAccessToken({ prompt: 'none', hint: this.userEmail });
+                    console.log('Attempting silent token refresh...');
+                } else {
+                    toast('⚠️ Phiên làm việc Google sắp hết hạn. Hãy kết nối lại.');
+                }
+            },
+
+            showConfig() {
+                const modal = document.getElementById('driveConfigModal');
+                if (modal) {
+                    modal.classList.add('show');
+                    modal.style.display = 'flex'; // Ensure flex
+                }
+            },
+
+            saveConfig() {
+                const clientId = document.getElementById('gDriveClientId').value.trim();
+                const apiKey = document.getElementById('gDriveApiKey').value.trim();
+
+                localStorage.setItem('gDrive_clientId', clientId);
+                localStorage.setItem('gDrive_apiKey', apiKey);
+                this.CLIENT_ID = clientId;
+                this.API_KEY = apiKey;
+
+                toast('Đã lưu cấu hình! Hãy thử kết nối lại.');
+                document.getElementById('driveConfigModal').classList.remove('show');
+            },
+
+            // ========== DATA SYNC ==========
+
+            async autoSaveToDrive() {
+                if (!this.userEmail || Date.now() > this.tokenExpiry) return;
+
+                // Simply update the config file
+                const notes = JSON.parse(localStorage.getItem('directorRecentNotes') || '[]');
+                const files = JSON.parse(localStorage.getItem('directorRecentFiles') || '[]');
+
+                const content = JSON.stringify({ notes, files });
+
+                try {
+                    // Find existing file
+                    const query = "name = 'director_sync_data.json' and 'appDataFolder' in parents and trashed = false";
+                    const response = await gapi.client.drive.files.list({
+                        q: query,
+                        spaces: 'appDataFolder',
+                        fields: 'files(id, name)'
+                    });
+
+                    const file = response.result.files[0];
+                    const fileId = file ? file.id : null;
+
+                    // Write content
+                    const metadata = {
+                        name: 'director_sync_data.json',
+                        mimeType: 'application/json',
+                        parents: ['appDataFolder']
+                    };
+
+                    // Using multipart upload for simplicity in raw JS
+                    const boundary = '-------314159265358979323846';
+                    const delimiter = "\r\n--" + boundary + "\r\n";
+                    const close_delim = "\r\n--" + boundary + "--";
+
+                    const multipartRequestBody =
+                        delimiter +
+                        'Content-Type: application/json\r\n\r\n' +
+                        JSON.stringify(metadata) +
+                        delimiter +
+                        'Content-Type: application/json\r\n\r\n' +
+                        content +
+                        close_delim;
+
+                    const request = gapi.client.request({
+                        'path': `/upload/drive/v3/files${fileId ? '/' + fileId : ''}`,
+                        'method': fileId ? 'PATCH' : 'POST',
+                        'params': { 'uploadType': 'multipart' },
+                        'headers': { 'Content-Type': 'multipart/related; boundary="' + boundary + '"' },
+                        'body': multipartRequestBody
+                    });
+
+                    await request;
+                    console.log('Auto-saved to Drive');
+                } catch (e) {
+                    console.error('Drive Save Error', e);
+                }
+            },
+
+            async loadFromDrive() {
+                // Load and merge
+                try {
+                    const query = "name = 'director_sync_data.json' and 'appDataFolder' in parents and trashed = false";
+                    const response = await gapi.client.drive.files.list({
+                        q: query,
+                        spaces: 'appDataFolder',
+                        fields: 'files(id, name)'
+                    });
+
+                    if (response.result.files.length > 0) {
+                        const fileId = response.result.files[0].id;
+                        const res = await gapi.client.drive.files.get({
+                            fileId: fileId,
+                            alt: 'media'
+                        });
+
+                        const data = res.result; // JSON object
+                        // Merge logic
+                        if (data.notes) {
+                            const current = JSON.parse(localStorage.getItem('directorRecentNotes') || '[]');
+                            // Simple merge: remote wins if newer? Or verify timestamp.
+                            // For now, just prepend remote to local if not exists
+                            // To keep it simple: We assume Cloud is backup. We update Cloud with Local primarily.
+                            // But if Logic is Sync:
+                            localStorage.setItem('directorRecentNotes', JSON.stringify(data.notes));
+                            if (typeof renderRecentNotes === 'function') renderRecentNotes();
+                        }
+                        if (data.files) {
+                            localStorage.setItem('directorRecentFiles', JSON.stringify(data.files));
+                            if (typeof renderRecentFiles === 'function') renderRecentFiles();
+                        }
+                        toast('Đã đồng bộ từ Cloud');
+                    }
+                } catch (e) {
+                    console.error('Load Error', e);
+                }
+            }
+        };
+
+        // Auto Init
+        window.addEventListener('load', () => GDriveSync.init());
+    </script>
 </body>
 
 
