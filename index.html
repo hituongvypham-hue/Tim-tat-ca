@@ -3737,6 +3737,48 @@
             cursor: grab;
         }
 
+        .prompt-item.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
+        }
+
+        .prompt-item.selected:hover {
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.5);
+        }
+
+        .prompt-trash-zone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .prompt-trash-zone:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .prompt-trash-zone.drag-over {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            transform: scale(1.02);
+        }
+
+        .prompt-trash-zone .trash-count {
+            font-weight: 600;
+        }
+
         .prompt-item-category {
             font-size: 0.75rem;
             padding: 0.25rem 0.6rem;
@@ -7189,6 +7231,9 @@
 
                         <div class="prompt-list" id="promptList">
                             <div class="prompt-empty">Chưa có prompt nào. Thêm prompt mới ở trên! 👆</div>
+                        </div>
+                        <div class="prompt-trash-zone" id="promptTrashZone" onclick="toggleTrashView()">
+                            🗑️ Thùng rác (<span class="trash-count" id="trashCount">0</span>)
                         </div>
                     </div>
                 </div>
@@ -12777,6 +12822,155 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
             let prompts = JSON.parse(localStorage.getItem('promptLibrary') || '[]');
             let editingPromptIndex = -1;
 
+            // Multi-select state
+            let selectedPrompts = new Set();
+            let lastClickedIndex = -1;
+            let promptTrash = JSON.parse(localStorage.getItem('promptTrash') || '[]');
+            let viewingTrash = false;
+
+            // Update trash count display
+            function updateTrashCount() {
+                const countEl = document.getElementById('trashCount');
+                if (countEl) countEl.textContent = promptTrash.length;
+            }
+
+            // Handle click with Ctrl/Shift support
+            function handlePromptClick(index, event) {
+                event.stopPropagation();
+
+                if (event.ctrlKey || event.metaKey) {
+                    // Ctrl+Click: Toggle selection
+                    if (selectedPrompts.has(index)) {
+                        selectedPrompts.delete(index);
+                    } else {
+                        selectedPrompts.add(index);
+                    }
+                } else if (event.shiftKey && lastClickedIndex >= 0) {
+                    // Shift+Click: Range selection
+                    const start = Math.min(lastClickedIndex, index);
+                    const end = Math.max(lastClickedIndex, index);
+                    for (let i = start; i <= end; i++) {
+                        selectedPrompts.add(i);
+                    }
+                } else {
+                    // Normal click: Clear and select one
+                    selectedPrompts.clear();
+                    selectedPrompts.add(index);
+                }
+
+                lastClickedIndex = index;
+                updateSelectionUI();
+            }
+
+            // Update visual selection state
+            function updateSelectionUI() {
+                document.querySelectorAll('.prompt-item').forEach((item, i) => {
+                    if (selectedPrompts.has(i)) {
+                        item.classList.add('selected');
+                    } else {
+                        item.classList.remove('selected');
+                    }
+                });
+            }
+
+            // Clear selection when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.prompt-item') && !e.target.closest('.prompt-trash-zone')) {
+                    selectedPrompts.clear();
+                    updateSelectionUI();
+                }
+            });
+
+            // Move selected prompts to trash
+            function moveToTrash(indices) {
+                const toTrash = [];
+                const sortedIndices = [...indices].sort((a, b) => b - a); // Sort descending
+
+                sortedIndices.forEach(i => {
+                    if (prompts[i]) {
+                        toTrash.push({ ...prompts[i], deletedAt: new Date().toISOString() });
+                        prompts.splice(i, 1);
+                    }
+                });
+
+                promptTrash = [...toTrash, ...promptTrash];
+                localStorage.setItem('promptLibrary', JSON.stringify(prompts));
+                localStorage.setItem('promptTrash', JSON.stringify(promptTrash));
+
+                selectedPrompts.clear();
+                lastClickedIndex = -1;
+                updateTrashCount();
+                renderPrompts();
+                toast(`🗑️ Đã chuyển ${toTrash.length} prompt vào thùng rác`);
+                autoSyncToDrive();
+            }
+
+            // Restore prompt from trash
+            function restoreFromTrash(trashIndex) {
+                const item = promptTrash[trashIndex];
+                if (item) {
+                    delete item.deletedAt;
+                    prompts.unshift(item);
+                    promptTrash.splice(trashIndex, 1);
+                    localStorage.setItem('promptLibrary', JSON.stringify(prompts));
+                    localStorage.setItem('promptTrash', JSON.stringify(promptTrash));
+                    updateTrashCount();
+                    renderPrompts();
+                    toast('✅ Đã khôi phục prompt');
+                    autoSyncToDrive();
+                }
+            }
+
+            // Empty all trash permanently
+            function emptyTrash() {
+                if (promptTrash.length === 0) return;
+                if (confirm(`Xóa vĩnh viễn ${promptTrash.length} prompt trong thùng rác?`)) {
+                    promptTrash = [];
+                    localStorage.setItem('promptTrash', JSON.stringify(promptTrash));
+                    updateTrashCount();
+                    if (viewingTrash) renderPrompts();
+                    toast('🗑️ Đã dọn sạch thùng rác');
+                }
+            }
+
+            // Toggle trash view
+            function toggleTrashView() {
+                viewingTrash = !viewingTrash;
+                selectedPrompts.clear();
+                lastClickedIndex = -1;
+                renderPrompts();
+            }
+
+            // Setup drag-to-trash handlers
+            function setupTrashDropZone() {
+                const trashZone = document.getElementById('promptTrashZone');
+                if (!trashZone) return;
+
+                trashZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    trashZone.classList.add('drag-over');
+                });
+
+                trashZone.addEventListener('dragleave', () => {
+                    trashZone.classList.remove('drag-over');
+                });
+
+                trashZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    trashZone.classList.remove('drag-over');
+
+                    if (selectedPrompts.size > 0) {
+                        moveToTrash(selectedPrompts);
+                    }
+                });
+            }
+
+            // Initialize trash on page load
+            document.addEventListener('DOMContentLoaded', () => {
+                updateTrashCount();
+                setupTrashDropZone();
+            });
+
             function renderPrompts() {
                 const list = document.getElementById('promptList');
                 const countEl = document.getElementById('promptCount');
@@ -12791,26 +12985,41 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 // Show/hide Copy All Steps button
                 copyBtn.style.display = workflowFilter ? 'inline-block' : 'none';
 
-                let filtered = prompts.filter(p => {
+                // Trash Mode Logic
+                let sourceData = viewingTrash ? promptTrash : prompts;
+                if (viewingTrash) {
+                    list.classList.add('trash-view');
+                    document.getElementById('promptTrashZone').innerHTML =
+                        `<button class="btn-restore-all" onclick="emptyTrash()" style="background:#ef4444;color:white;border:none;padding:5px 10px;border-radius:4px;">🗑️ Xóa sạch thùng rác</button> 
+                         <button onclick="toggleTrashView()" style="margin-left:10px;">🔙 Quay lại</button>`;
+                } else {
+                    list.classList.remove('trash-view');
+                    document.getElementById('promptTrashZone').innerHTML =
+                        `🗑️ Thùng rác (<span class="trash-count" id="trashCount">${promptTrash.length}</span>)`;
+                }
+
+                let filtered = sourceData.filter(p => {
                     const matchSearch = !searchVal ||
                         p.name.toLowerCase().includes(searchVal) ||
                         p.content.toLowerCase().includes(searchVal) ||
                         (p.tags && p.tags.some(t => t.toLowerCase().includes(searchVal))) ||
-                        (p.workflow && p.workflow.toLowerCase().includes(searchVal));
+                        (p.workflow && p.workflow && p.workflow.toLowerCase().includes(searchVal));
                     const matchCategory = !categoryFilter || p.category === categoryFilter;
                     const matchWorkflow = !workflowFilter || p.workflow === workflowFilter;
                     return matchSearch && matchCategory && matchWorkflow;
                 });
 
-                // Sort by step if filtering by workflow
-                if (workflowFilter) {
+                // Sort by step if filtering by workflow (only in normal view)
+                if (workflowFilter && !viewingTrash) {
                     filtered.sort((a, b) => (a.step || 999) - (b.step || 999));
                 }
 
-                countEl.textContent = `${filtered.length} prompts`;
+                countEl.textContent = viewingTrash ? `🗑️ ${filtered.length} deleted prompts` : `${filtered.length} prompts`;
 
                 if (filtered.length === 0) {
-                    list.innerHTML = '<div class="prompt-empty">Chưa có prompt nào. Thêm prompt mới ở trên! 👆</div>';
+                    list.innerHTML = viewingTrash
+                        ? '<div class="prompt-empty">Thùng rác rỗng 🗑️</div>'
+                        : '<div class="prompt-empty">Chưa có prompt nào. Thêm prompt mới ở trên! 👆</div>';
                     return;
                 }
 
@@ -12836,6 +13045,7 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
 
                     return `
                     <div class="prompt-item" draggable="true" 
+                         onclick="handlePromptClick(${realIndex}, event)"
                          ondragstart="handleDragStart(event, ${realIndex})" 
                          ondragover="handleDragOver(event)" 
                          ondrop="handleDrop(event, ${realIndex})"
@@ -12849,9 +13059,14 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                         ${tagsHtml ? `<div class="prompt-item-tags">${tagsHtml}</div>` : ''}
                         ${noteHtml}
                         <div class="prompt-item-actions">
-                            <button class="prompt-action-btn copy" onclick="copyPrompt(${realIndex})">📋 Copy</button>
-                            <button class="prompt-action-btn" onclick="editPrompt(${realIndex})">✏️ Sửa</button>
-                            <button class="prompt-action-btn delete" onclick="deletePrompt(${realIndex})">🗑️ Xóa</button>
+                            ${viewingTrash ?
+                            `<button class="prompt-action-btn" onclick="restoreFromTrash(${realIndex})">♻️ Khôi phục</button>
+                                 <button class="prompt-action-btn delete" onclick="deletePrompt(${realIndex})" style="color:#ef4444;">🗑️ Xóa vĩnh viễn</button>`
+                            :
+                            `<button class="prompt-action-btn copy" onclick="copyPrompt(${realIndex})">📋 Copy</button>
+                                 <button class="prompt-action-btn" onclick="editPrompt(${realIndex})">✏️ Sửa</button>
+                                 <button class="prompt-action-btn delete" onclick="deletePrompt(${realIndex})">🗑️ Xóa</button>`
+                        }
                         </div>
                     </div>
                 `;
@@ -13035,6 +13250,23 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                 draggedIndex = index;
                 event.target.classList.add('dragging');
                 event.dataTransfer.effectAllowed = 'move';
+                event.dataTransfer.setData('text/plain', index);
+
+                // If dragging a selected item, we might be dragging multiple
+                if (selectedPrompts.has(index)) {
+                    const count = selectedPrompts.size;
+                    const ghost = document.createElement('div');
+                    ghost.textContent = `Moving ${count} items...`;
+                    ghost.style.background = '#667eea';
+                    ghost.style.color = 'white';
+                    ghost.style.padding = '5px 10px';
+                    ghost.style.borderRadius = '4px';
+                    ghost.style.position = 'absolute';
+                    ghost.style.top = '-1000px';
+                    document.body.appendChild(ghost);
+                    event.dataTransfer.setDragImage(ghost, 0, 0);
+                    setTimeout(() => document.body.removeChild(ghost), 0);
+                }
             }
 
             function handleDragOver(event) {
@@ -13061,17 +13293,34 @@ RETURN ONLY A VALID JSON OBJECT (No markdown, no intro):
                     item.addEventListener('dragend', () => {
                         item.classList.remove('dragging');
                         draggedIndex = null;
+                        document.querySelectorAll('.prompt-trash-zone').forEach(z => z.classList.remove('drag-over'));
                     });
                 });
             }
 
             function deletePrompt(index) {
-                if (confirm('Xóa prompt "' + prompts[index].name + '"?')) {
-                    prompts.splice(index, 1);
-                    localStorage.setItem('promptLibrary', JSON.stringify(prompts));
-                    renderPrompts();
-                    toast('🗑️ Đã xóa prompt');
-                    autoSyncToDrive();
+                if (viewingTrash) {
+                    if (confirm('⚠️ Xóa vĩnh viễn prompt này? Hành động này không thể hoàn tác!')) {
+                        promptTrash.splice(index, 1);
+                        localStorage.setItem('promptTrash', JSON.stringify(promptTrash));
+                        renderPrompts();
+                        updateTrashCount();
+                        toast('🗑️ Đã xóa vĩnh viễn prompt');
+                    }
+                } else {
+                    if (confirm('Chuyển prompt "' + prompts[index].name + '" vào thùng rác?')) {
+                        // Move single item to trash
+                        const item = { ...prompts[index], deletedAt: new Date().toISOString() };
+                        prompts.splice(index, 1);
+                        promptTrash.unshift(item);
+
+                        localStorage.setItem('promptLibrary', JSON.stringify(prompts));
+                        localStorage.setItem('promptTrash', JSON.stringify(promptTrash));
+                        renderPrompts();
+                        updateTrashCount();
+                        toast('🗑️ Đã chuyển vào thùng rác');
+                        autoSyncToDrive();
+                    }
                 }
             }
 
