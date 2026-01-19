@@ -5660,6 +5660,475 @@
                 font-size: 0.8rem;
             }
         }
+
+        /* ========================================
+           DIRECTOR TAB v3 - Input Section & Table
+           ======================================== */
+
+        /* Input Card */
+        .director-input-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .director-input-header {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .director-input-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .director-input-icon {
+            font-size: 1.4rem;
+        }
+
+        .director-input-subtitle {
+            margin-top: 4px;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .director-input-body {
+            padding: 20px;
+        }
+
+        .director-textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--mac-border);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            background: var(--mac-bg);
+            color: var(--mac-text);
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.2s;
+        }
+
+        .director-textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+
+        .director-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .director-analyze-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .director-analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+        }
+
+        .director-clear-btn {
+            padding: 14px 18px;
+            background: #6b7280;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .director-clear-btn:hover {
+            background: #ef4444;
+        }
+
+        /* Settings Card */
+        .director-settings-card {
+            background: var(--mac-card);
+            border: 1px solid var(--mac-border);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .director-settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .director-settings-header:hover {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .settings-arrow {
+            font-size: 10px;
+            transition: transform 0.2s;
+        }
+
+        .director-settings-body {
+            padding: 16px;
+            border-top: 1px solid var(--mac-border);
+        }
+
+        .settings-group {
+            margin-bottom: 16px;
+        }
+
+        .settings-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--mac-text);
+        }
+
+        .director-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--mac-border);
+            border-radius: 8px;
+            background: var(--mac-bg);
+            color: var(--mac-text);
+            font-size: 0.9rem;
+        }
+
+        .settings-toggles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .toggle-text {
+            font-size: 0.85rem;
+        }
+
+        /* Results Header */
+        .director-results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            margin-bottom: 12px;
+            border-bottom: 2px solid var(--mac-border);
+        }
+
+        .results-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .results-btn {
+            padding: 8px 14px;
+            border: 1px solid var(--mac-border);
+            border-radius: 8px;
+            background: var(--mac-bg);
+            color: var(--mac-text);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .results-btn:hover {
+            background: var(--mac-accent);
+            color: white;
+            border-color: var(--mac-accent);
+        }
+
+        /* Shot List Container */
+        .director-shot-list {
+            background: var(--mac-card);
+            border: 1px solid var(--mac-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* Loading */
+        .director-loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-spinner {
+            font-size: 3rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .loading-text {
+            margin-top: 16px;
+            color: var(--mac-text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Tips Card */
+        .director-tips-card {
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .tips-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(245, 158, 11, 0.1);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .tips-body {
+            padding: 16px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .tips-section {
+            font-size: 0.85rem;
+        }
+
+        .tips-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--mac-text);
+        }
+
+        .tips-list {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--mac-text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           TABLE-STYLE SHOT BREAKDOWN
+           ======================================== */
+
+        .director-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .director-table th {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .director-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .director-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .director-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--mac-border);
+            vertical-align: top;
+        }
+
+        .director-table tr:hover td {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .director-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Table Cell Styles */
+        .table-shot-num {
+            font-weight: 700;
+            color: #6366f1;
+            white-space: nowrap;
+        }
+
+        .table-duration {
+            color: var(--mac-text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .table-type {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .table-type.wide {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .table-type.medium {
+            background: #10b981;
+            color: white;
+        }
+
+        .table-type.closeup {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .table-type.extreme {
+            background: #ef4444;
+            color: white;
+        }
+
+        .table-type.aerial {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .table-type.default {
+            background: #6b7280;
+            color: white;
+        }
+
+        .table-voiceover {
+            font-style: italic;
+            color: var(--mac-text-secondary);
+            max-width: 250px;
+        }
+
+        .table-visual {
+            max-width: 200px;
+            line-height: 1.4;
+        }
+
+        .table-camera {
+            font-size: 0.8rem;
+            color: var(--mac-text-secondary);
+        }
+
+        .table-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-width: 180px;
+        }
+
+        .table-keyword {
+            padding: 3px 8px;
+            background: rgba(107, 114, 128, 0.1);
+            border: 1px solid rgba(107, 114, 128, 0.2);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .table-keyword:hover {
+            background: var(--mac-accent);
+            color: white;
+            border-color: var(--mac-accent);
+        }
+
+        .table-keyword.copied {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        /* Responsive Table */
+        @media (max-width: 900px) {
+            .director-table-wrapper {
+                overflow-x: auto;
+            }
+
+            .director-table {
+                min-width: 800px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .director-input-header {
+                padding: 12px 16px;
+            }
+
+            .director-input-title {
+                font-size: 1rem;
+            }
+
+            .director-input-body {
+                padding: 16px;
+            }
+
+            .tips-body {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 
 </head>
@@ -7829,37 +8298,46 @@
 
                 <!-- DIRECTOR TAB -->
                 <div class="tab-content" id="director-tab">
-                    <div class="script-section">
-                        <div class="script-header">
-                            <span class="script-title">🎬 Visual Director - Shot Breakdown</span>
-                            <span class="script-hint">Phân tích kịch bản → Gợi ý hình ảnh/video cần dùng</span>
+                    <!-- Director Header Card -->
+                    <div class="director-input-card">
+                        <div class="director-input-header">
+                            <div class="director-input-title">
+                                <span class="director-input-icon">🎬</span>
+                                <span>Visual Director</span>
+                            </div>
+                            <div class="director-input-subtitle">Shot Breakdown & B-roll Suggestions</div>
                         </div>
-                        <textarea id="directorScript" class="script-textarea" rows="8"
-                            placeholder="Dán kịch bản voice-over vào đây...&#10;&#10;Ví dụ:&#10;Con hổ Bengal là loài mèo lớn thứ hai thế giới, chỉ sau hổ Siberia. Trọng lượng của chúng có thể đạt tới 250kg. Chúng sống chủ yếu ở các khu rừng nhiệt đới Ấn Độ và Bangladesh..."></textarea>
-                        <div style="display: flex; gap: 10px; margin-top: 12px;">
-                            <button class="analyze-btn" id="directorAnalyzeBtn" onclick="analyzeDirectorScript()"
-                                style="flex:1;">
-                                🎬 Phân tích Shot Breakdown
-                            </button>
-                            <button class="analyze-btn" onclick="clearDirectorResults()"
-                                style="flex:0 0 auto; background: #6b7280;">
-                                🗑️ Xóa
-                            </button>
+
+                        <div class="director-input-body">
+                            <textarea id="directorScript" class="director-textarea" rows="6"
+                                placeholder="Dán kịch bản voice-over vào đây...
+
+Ví dụ:
+Con hổ Bengal là loài mèo lớn thứ hai thế giới, chỉ sau hổ Siberia. Trọng lượng của chúng có thể đạt tới 250kg..."></textarea>
+
+                            <div class="director-actions">
+                                <button class="director-analyze-btn" id="directorAnalyzeBtn"
+                                    onclick="analyzeDirectorScript()">
+                                    <span class="btn-icon">🎬</span>
+                                    <span>Phân tích Shot Breakdown</span>
+                                </button>
+                                <button class="director-clear-btn" onclick="clearDirectorResults()">
+                                    <span>🗑️</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Director AI Settings -->
-                    <div class="section" style="margin-bottom: 20px;">
-                        <div class="section-title" style="cursor: pointer;" onclick="toggleDirectorSettings()">
-                            ⚙️ Cài đặt <span id="directorSettingsArrow" style="font-size: 10px;">▼</span>
+                    <!-- Director Settings Card -->
+                    <div class="director-settings-card">
+                        <div class="director-settings-header" onclick="toggleDirectorSettings()">
+                            <span>⚙️ Cài đặt nâng cao</span>
+                            <span id="directorSettingsArrow" class="settings-arrow">▼</span>
                         </div>
-                        <div id="directorSettings"
-                            style="display: none; padding: 12px; background: var(--mac-card); border-radius: 8px; border: 1px solid var(--mac-border);">
-                            <div style="margin-bottom: 12px;">
-                                <label style="font-size: 0.85rem; color: var(--mac-text-secondary);">Phong cách đạo
-                                    diễn:</label>
-                                <select id="directorStyle"
-                                    style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--mac-border); margin-top: 4px;">
+                        <div id="directorSettings" class="director-settings-body" style="display: none;">
+                            <div class="settings-group">
+                                <label class="settings-label">🎥 Phong cách đạo diễn</label>
+                                <select id="directorStyle" class="director-select">
                                     <option value="documentary">📹 Documentary (Phim tài liệu)</option>
                                     <option value="cinematic">🎬 Cinematic (Điện ảnh)</option>
                                     <option value="youtube">▶️ YouTube (Casual, B-roll)</option>
@@ -7867,18 +8345,20 @@
                                     <option value="educational">📚 Educational (Giáo dục)</option>
                                 </select>
                             </div>
-                            <div>
-                                <label style="font-size: 0.85rem; color: var(--mac-text-secondary);">Chi tiết
-                                    output:</label>
-                                <div style="display: flex; gap: 10px; margin-top: 4px;">
-                                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem;">
-                                        <input type="checkbox" id="directorShowStock" checked> Stock keywords
+                            <div class="settings-group">
+                                <label class="settings-label">📋 Chi tiết output</label>
+                                <div class="settings-toggles">
+                                    <label class="toggle-item">
+                                        <input type="checkbox" id="directorShowStock" checked>
+                                        <span class="toggle-text">🔍 Stock keywords</span>
                                     </label>
-                                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem;">
-                                        <input type="checkbox" id="directorShowCamera" checked> Camera notes
+                                    <label class="toggle-item">
+                                        <input type="checkbox" id="directorShowCamera" checked>
+                                        <span class="toggle-text">🎥 Camera notes</span>
                                     </label>
-                                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem;">
-                                        <input type="checkbox" id="directorShowMood" checked> Mood/Tone
+                                    <label class="toggle-item">
+                                        <input type="checkbox" id="directorShowMood" checked>
+                                        <span class="toggle-text">🎨 Mood/Tone</span>
                                     </label>
                                 </div>
                             </div>
@@ -7887,55 +8367,55 @@
 
                     <!-- Director Results -->
                     <div id="directorResults" style="display: none;">
-                        <div class="section">
-                            <div class="section-title"
-                                style="display: flex; justify-content: space-between; align-items: center;">
-                                <span>📋 Shot Breakdown</span>
-                                <div style="display: flex; gap: 8px;">
-                                    <button onclick="copyDirectorResults()"
-                                        style="padding: 4px 10px; font-size: 12px; border-radius: 6px; border: 1px solid var(--mac-border); background: var(--mac-bg); cursor: pointer;">
-                                        📋 Copy All
-                                    </button>
-                                    <button onclick="exportDirectorPDF()"
-                                        style="padding: 4px 10px; font-size: 12px; border-radius: 6px; border: 1px solid var(--mac-border); background: var(--mac-bg); cursor: pointer;">
-                                        📄 Export
-                                    </button>
-                                </div>
+                        <div class="director-results-header">
+                            <span class="results-title">📋 Kết quả phân tích</span>
+                            <div class="results-actions">
+                                <button class="results-btn" onclick="copyDirectorResults()">
+                                    📋 Copy All
+                                </button>
+                                <button class="results-btn" onclick="exportDirectorPDF()">
+                                    📄 Export
+                                </button>
                             </div>
-                            <div id="directorShotList"
-                                style="background: var(--mac-card); border-radius: 12px; padding: 16px; border: 1px solid var(--mac-border);">
-                                <!-- Shot breakdown will be rendered here -->
-                            </div>
+                        </div>
+                        <div id="directorShotList" class="director-shot-list">
+                            <!-- Shot breakdown will be rendered here -->
                         </div>
                     </div>
 
                     <!-- Director Loading -->
-                    <div id="directorLoading" style="display: none; text-align: center; padding: 40px;">
-                        <div style="font-size: 2rem; margin-bottom: 10px;">🎬</div>
-                        <div style="color: var(--mac-text-secondary);">Đang phân tích kịch bản như một đạo diễn...</div>
+                    <div id="directorLoading" class="director-loading" style="display: none;">
+                        <div class="loading-spinner">🎬</div>
+                        <div class="loading-text">Đang phân tích kịch bản như một đạo diễn...</div>
                     </div>
 
-                    <!-- Director Tips -->
-                    <div class="section" style="margin-top: 20px;">
-                        <div class="section-title">💡 Tips sử dụng</div>
-                        <div
-                            style="background: var(--mac-card); border-radius: 12px; padding: 16px; border: 1px solid var(--mac-border); font-size: 0.85rem; color: var(--mac-text-secondary); line-height: 1.6;">
-                            <p><strong>Công cụ này giúp bạn:</strong></p>
-                            <ul style="margin: 8px 0 0 20px;">
-                                <li>Phân tích từng đoạn voice-over → Gợi ý loại shot (toàn cảnh/trung/cận)</li>
-                                <li>Đề xuất từ khóa tìm stock footage/images phù hợp</li>
-                                <li>Gợi ý góc máy, chuyển động camera chuyên nghiệp</li>
-                                <li>Không tạo ảnh/video - chỉ đưa ra gợi ý như đạo diễn thực sự</li>
-                            </ul>
-                            <p style="margin-top: 12px;"><strong>Để có kết quả tốt nhất:</strong></p>
-                            <ul style="margin: 8px 0 0 20px;">
-                                <li>Dán kịch bản voice-over hoàn chỉnh (không cần timestamps)</li>
-                                <li>Mỗi câu/đoạn sẽ được phân tích riêng</li>
-                                <li>Có thể dùng kết quả để tìm kiếm trên tab Video/Image</li>
-                            </ul>
+                    <!-- Director Tips Card -->
+                    <div class="director-tips-card">
+                        <div class="tips-header">
+                            <span>💡</span>
+                            <span>Hướng dẫn sử dụng</span>
+                        </div>
+                        <div class="tips-body">
+                            <div class="tips-section">
+                                <div class="tips-title">Công cụ này giúp bạn:</div>
+                                <ul class="tips-list">
+                                    <li>Phân tích từng đoạn voice-over → Gợi ý loại shot</li>
+                                    <li>Đề xuất từ khóa tìm stock footage/images</li>
+                                    <li>Gợi ý góc máy, chuyển động camera</li>
+                                </ul>
+                            </div>
+                            <div class="tips-section">
+                                <div class="tips-title">Để có kết quả tốt nhất:</div>
+                                <ul class="tips-list">
+                                    <li>Dán kịch bản voice-over hoàn chỉnh</li>
+                                    <li>Mỗi câu/đoạn sẽ được phân tích riêng</li>
+                                    <li>Click keyword để copy → tìm trên Video/Image</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
+
 
                 <!-- History -->
 
@@ -16236,65 +16716,68 @@ Trả về JSON:`;
                 `;
             }
 
-            // ===== TIMELINE SHOTS =====
-            html += '<div class="director-timeline">';
+            // ===== TABLE-STYLE SHOT BREAKDOWN =====
+            html += '<div class="director-table-wrapper">';
+            html += '<table class="director-table">';
 
+            // Table Header
+            html += `
+                <thead>
+                    <tr>
+                        <th>Shot</th>
+                        <th>Thời lượng</th>
+                        <th>Loại</th>
+                        <th>Voiceover</th>
+                        <th>Hình ảnh (Visual)</th>
+                        ${showCamera ? '<th>Camera</th>' : ''}
+                        ${showStock ? '<th>Keywords</th>' : ''}
+                    </tr>
+                </thead>
+            `;
+
+            // Table Body
+            html += '<tbody>';
             result.shots.forEach((shot, index) => {
                 const typeClass = getShotTypeClass(shot.shotType);
 
                 html += `
-                    <div class="director-shot">
-                        <div class="shot-header">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span class="shot-number">SHOT ${shot.id}</span>
-                                <span class="shot-duration">⏱️ ${escapeHtml(shot.duration || '3-5s')}</span>
-                            </div>
-                            <div class="shot-badges">
-                                <span class="shot-type-badge ${typeClass}">${escapeHtml(shot.shotTypeVi || shot.shotType)}</span>
-                                ${showMood && shot.mood ? `<span class="shot-mood-badge">${escapeHtml(shot.mood)}</span>` : ''}
-                            </div>
-                        </div>
-                        
-                        <div class="shot-voiceover">
-                            ${escapeHtml(shot.voiceover)}
-                        </div>
-                        
-                        <div class="shot-visual">
-                            <span class="shot-visual-icon">📷</span>
-                            <span>${escapeHtml(shot.visual)}</span>
-                        </div>
-                        
+                    <tr>
+                        <td>
+                            <div class="table-shot-num">#${shot.id}</div>
+                            ${showMood && shot.mood ? `<div style="font-size: 0.7rem; color: #8b5cf6; margin-top: 4px;">${escapeHtml(shot.mood)}</div>` : ''}
+                        </td>
+                        <td class="table-duration">${escapeHtml(shot.duration || '3-5s')}</td>
+                        <td><span class="table-type ${typeClass}">${escapeHtml(shot.shotTypeVi || shot.shotType)}</span></td>
+                        <td class="table-voiceover">"${escapeHtml(shot.voiceover)}"</td>
+                        <td class="table-visual">
+                            📷 ${escapeHtml(shot.visual)}
+                            ${shot.notes ? `<div style="margin-top: 6px; font-size: 0.75rem; color: #f59e0b;">💡 ${escapeHtml(shot.notes)}</div>` : ''}
+                        </td>
                         ${showCamera ? `
-                        <div class="shot-camera">
-                            <div class="shot-camera-item">
-                                <span>🎥</span>
-                                <span class="shot-camera-label">Camera:</span>
-                                <span>${escapeHtml(shot.cameraMove || 'Static')}</span>
-                            </div>
-                            <div class="shot-camera-item">
-                                <span>📐</span>
-                                <span class="shot-camera-label">Angle:</span>
-                                <span>${escapeHtml(shot.angle || 'Eye level')}</span>
-                            </div>
-                        </div>
+                        <td class="table-camera">
+                            <div>🎥 ${escapeHtml(shot.cameraMove || 'Static')}</div>
+                            <div>📐 ${escapeHtml(shot.angle || 'Eye level')}</div>
+                        </td>
                         ` : ''}
-                        
                         ${showStock && shot.stockKeywords && shot.stockKeywords.length > 0 ? `
-                        <div class="shot-keywords">
-                            ${shot.stockKeywords.map(kw =>
-                    `<span class="stock-chip" onclick="copyKeyword(this, '${escapeHtml(kw)}')" title="Click to copy">${escapeHtml(kw)}</span>`
+                        <td>
+                            <div class="table-keywords">
+                                ${shot.stockKeywords.map(kw =>
+                    `<span class="table-keyword" onclick="copyKeyword(this, '${escapeHtml(kw)}')" title="Click to copy">${escapeHtml(kw)}</span>`
                 ).join('')}
-                        </div>
-                        ` : ''}
-                        
-                        ${shot.notes ? `<div class="shot-notes">💡 ${escapeHtml(shot.notes)}</div>` : ''}
-                    </div>
+                            </div>
+                        </td>
+                        ` : (showStock ? '<td>-</td>' : '')}
+                    </tr>
                 `;
             });
-
+            html += '</tbody>';
+            html += '</table>';
             html += '</div>';
+
             shotListEl.innerHTML = html;
         }
+
 
 
         function searchFromDirector(keyword) {
@@ -16494,7 +16977,7 @@ Trả về JSON:`;
             if (clock) {
                 // Formatting based on user request: vYYYY.MM.DD HH:MM
                 // v2026.01.19 16:55 - Director Tab Redesign
-                const version = `v2026.01.19 17:50`;
+                const version = `v2026.01.19 17:55`;
                 clock.textContent = version;
             }
         }
