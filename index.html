@@ -5969,6 +5969,148 @@
             background: rgba(239, 68, 68, 0.15);
         }
 
+        /* Google Drive Sync Styles */
+        .drive-sync-section {
+            border-top: 1px dashed var(--mac-border);
+            padding-top: 16px;
+            margin-top: 16px;
+        }
+
+        .drive-connect-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .drive-connect-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(66, 133, 244, 0.3);
+        }
+
+        .drive-connect-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.4);
+        }
+
+        .drive-status-unconfigured,
+        .drive-status-disconnected {
+            font-size: 0.85rem;
+            color: var(--mac-text-secondary);
+            opacity: 0.8;
+        }
+
+        .drive-status-connected {
+            font-size: 0.85rem;
+            color: #34a853;
+            font-weight: 500;
+        }
+
+        .drive-recent-section {
+            margin-top: 12px;
+        }
+
+        .recent-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+
+        .recent-empty {
+            font-size: 0.8rem;
+            color: var(--mac-text-secondary);
+            opacity: 0.7;
+            font-style: italic;
+        }
+
+        .recent-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 16px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            max-width: 200px;
+        }
+
+        .recent-chip:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--mac-accent);
+        }
+
+        .recent-chip-file {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.25);
+        }
+
+        .recent-chip-file:hover {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: #f59e0b;
+        }
+
+        .recent-chip-icon {
+            font-size: 0.9rem;
+        }
+
+        .recent-chip-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .recent-chip-delete {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0 2px;
+            margin-left: 2px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .recent-chip-delete:hover {
+            opacity: 1;
+        }
+
+        .drive-setup-guide {
+            background: rgba(99, 102, 241, 0.08);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+        }
+
+        .drive-setup-guide ol {
+            margin: 8px 0 0 20px;
+            padding: 0;
+        }
+
+        .drive-setup-guide li {
+            margin-bottom: 4px;
+        }
+
+        .drive-setup-guide a {
+            color: var(--mac-accent);
+        }
+
         /* Results Header */
         .director-results-header {
             display: flex;
@@ -8508,6 +8650,33 @@ Con hổ Bengal là loài mèo lớn thứ hai thế giới, chỉ sau hổ Sibe
                                     </div>
                                 </div>
                                 <div id="directorFileList" class="uploaded-files-list"></div>
+                            </div>
+
+                            <!-- Google Drive Sync Section -->
+                            <div class="settings-group drive-sync-section">
+                                <label class="settings-label">☁️ Đồng bộ Google Drive</label>
+                                <div class="drive-connect-row">
+                                    <button id="driveConnectBtn" class="drive-connect-btn">
+                                        ⚙️ Cấu hình Google Drive
+                                    </button>
+                                    <span id="driveStatus" class="drive-status-unconfigured">Chưa cấu hình</span>
+                                </div>
+                            </div>
+
+                            <!-- Recent Items Section (hidden until connected) -->
+                            <div id="driveRecentSection" class="drive-recent-section" style="display: none;">
+                                <div class="settings-group">
+                                    <label class="settings-label">📝 Ghi chú gần đây</label>
+                                    <div id="recentNotesList" class="recent-chips">
+                                        <span class="recent-empty">Chưa có ghi chú nào</span>
+                                    </div>
+                                </div>
+                                <div class="settings-group">
+                                    <label class="settings-label">📁 File gần đây</label>
+                                    <div id="recentFilesList" class="recent-chips">
+                                        <span class="recent-empty">Chưa có file nào</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -16888,6 +17057,16 @@ Trả về JSON:`;
                 resultsEl.style.display = 'block';
                 toast('✅ Đã phân tích xong ' + result.totalShots + ' shots!');
 
+                // Auto-save to Google Drive if connected
+                if (typeof DriveSync !== 'undefined' && DriveSync.isSignedIn) {
+                    if (userContext) {
+                        DriveSync.saveNote(userContext);
+                    }
+                    directorFileContents.forEach(file => {
+                        DriveSync.saveFile(file.name, file.content);
+                    });
+                }
+
             } catch (error) {
                 console.error('Director analysis error:', error);
                 loadingEl.style.display = 'none';
@@ -17219,7 +17398,7 @@ Trả về JSON:`;
             if (clock) {
                 // Formatting based on user request: vYYYY.MM.DD HH:MM
                 // v2026.01.19 16:55 - Director Tab Redesign
-                const version = `v2026.01.19 17:59`;
+                const version = `v2026.01.19 18:25`;
                 clock.textContent = version;
             }
         }
@@ -17234,6 +17413,49 @@ Trả về JSON:`;
             updateHeaderClock();
         });
     </script>
+
+    <!-- Google Drive Settings Modal -->
+    <div class="modal" id="driveSettingsModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>☁️ Cấu hình Google Drive</h3>
+                <button class="modal-close"
+                    onclick="document.getElementById('driveSettingsModal').classList.remove('show')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="drive-setup-guide">
+                    <p><strong>Hướng dẫn lấy credentials:</strong></p>
+                    <ol>
+                        <li>Vào <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a></li>
+                        <li>Tạo Project mới (hoặc chọn project có sẵn)</li>
+                        <li>Vào APIs & Services → Enable Google Drive API</li>
+                        <li>Vào Credentials → Create Credentials → OAuth Client ID</li>
+                        <li>Chọn Web Application, thêm domain hiện tại vào Authorized JavaScript origins</li>
+                        <li>Copy Client ID và API Key vào đây</li>
+                    </ol>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Client ID</label>
+                    <input type="text" class="form-input" id="googleClientIdInput"
+                        placeholder="xxx.apps.googleusercontent.com"
+                        style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--mac-border); background: var(--mac-input-bg); color: var(--mac-text);">
+                </div>
+                <div class="form-group" style="margin-top: 12px;">
+                    <label class="form-label">API Key</label>
+                    <input type="text" class="form-input" id="googleApiKeyInput" placeholder="AIza..."
+                        style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--mac-border); background: var(--mac-input-bg); color: var(--mac-text);">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary"
+                    onclick="document.getElementById('driveSettingsModal').classList.remove('show')">Hủy</button>
+                <button class="btn btn-primary" onclick="DriveSync.saveCredentials()">Lưu & Kết nối</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DriveSync Script -->
+    <script src="driveSync.js"></script>
 </body>
 
 
