@@ -8330,11 +8330,10 @@ Con hổ Bengal là loài mèo lớn thứ hai thế giới, chỉ sau hổ Sibe
 
                     <!-- Director Settings Card -->
                     <div class="director-settings-card">
-                        <div class="director-settings-header" onclick="toggleDirectorSettings()">
-                            <span>⚙️ Cài đặt nâng cao</span>
-                            <span id="directorSettingsArrow" class="settings-arrow">▼</span>
+                        <div class="director-settings-header">
+                            <span>⚙️ Cài đặt</span>
                         </div>
-                        <div id="directorSettings" class="director-settings-body" style="display: none;">
+                        <div id="directorSettings" class="director-settings-body">
                             <div class="settings-group">
                                 <label class="settings-label">🎥 Phong cách đạo diễn</label>
                                 <select id="directorStyle" class="director-select">
@@ -16977,7 +16976,7 @@ Trả về JSON:`;
             if (clock) {
                 // Formatting based on user request: vYYYY.MM.DD HH:MM
                 // v2026.01.19 16:55 - Director Tab Redesign
-                const version = `v2026.01.19 17:55`;
+                const version = `v2026.01.19 17:59`;
                 clock.textContent = version;
             }
         }
