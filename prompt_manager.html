@@ -657,7 +657,14 @@
                     // Let's keep it simple: strict filtering
                 });
             }
-            render();
+        }
+        render();
+
+        // Re-render active view to show/hide highlights live
+        if (primarySelectedId) {
+            const item = data.prompts.find(p => p.id === primarySelectedId);
+            if (item) renderPromptView(primarySelectedId);
+        }
         };
 
         const addAncestors = (folderId) => {
