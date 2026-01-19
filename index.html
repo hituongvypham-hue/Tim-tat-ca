@@ -10950,7 +10950,12 @@ Trả về JSON (chỉ JSON, không text khác):
                                     const local = localData[key];
                                     const cloud = cloudData[key];
 
-                                    if (Array.isArray(local) && Array.isArray(cloud)) {
+                                    if (key === 'prompt_manager_v4') {
+                                        // Special handling for complex DB object: Atomic replacement based on timestamp
+                                        if (cloudData.timestamp > localData.timestamp) {
+                                            merged[key] = cloud;
+                                        }
+                                    } else if (Array.isArray(local) && Array.isArray(cloud)) {
                                         // Merge arrays by unique identifier
                                         merged[key] = this.mergeArrays(local, cloud, key);
                                     } else if (typeof local === 'object' && typeof cloud === 'object') {
@@ -10997,12 +11002,17 @@ Trả về JSON (chỉ JSON, không text khác):
                             },
 
                             mergeObjects(local, cloud) {
+                                // Prevent array corruption: if either is array, do not merge as object
+                                if (Array.isArray(local) || Array.isArray(cloud)) {
+                                    return local; // Prefer local if conflict in type or handling nested array without ID
+                                }
+
                                 const merged = { ...local };
 
                                 Object.keys(cloud).forEach(key => {
                                     if (!(key in merged)) {
                                         merged[key] = cloud[key];
-                                    } else if (typeof cloud[key] === 'object' && typeof merged[key] === 'object') {
+                                    } else if (typeof cloud[key] === 'object' && cloud[key] !== null && typeof merged[key] === 'object' && merged[key] !== null) {
                                         merged[key] = this.mergeObjects(merged[key], cloud[key]);
                                     }
                                 });
@@ -11203,20 +11213,12 @@ Trả về JSON (chỉ JSON, không text khác):
                                     const cloudData = await downloadRes.json();
                                     const localData = GDriveData.collect();
 
-                                    // Check if cloud has newer or more data
+                                    // Check if cloud is newer
                                     const cloudTime = cloudData.timestamp || 0;
                                     const localTime = localData.timestamp || 0;
 
-                                    // Count items in critical arrays
-                                    const cloudItems = (cloudData.ytAudioPlaylists?.length || 0) +
-                                        (cloudData.ytAudioFavorites?.length || 0) +
-                                        (cloudData.promptLibrary?.length || 0);
-                                    const localItems = (localData.ytAudioPlaylists?.length || 0) +
-                                        (localData.ytAudioFavorites?.length || 0) +
-                                        (localData.promptLibrary?.length || 0);
-
-                                    if (cloudItems > localItems) {
-                                        console.log('[GDrive] Cloud has more items, merging...');
+                                    if (cloudTime > localTime) {
+                                        console.log('[GDrive] Cloud is newer, merging...');
                                         const merged = GDriveData.smartMerge(localData, cloudData);
                                         GDriveData.apply(merged);
                                         toast('☁️ Đã đồng bộ dữ liệu từ cloud');
@@ -11225,8 +11227,17 @@ Trả về JSON (chỉ JSON, không text khác):
                                         if (typeof renderYTHistory === 'function') renderYTHistory();
                                         if (typeof renderYTFavorites === 'function') renderYTFavorites();
                                         if (typeof renderYTPlaylists === 'function') renderYTPlaylists();
+
+                                        // Refresh prompt manager if frame exists
+                                        if (typeof document.getElementById('promptManagerFrame') !== 'undefined') {
+                                            const frame = document.getElementById('promptManagerFrame');
+                                            if (frame && frame.contentWindow && frame.contentWindow.loadData) {
+                                                frame.contentWindow.loadData();
+                                                frame.contentWindow.render();
+                                            }
+                                        }
                                     } else {
-                                        console.log('[GDrive] Local data is up to date');
+                                        console.log('[GDrive] Local data is up to date (or newer)');
                                     }
 
                                 } catch (err) {
