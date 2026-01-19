@@ -434,6 +434,10 @@
             <button onclick="importData()">📥 Import Files</button>
             <button onclick="importFolder()">📂 Import Folder</button>
             <button onclick="exportData()">📤 Export</button>
+            <div style="flex:1; margin: 0 12px;">
+                <input type="text" class="form-input" id="searchPrompt" placeholder="🔍 Tìm kiếm (Tên, nội dung)..."
+                    oninput="handleSearch(this.value)" style="width:100%">
+            </div>
             <button onclick="openSettings()">⚙️ Cài đặt</button>
         </div>
         <div class="content">
@@ -546,6 +550,8 @@
         let dragItem = null;
         let isTrashView = false;
         let actionHistory = []; // History stack for Undo
+        let searchTerm = '';
+        let searchResults = new Set(); // Set of IDs to show
 
         // Init
         const init = () => {
@@ -576,9 +582,50 @@
         };
 
         const saveData = () => {
+            // ... (existing save logic)
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
             // Notify parent to sync
             window.parent.postMessage({ type: 'SYNC_DRIVE' }, '*');
+        };
+
+        // Search Logic
+        const handleSearch = (term) => {
+            searchTerm = term.toLowerCase().trim();
+            if (searchTerm) {
+                // Pre-calculate matches
+                searchResults.clear();
+
+                // 1. Find directly matching items
+                const matchedPrompts = data.prompts.filter(p =>
+                    p.name.toLowerCase().includes(searchTerm) ||
+                    (p.content && p.content.toLowerCase().includes(searchTerm))
+                );
+
+                const matchedFolders = data.folders.filter(f =>
+                    f.id !== 'root' && f.name.toLowerCase().includes(searchTerm)
+                );
+
+                // 2. Add them and their ancestors to Show List
+                matchedPrompts.forEach(p => {
+                    searchResults.add(p.id);
+                    addAncestors(p.folder);
+                });
+
+                matchedFolders.forEach(f => {
+                    searchResults.add(f.id);
+                    addAncestors(f.parent);
+                    // Optional: Show children of matched folder? 
+                    // Let's keep it simple: strict filtering
+                });
+            }
+            render();
+        };
+
+        const addAncestors = (folderId) => {
+            if (!folderId || folderId === 'root') return;
+            searchResults.add(folderId);
+            const folder = data.folders.find(f => f.id === folderId);
+            if (folder) addAncestors(folder.parent);
         };
 
         // Render
@@ -586,20 +633,25 @@
             const tree = document.getElementById('folderTree');
             let html = renderFolder('root');
 
-            // Add trash section
-            const trashCount = data.trash.length;
-            html += `
-                <div style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px;">
-                    <div class="folder-item ${isTrashView ? 'selected' : ''}" 
-                         onclick="showTrash()"
-                         ondragover="handleTrashDragOver(event)"
-                         ondrop="handleTrashDrop(event)">
-                        <span class="folder-toggle"></span>
-                        <span class="folder-icon">🗑️</span>
-                        <span class="folder-name">Thùng rác ${trashCount > 0 ? '(' + trashCount + ')' : ''}</span>
+            // Add trash section (Hide in search if no matches in trash? Or just always show)
+            // For simplicity, hide trash if searching and trash not matched (cleaning logic complicated).
+            // Let's just show trash at bottom always unless search is active?
+
+            if (!searchTerm) {
+                const trashCount = data.trash.length;
+                html += `
+                    <div style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px;">
+                        <div class="folder-item ${isTrashView ? 'selected' : ''}" 
+                            onclick="showTrash()"
+                            ondragover="handleTrashDragOver(event)"
+                            ondrop="handleTrashDrop(event)">
+                            <span class="folder-toggle"></span>
+                            <span class="folder-icon">🗑️</span>
+                            <span class="folder-name">Thùng rác ${trashCount > 0 ? '(' + trashCount + ')' : ''}</span>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            }
 
             tree.innerHTML = html;
         };
@@ -608,15 +660,25 @@
             const folder = data.folders.find(f => f.id === folderId);
             if (!folder) return '';
 
+            // Filter if Searching
+            if (searchTerm && folderId !== 'root' && !searchResults.has(folderId)) {
+                return ''; // Hide this folder if it's not in results chain
+            }
+
             const childFolders = data.folders.filter(f => f.parent === folderId);
             const childPrompts = data.prompts.filter(p => (p.folder || 'root') === folderId);
-            const isCollapsed = folder.collapsed;
+
+            const isCollapsed = searchTerm ? false : folder.collapsed; // Force expand on search
             const isRoot = folderId === 'root';
 
             let html = '';
 
             if (!isRoot) {
                 const isSelected = selectedIds.has(folderId);
+                const name = escapeHtml(folder.name);
+                // Highlight search term
+                const displayName = searchTerm ? name.replace(new RegExp(searchTerm, 'gi'), match => `<mark>${match}</mark>`) : name;
+
                 html += `
                     <div class="folder-item ${isSelected ? 'selected' : ''}" 
                          data-id="${folderId}" 
@@ -627,7 +689,7 @@
                          oncontextmenu="showContext(event, '${folderId}', 'folder')">
                         <span class="folder-toggle" onclick="event.stopPropagation(); toggleFolder('${folderId}')">${isCollapsed ? '▶' : '▼'}</span>
                         <span class="folder-icon">📁</span>
-                        <span class="folder-name">${escapeHtml(folder.name)}</span>
+                        <span class="folder-name">${displayName}</span>
                     </div>
                 `;
             }
@@ -640,7 +702,13 @@
             });
 
             childPrompts.forEach(p => {
+                // Filter prompts
+                if (searchTerm && !searchResults.has(p.id)) return;
+
                 const isSelected = selectedIds.has(p.id);
+                const name = escapeHtml(p.name);
+                const displayName = searchTerm ? name.replace(new RegExp(searchTerm, 'gi'), match => `<mark>${match}</mark>`) : name;
+
                 html += `
                     <div class="prompt-item ${isSelected ? 'selected' : ''}"
                          data-id="${p.id}"
@@ -651,7 +719,7 @@
                          oncontextmenu="showContext(event, '${p.id}', 'prompt')">
                         <span class="folder-toggle"></span>
                         <span class="prompt-icon">📄</span>
-                        <span class="prompt-name">${escapeHtml(p.name)}</span>
+                        <span class="prompt-name">${displayName}</span>
                     </div>
                 `;
             });
