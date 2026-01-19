@@ -8180,15 +8180,14 @@
                     }
                 }
 
-                // Zen Mode Logic (Prompt Tab)
+                // Zen Mode Logic (Global)
                 const macWindow = document.querySelector('.mac-window');
-                if (tabId === 'prompt') {
-                    macWindow.classList.add('zen-mode');
-                    macWindow.classList.remove('zen-open'); // Auto hide on entry
-                } else {
-                    macWindow.classList.remove('zen-mode');
-                    macWindow.classList.remove('zen-open');
-                }
+                macWindow.classList.add('zen-mode');
+
+                // Auto-close sidebar on tab switch (Zen behavior)
+                // If you want it to persist open state, remove the next line. 
+                // But user asked for behavior "like prompt tab" which auto-hides.
+                macWindow.classList.remove('zen-open');
 
                 // Update global state if available
                 if (typeof currentTab !== 'undefined') currentTab = tabId;
