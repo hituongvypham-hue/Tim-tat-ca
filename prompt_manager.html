@@ -434,9 +434,6 @@
             <button onclick="importData()">📥 Import</button>
             <button onclick="exportData()">📤 Export</button>
             <button onclick="openSettings()">⚙️ Cài đặt</button>
-            <span style="margin-left:auto; font-size:11px; color:#666; display:flex; align-items:center;">
-                v2026.01.19 14:56
-            </span>
         </div>
         <div class="content">
             <div class="prompt-view empty" id="promptView">
@@ -552,6 +549,7 @@
         const init = () => {
             loadData();
             cleanupTrash();
+            cleanupOrphans(); // Remove invalid folders
             render();
             attachEvents();
         };
@@ -1020,16 +1018,34 @@
                 if (type === 'folder' && id !== 'root') {
                     const folder = data.folders.find(f => f.id === id);
                     if (folder) {
-                        // Record children first
-                        data.prompts.filter(p => p.folder === id).forEach(p => {
-                            deletedItems.push({ ...p, type: 'prompt' });
-                            data.trash.push({ ...p, deletedAt: Date.now(), type: 'prompt' });
-                        });
-                        deletedItems.push({ ...folder, type: 'folder' });
+                        // Find all descendant folders recursively
+                        const getDescendants = (parentId) => {
+                            let descendants = [];
+                            const children = data.folders.filter(f => f.parent === parentId);
+                            children.forEach(child => {
+                                descendants.push(child);
+                                descendants = descendants.concat(getDescendants(child.id));
+                            });
+                            return descendants;
+                        };
 
-                        data.prompts = data.prompts.filter(p => p.folder !== id);
-                        data.trash.push({ ...folder, deletedAt: Date.now(), type: 'folder' });
-                        data.folders = data.folders.filter(f => f.id !== id);
+                        const allFoldersToDelete = [folder, ...getDescendants(id)];
+
+                        allFoldersToDelete.forEach(f => {
+                            // Archive prompts in this folder
+                            data.prompts.filter(p => p.folder === f.id).forEach(p => {
+                                deletedItems.push({ ...p, type: 'prompt' });
+                                data.trash.push({ ...p, deletedAt: Date.now(), type: 'prompt' });
+                            });
+
+                            // Archive the folder itself
+                            deletedItems.push({ ...f, type: 'folder' });
+                            data.trash.push({ ...f, deletedAt: Date.now(), type: 'folder' });
+
+                            // Remove from data
+                            data.prompts = data.prompts.filter(p => p.folder !== f.id);
+                            data.folders = data.folders.filter(x => x.id !== f.id);
+                        });
                     }
                 } else if (type === 'prompt') {
                     const prompt = data.prompts.find(p => p.id === id);
@@ -1260,6 +1276,36 @@
             if (data.trash.length < before) {
                 saveData();
                 showToast('🗑️ Đã tự động xóa ' + (before - data.trash.length) + ' items cũ');
+            }
+        };
+
+        const cleanupOrphans = () => {
+            // Remove folders that have non-existent parents (orphans)
+            // Iterate until no more changes to handle multi-level orphans
+            let changed = false;
+            let currentFolderCount = data.folders.length;
+
+            do {
+                currentFolderCount = data.folders.length;
+                data.folders = data.folders.filter(f => {
+                    if (f.id === 'root') return true;
+                    // Check if parent exists
+                    return data.folders.some(p => p.id === f.parent);
+                });
+                if (data.folders.length < currentFolderCount) changed = true;
+            } while (data.folders.length < currentFolderCount);
+
+            // Fix prompts with invalid folders
+            data.prompts.forEach(p => {
+                if (p.folder !== 'root' && !data.folders.some(f => f.id === p.folder)) {
+                    p.folder = 'root'; // Move to root
+                    changed = true;
+                }
+            });
+
+            if (changed) {
+                console.log('Cleaned up orphan folders/prompts');
+                saveData();
             }
         };
 
@@ -1622,31 +1668,31 @@
                 const targetType = target.dataset.type;
 
                 if (targetId && targetType === dragItem.type && targetId !== dragItem.id) {
-                    // Reorder
-                    // We need to find the array and swap/move
-                    let array = dragItem.type === 'folder' ? data.folders : data.prompts;
-                    // Find indices
-                    const fromIndex = array.findIndex(x => x.id === dragItem.id);
-                    const toIndex = array.findIndex(x => x.id === targetId);
+                    // Reorder Prompts (Folders should fall through to Move logic for nesting)
+                    if (dragItem.type !== 'folder') {
+                        // We need to find the array and swap/move
+                        let array = data.prompts;
+                        // Find indices
+                        const fromIndex = array.findIndex(x => x.id === dragItem.id);
+                        const toIndex = array.findIndex(x => x.id === targetId);
 
-                    if (fromIndex > -1 && toIndex > -1) {
-                        // If folders, ensure they share same parent (optional, but good for tree)
-                        // Actually for simple reorder list, just move in array
-                        // Remove from old pos
-                        const [movedItem] = array.splice(fromIndex, 1);
-                        // Insert at new pos
-                        array.splice(toIndex, 0, movedItem);
+                        if (fromIndex > -1 && toIndex > -1) {
+                            // Remove from old pos
+                            const [movedItem] = array.splice(fromIndex, 1);
+                            // Insert at new pos
+                            array.splice(toIndex, 0, movedItem);
 
-                        saveData();
-                        render();
-                        // If we are in folder view and reordered prompts, refresh folder view
-                        if (primarySelectedId && dragItem.type === 'prompt') {
-                            const p = array.find(x => x.id === dragItem.id);
-                            if (p && p.folder === primarySelectedId) renderFolderView(primarySelectedId);
+                            saveData();
+                            render();
+                            // If we are in folder view and reordered prompts, refresh folder view
+                            if (primarySelectedId && dragItem.type === 'prompt') {
+                                const p = array.find(x => x.id === dragItem.id);
+                                if (p && p.folder === primarySelectedId) renderFolderView(primarySelectedId);
+                            }
+                            showToast('Đã sắp xếp!');
+                            document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                            return; // Done
                         }
-                        showToast('Đã sắp xếp!');
-                        document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
-                        return; // Done
                     }
                 }
 
