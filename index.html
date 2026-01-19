@@ -5289,6 +5289,377 @@
                 display: none !important;
             }
         }
+
+        /* ========================================
+           DIRECTOR TAB v2 - StudioBinder Style
+           ======================================== */
+
+        /* Summary Dashboard */
+        .director-summary {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .director-summary-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--mac-text);
+        }
+
+        .director-summary-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .director-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .director-stat {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .director-stat-icon {
+            font-size: 1rem;
+        }
+
+        /* B-roll Section */
+        .director-broll {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .director-broll-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .director-broll-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .broll-chip {
+            padding: 8px 14px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+
+        .broll-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+        }
+
+        .broll-chip.copied {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Timeline Container */
+        .director-timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .director-timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--mac-accent), rgba(99, 102, 241, 0.3));
+            border-radius: 2px;
+        }
+
+        /* Shot Card */
+        .director-shot {
+            position: relative;
+            background: var(--mac-card);
+            border: 1px solid var(--mac-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            margin-left: 16px;
+            transition: all 0.2s;
+        }
+
+        .director-shot:hover {
+            border-color: var(--mac-accent);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Timeline Dot */
+        .director-shot::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: var(--mac-accent);
+            border: 3px solid var(--mac-bg);
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px var(--mac-accent);
+        }
+
+        /* Shot Header */
+        .shot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .shot-number {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, var(--mac-accent) 0%, #6366f1 100%);
+            color: white;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .shot-duration {
+            color: var(--mac-text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .shot-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* Color-coded Shot Type Badges */
+        .shot-type-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .shot-type-badge.wide {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .shot-type-badge.medium {
+            background: #10b981;
+            color: white;
+        }
+
+        .shot-type-badge.closeup {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .shot-type-badge.extreme {
+            background: #ef4444;
+            color: white;
+        }
+
+        .shot-type-badge.aerial {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .shot-type-badge.default {
+            background: #6b7280;
+            color: white;
+        }
+
+        .shot-mood-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        /* Voiceover Quote */
+        .shot-voiceover {
+            position: relative;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            background: rgba(99, 102, 241, 0.05);
+            border-left: 4px solid var(--mac-accent);
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: var(--mac-text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .shot-voiceover::before {
+            content: '"';
+            position: absolute;
+            left: 8px;
+            top: -4px;
+            font-size: 2rem;
+            color: var(--mac-accent);
+            opacity: 0.3;
+        }
+
+        /* Visual Description */
+        .shot-visual {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .shot-visual-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        /* Camera Info */
+        .shot-camera {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 10px 12px;
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--mac-text-secondary);
+            margin-bottom: 12px;
+        }
+
+        [data-theme="dark"] .shot-camera {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .shot-camera-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .shot-camera-label {
+            font-weight: 600;
+        }
+
+        /* Stock Keywords */
+        .shot-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--mac-border);
+        }
+
+        .stock-chip {
+            padding: 5px 10px;
+            background: rgba(107, 114, 128, 0.1);
+            border: 1px solid rgba(107, 114, 128, 0.2);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--mac-text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .stock-chip:hover {
+            background: var(--mac-accent);
+            color: white;
+            border-color: var(--mac-accent);
+        }
+
+        .stock-chip.copied {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        /* Notes */
+        .shot-notes {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid #f59e0b;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.8rem;
+            color: #b45309;
+        }
+
+        [data-theme="dark"] .shot-notes {
+            color: #fbbf24;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .director-timeline {
+                padding-left: 16px;
+            }
+
+            .director-timeline::before {
+                left: 4px;
+            }
+
+            .director-shot {
+                margin-left: 12px;
+                padding: 12px;
+            }
+
+            .director-shot::before {
+                left: -20px;
+                width: 10px;
+                height: 10px;
+            }
+
+            .director-summary-stats {
+                gap: 8px;
+            }
+
+            .director-stat {
+                padding: 4px 10px;
+                font-size: 0.8rem;
+            }
+        }
     </style>
 
 </head>
@@ -15805,70 +16176,118 @@ Trả về JSON:`;
         function renderDirectorResults(result, showStock, showCamera, showMood) {
             const shotListEl = document.getElementById('directorShotList');
 
-            let html = `
-                <div style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--mac-border);">
-                    <h3 style="margin: 0 0 8px 0; font-size: 1.1rem;">🎬 ${escapeHtml(result.title || 'Shot Breakdown')}</h3>
-                    <div style="font-size: 0.85rem; color: var(--mac-text-secondary);">
-                        Tổng: <strong>${result.totalShots} shots</strong>
-                        ${result.colorGrade ? ` | Color: <strong>${escapeHtml(result.colorGrade)}</strong>` : ''}
+            // Helper: Get shot type badge class
+            function getShotTypeClass(type) {
+                const t = (type || '').toLowerCase();
+                if (t.includes('wide') || t.includes('toàn')) return 'wide';
+                if (t.includes('medium') || t.includes('trung')) return 'medium';
+                if (t.includes('close') || t.includes('cận')) return 'closeup';
+                if (t.includes('extreme') || t.includes('cực')) return 'extreme';
+                if (t.includes('aerial') || t.includes('flycam') || t.includes('drone')) return 'aerial';
+                return 'default';
+            }
+
+            // Calculate estimated duration
+            const estimatedDuration = result.shots ? result.shots.reduce((acc, shot) => {
+                const match = (shot.duration || '3-5s').match(/(\d+)/);
+                return acc + (match ? parseInt(match[1]) : 4);
+            }, 0) : 0;
+
+            let html = '';
+
+            // ===== SUMMARY DASHBOARD =====
+            html += `
+                <div class="director-summary">
+                    <div class="director-summary-title">
+                        🎬 ${escapeHtml(result.title || 'Shot Breakdown')}
+                    </div>
+                    <div class="director-summary-stats">
+                        <div class="director-stat">
+                            <span class="director-stat-icon">📊</span>
+                            <strong>${result.totalShots || result.shots?.length || 0}</strong> shots
+                        </div>
+                        <div class="director-stat">
+                            <span class="director-stat-icon">⏱️</span>
+                            ~${Math.floor(estimatedDuration / 60)}:${String(estimatedDuration % 60).padStart(2, '0')} min
+                        </div>
+                        ${result.colorGrade ? `
+                        <div class="director-stat">
+                            <span class="director-stat-icon">🎨</span>
+                            ${escapeHtml(result.colorGrade)}
+                        </div>` : ''}
                     </div>
                 </div>
             `;
 
-            // B-roll suggestions
+            // ===== B-ROLL SECTION =====
             if (result.brollSuggestions && result.brollSuggestions.length > 0) {
                 html += `
-                    <div style="margin-bottom: 16px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
-                        <div style="font-weight: 600; margin-bottom: 8px;">🎥 B-roll Keywords (click để copy)</div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <div class="director-broll">
+                        <div class="director-broll-title">
+                            🎥 B-roll Keywords
+                            <span style="font-weight: 400; opacity: 0.7; font-size: 0.8rem;">— click để copy</span>
+                        </div>
+                        <div class="director-broll-grid">
                             ${result.brollSuggestions.map(kw =>
-                    `<span class="keyword-chip copyable" onclick="copyKeyword(this, '${escapeHtml(kw)}')" title="Click to copy">${escapeHtml(kw)}</span>`
+                    `<span class="broll-chip" onclick="copyKeyword(this, '${escapeHtml(kw)}')" title="Click to copy">${escapeHtml(kw)}</span>`
                 ).join('')}
                         </div>
                     </div>
                 `;
             }
 
-            // Individual shots
-            html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            // ===== TIMELINE SHOTS =====
+            html += '<div class="director-timeline">';
 
             result.shots.forEach((shot, index) => {
+                const typeClass = getShotTypeClass(shot.shotType);
+
                 html += `
-                    <div style="padding: 14px; background: var(--mac-bg); border-radius: 10px; border: 1px solid var(--mac-border);">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="background: var(--mac-accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">SHOT ${shot.id}</span>
-                                <span style="font-size: 0.8rem; color: var(--mac-text-secondary);">${escapeHtml(shot.duration || '3-5s')}</span>
+                    <div class="director-shot">
+                        <div class="shot-header">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="shot-number">SHOT ${shot.id}</span>
+                                <span class="shot-duration">⏱️ ${escapeHtml(shot.duration || '3-5s')}</span>
                             </div>
-                            <div style="display: flex; gap: 4px;">
-                                <span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;">${escapeHtml(shot.shotTypeVi || shot.shotType)}</span>
-                                ${showMood && shot.mood ? `<span style="background: #8b5cf6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;">${escapeHtml(shot.mood)}</span>` : ''}
+                            <div class="shot-badges">
+                                <span class="shot-type-badge ${typeClass}">${escapeHtml(shot.shotTypeVi || shot.shotType)}</span>
+                                ${showMood && shot.mood ? `<span class="shot-mood-badge">${escapeHtml(shot.mood)}</span>` : ''}
                             </div>
                         </div>
                         
-                        <div style="font-style: italic; color: var(--mac-text-secondary); margin-bottom: 8px; font-size: 0.85rem; border-left: 3px solid var(--mac-accent); padding-left: 10px;">
-                            "${escapeHtml(shot.voiceover)}"
+                        <div class="shot-voiceover">
+                            ${escapeHtml(shot.voiceover)}
                         </div>
                         
-                        <div style="font-size: 0.9rem; margin-bottom: 8px;">
-                            📷 ${escapeHtml(shot.visual)}
+                        <div class="shot-visual">
+                            <span class="shot-visual-icon">📷</span>
+                            <span>${escapeHtml(shot.visual)}</span>
                         </div>
                         
                         ${showCamera ? `
-                        <div style="font-size: 0.8rem; color: var(--mac-text-secondary); margin-bottom: 8px;">
-                            🎥 <strong>Camera:</strong> ${escapeHtml(shot.cameraMove || 'Static')} | <strong>Angle:</strong> ${escapeHtml(shot.angle || 'Eye level')}
+                        <div class="shot-camera">
+                            <div class="shot-camera-item">
+                                <span>🎥</span>
+                                <span class="shot-camera-label">Camera:</span>
+                                <span>${escapeHtml(shot.cameraMove || 'Static')}</span>
+                            </div>
+                            <div class="shot-camera-item">
+                                <span>📐</span>
+                                <span class="shot-camera-label">Angle:</span>
+                                <span>${escapeHtml(shot.angle || 'Eye level')}</span>
+                            </div>
                         </div>
                         ` : ''}
                         
                         ${showStock && shot.stockKeywords && shot.stockKeywords.length > 0 ? `
-                        <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px;">
+                        <div class="shot-keywords">
                             ${shot.stockKeywords.map(kw =>
-                    `<span class="keyword-chip copyable" onclick="copyKeyword(this, '${escapeHtml(kw)}')" title="Click to copy">${escapeHtml(kw)}</span>`
+                    `<span class="stock-chip" onclick="copyKeyword(this, '${escapeHtml(kw)}')" title="Click to copy">${escapeHtml(kw)}</span>`
                 ).join('')}
                         </div>
                         ` : ''}
                         
-                        ${shot.notes ? `<div style="font-size: 0.8rem; color: #f59e0b; margin-top: 8px;">💡 ${escapeHtml(shot.notes)}</div>` : ''}
+                        ${shot.notes ? `<div class="shot-notes">💡 ${escapeHtml(shot.notes)}</div>` : ''}
                     </div>
                 `;
             });
@@ -15876,6 +16295,7 @@ Trả về JSON:`;
             html += '</div>';
             shotListEl.innerHTML = html;
         }
+
 
         function searchFromDirector(keyword) {
             // Switch to video tab and fill in the keyword
@@ -16074,7 +16494,7 @@ Trả về JSON:`;
             if (clock) {
                 // Formatting based on user request: vYYYY.MM.DD HH:MM
                 // v2026.01.19 16:55 - Director Tab Redesign
-                const version = `v2026.01.19 17:40`;
+                const version = `v2026.01.19 17:50`;
                 clock.textContent = version;
             }
         }
