@@ -746,7 +746,17 @@
 
                 const isSelected = selectedIds.has(p.id);
                 const name = escapeHtml(p.name);
+                // Highlight search term
                 const displayName = searchTerm ? name.replace(new RegExp(searchTerm, 'gi'), match => `<mark>${match}</mark>`) : name;
+
+                // Check if content matched
+                let badge = '';
+                if (searchTerm && p.content && p.content.toLowerCase().includes(searchTerm)) {
+                    // Show "Nội dung" badge if match found in content
+                    if (!p.name.toLowerCase().includes(searchTerm)) {
+                        badge = `<span class="search-badge search-match-content">Nội dung</span>`;
+                    }
+                }
 
                 html += `
                     <div class="prompt-item ${isSelected ? 'selected' : ''}"
@@ -758,7 +768,7 @@
                          oncontextmenu="showContext(event, '${p.id}', 'prompt')">
                         <span class="folder-toggle"></span>
                         <span class="prompt-icon">📄</span>
-                        <span class="prompt-name">${displayName}</span>
+                        <span class="prompt-name">${displayName}${badge}</span>
                     </div>
                 `;
             });
