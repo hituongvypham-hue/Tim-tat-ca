@@ -45,7 +45,26 @@
 - **Commit:** `0f476d6`
 - **Ngày sửa:** 10/01/2026
 
----
+- **Ngày sửa:** 10/01/2026
+ 
+ ### 6. GitHub Pages Update Không Hiển Thị (Deployment Delay)
+ - **Triệu chứng:** Push code thành công nhưng trang web vẫn hiện version cũ, check API thấy code mới.
+ - **Nguyên nhân:**
+   - 1. **Propagation Delay:** GitHub Pages CDNs mất 1-10 phút để update toàn cầu.
+   - 2. **Network Timeout:** File lớn hoặc mạng yếu khiến `git push` bị treo/fail ngầm.
+ - **Giải pháp:**
+   - **Tăng Buffer Git:** `git config --global http.postBuffer 524288000` (500MB).
+   - **Force Refresh:** `Ctrl + Shift + R` hoặc mở Incognito.
+   - **Check URL:** Thêm query param để bypass cache: `?v=new_version`
+ - **Ngày sửa:** 19/01/2026
+ 
+ ### 7. Hardcoded Version String Overwrite
+ - **Triệu chứng:** Đã update HTML version nhưng load lại vẫn thấy version cũ (vd: 15:52).
+ - **Nguyên nhân:** Có code JS (vd: `updateHeaderClock`) hardcode string version và ghi đè lên HTML lúc runtime.
+ - **Giải pháp:** Search toàn bộ project tìm string version cũ (grep "v2026...") và update trong cả HTML lẫn JS.
+ - **Ngày sửa:** 19/01/2026
+ 
+ ---
 
 ## ⚠️ Bugs Cần Lưu Ý Khi Code
 
