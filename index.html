@@ -5125,6 +5125,53 @@
             }
         }
 
+        /* Zen Mode (Prompt Tab Only) */
+        .mac-window.zen-mode .mac-sidebar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            transform: translateX(-100%);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            height: 100%;
+        }
+
+        .mac-window.zen-mode .mac-content {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .mac-window.zen-mode.zen-open .mac-sidebar {
+            transform: translateX(0);
+        }
+
+        /* Toggle Button for Zen Mode */
+        .zen-toggle-btn {
+            display: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 8px;
+            background: none;
+            border: none;
+            color: var(--mac-text);
+            border-radius: 4px;
+        }
+
+        .zen-toggle-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .mac-window.zen-mode .zen-toggle-btn {
+            display: block;
+        }
+
+        /* Hide mobile menu toggle in Zen Mode to avoid duplicates/confusion */
+        .mac-window.zen-mode #mobileMenuBtn {
+            display: none !important;
+        }
+
         /* Desktop: hide mobile menu toggle */
         @media (min-width: 769px) {
             .mobile-menu-toggle {
@@ -5144,6 +5191,8 @@
         <!-- macOS Title Bar -->
         <div class="mac-titlebar">
             <button class="mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileSidebar()">☰</button>
+            <button class="zen-toggle-btn" id="zenToggleBtn" onclick="toggleZenSidebar()"
+                title="Toggle Sidebar">☰</button>
             <div class="traffic-lights">
                 <div class="traffic-light close" title="Close"></div>
                 <div class="traffic-light minimize" title="Minimize"></div>
@@ -8131,11 +8180,27 @@
                     }
                 }
 
+                // Zen Mode Logic (Prompt Tab)
+                const macWindow = document.querySelector('.mac-window');
+                if (tabId === 'prompt') {
+                    macWindow.classList.add('zen-mode');
+                    macWindow.classList.remove('zen-open'); // Auto hide on entry
+                } else {
+                    macWindow.classList.remove('zen-mode');
+                    macWindow.classList.remove('zen-open');
+                }
+
                 // Update global state if available
                 if (typeof currentTab !== 'undefined') currentTab = tabId;
 
                 // Save to localStorage
                 localStorage.setItem('activeTab', tabId);
+            }
+
+            // Zen Mode Toggle
+            function toggleZenSidebar() {
+                const macWindow = document.querySelector('.mac-window');
+                macWindow.classList.toggle('zen-open');
             }
 
             // --- MOBILE SIDEBAR TOGGLE ---
