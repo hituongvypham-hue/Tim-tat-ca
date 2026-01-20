@@ -62,7 +62,7 @@
  - **Triệu chứng:** Đã update HTML version nhưng load lại vẫn thấy version cũ (vd: 15:52).
  - **Nguyên nhân:** Có code JS (vd: `updateHeaderClock`) hardcode string version và ghi đè lên HTML lúc runtime.
  - **Giải pháp:** Search toàn bộ project tìm string version cũ (grep "v2026...") và update trong cả HTML lẫn JS.
- - **Ngày sửa:** 19/01/2026
+ - **Trạng thái:** [FIXED] 20/01/2026 (Updated JS & Removed HTML Duplicate)
  
  ---
 

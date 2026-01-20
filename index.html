@@ -6429,8 +6429,7 @@
                 <div class="traffic-light minimize" title="Minimize"></div>
                 <div class="traffic-light maximize" title="Maximize"></div>
             </div>
-            <div class="mac-title">Media Search Pro <span style="font-size: 0.8em; opacity: 0.7;">v2026.01.20
-                    09:30</span></div>
+            <div class="mac-title">Media Search Pro</div>
             <div class="header-actions" style="display: flex; align-items: center; gap: 8px;">
                 <span id="headerClock" style="font-size: 11px; color: var(--mac-text-secondary);"></span>
                 <div id="apiStatusBadge" class="api-status-badge disconnected" onclick="showApiKeyModal()"
@@ -12818,13 +12817,7 @@ Trả về JSON (chỉ JSON, không text khác):
 
             // 5. Update header clock
             // 5. Update header clock (Version Timestamp)
-            function updateClock() {
-                // Static version time (Push time)
-                document.getElementById('headerClock').textContent = `19/01 • 07:23`;
-                document.getElementById('headerClock').title = "Cập nhật lần cuối: 07:23, 19/01/2026";
-            }
-            updateClock(); // Set once
-            // setInterval(updateClock, 60000); // Removed dynamic update
+            // 5. Update header clock - Handled by global updateHeaderClock() at end of file
 
             // 6. Formula Cards functions
             function toggleFormulaCards() {
@@ -17579,8 +17572,8 @@ Trả về JSON:`;
             const clock = document.getElementById('headerClock');
             if (clock) {
                 // Formatting based on user request: vYYYY.MM.DD HH:MM
-                // v2026.01.20 09:15 - Fix API Model
-                const version = `v2026.01.20 09:15`;
+                // v2026.01.20 09:40 - Fix AI Suggest & Version Display
+                const version = `v2026.01.20 09:40`;
                 clock.textContent = version;
             }
         }
