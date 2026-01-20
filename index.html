@@ -17598,40 +17598,47 @@ Trả về JSON:`;
 
     <script>
         // API Key Logic
-        function showApiKeyModal() {
+        // API Key Logic
+        window.showApiKeyModal = function () {
             const key = localStorage.getItem('geminiApiKey');
             if (key) {
                 const input = document.getElementById('geminiApiKeyInput');
                 if (input) input.value = key;
             }
             const modal = document.getElementById('apiKeyModal');
-            if (modal) modal.classList.add('active');
-        }
+            if (modal) {
+                modal.classList.add('active');
+                modal.style.display = 'flex'; // Ensure visibility
+            }
+        };
 
-        function closeApiKeyModal() {
+        window.closeApiKeyModal = function () {
             const modal = document.getElementById('apiKeyModal');
-            if (modal) modal.classList.remove('active');
-        }
+            if (modal) {
+                modal.classList.remove('active');
+                modal.style.display = 'none';
+            }
+        };
 
-        function saveGeminiApiKey() {
+        window.saveGeminiApiKey = function () {
             const input = document.getElementById('geminiApiKeyInput');
             if (!input) return;
 
             const key = input.value.trim();
             if (key) {
                 localStorage.setItem('geminiApiKey', key);
-                updateApiStatus();
-                closeApiKeyModal();
+                window.updateApiStatus();
+                window.closeApiKeyModal();
                 if (typeof toast === 'function') toast('✅ API Key saved!');
             } else {
                 localStorage.removeItem('geminiApiKey');
-                updateApiStatus();
-                closeApiKeyModal();
+                window.updateApiStatus();
+                window.closeApiKeyModal();
                 if (typeof toast === 'function') toast('🗑️ API Key removed');
             }
-        }
+        };
 
-        function updateApiStatus() {
+        window.updateApiStatus = function () {
             const key = localStorage.getItem('geminiApiKey');
             const badge = document.getElementById('apiStatusBadge');
             if (badge) {
@@ -17647,26 +17654,26 @@ Trả về JSON:`;
                     if (icon) icon.textContent = '❌';
                 }
             }
-        }
+        };
 
         // Clock / Version
         function updateHeaderClock() {
             const clock = document.getElementById('headerClock');
             if (clock) {
                 // Formatting based on user request: vYYYY.MM.DD HH:MM
-                // v2026.01.20 09:05 - Added AI Assist Fill
-                const version = `v2026.01.20 09:05`;
+                // v2026.01.20 09:10 - Fix Modal
+                const version = `v2026.01.20 09:10`;
                 clock.textContent = version;
             }
         }
 
         // Init immediately
-        updateApiStatus();
+        window.updateApiStatus();
         updateHeaderClock();
 
         // And on load ensure it runs
         document.addEventListener('DOMContentLoaded', () => {
-            updateApiStatus();
+            window.updateApiStatus();
             updateHeaderClock();
         });
     </script>
