@@ -13029,7 +13029,7 @@ Trả về JSON (chỉ JSON, không text khác):
                 document.getElementById('finalPrompt').value = finalPrompt;
             }
 
-            function copyFinalPrompt() {
+            window.copyFinalPrompt = function () {
                 const prompt = document.getElementById('finalPrompt').value;
                 if (!prompt) {
                     toast('⚠️ Prompt trống!');
@@ -13038,7 +13038,7 @@ Trả về JSON (chỉ JSON, không text khác):
                 navigator.clipboard.writeText(prompt).then(() => {
                     toast('✅ Đã copy prompt!');
                 });
-            }
+            };
 
             // Update create count when checkboxes change
             document.addEventListener('change', function (e) {
@@ -13048,55 +13048,87 @@ Trả về JSON (chỉ JSON, không text khác):
                 }
             });
 
-            function generateAIImage() {
+            // Expose to window for inline HTML onclick
+            window.toggleAiIcon = function (btn) {
+                btn.classList.toggle('selected');
+            };
+
+            window.generateAIImage = function () {
                 const prompt = document.getElementById('finalPrompt').value.trim();
-                const selectedModels = document.querySelectorAll('.ai-icon-btn.selected');
+                // Select buttons that have class 'selected'
+                const selectedModels = document.querySelectorAll('#aiIconGrid .ai-icon-btn.selected');
 
                 if (!prompt) {
-                    alert('Vui lòng điền thông tin để tạo prompt!');
+                    toast('⚠️ Chưa có prompt! Hãy bấm "Tạo Prompt" trước.', 'error');
                     return;
                 }
 
                 if (selectedModels.length === 0) {
-                    alert('Vui lòng chọn ít nhất 1 AI model!');
+                    toast('⚠️ Hãy chọn ít nhất 1 AI Model (bấm vào icon)!', 'error');
                     return;
                 }
 
-                const encodedPrompt = encodeURIComponent(prompt);
-
-                const aiUrls = {
-                    'chatgpt-dalle': `https://chat.openai.com/?q=Create an image: ${encodedPrompt}`,
-                    'midjourney': 'https://www.midjourney.com/app/',
-                    'flux': 'https://flux1.ai/',
-                    'ideogram': `https://ideogram.ai/t/explore?q=${encodedPrompt}`,
-                    'leonardo': 'https://app.leonardo.ai/ai-generations',
-                    'firefly': 'https://firefly.adobe.com/generate/images',
-                    'gemini-image': 'https://gemini.google.com/',
-                    'stable-diffusion': 'https://stability.ai/stable-image',
-                    'keling': 'https://klingai.com/',
+                // AI Service URLs (Map ID to URL)
+                const AI_URLS = {
+                    'chatgpt-dalle': `https://chat.openai.com/?model=gpt-4-dalle`,
+                    'midjourney-web': 'https://www.midjourney.com/imagine',
+                    'gemini-image': 'https://gemini.google.com/app',
+                    'bing-image': 'https://www.bing.com/images/create',
+                    'adobe-firefly': 'https://firefly.adobe.com/',
+                    'leonardo-ai': 'https://app.leonardo.ai/',
+                    'ideogram': 'https://ideogram.ai/',
+                    'clipdrop': 'https://clipdrop.co/stable-diffusion',
+                    'tensor-art': 'https://tensor.art/',
+                    'seaart': 'https://www.seaart.ai/',
+                    'playground-ai': 'https://playgroundai.com/',
+                    'krea-ai': 'https://www.krea.ai/',
+                    // Chinese
+                    'liblib-ai': 'https://www.liblib.art/',
+                    'civita-ai': 'https://civitai.com/',
+                    'tiamat': 'https://tiamat.ai/',
+                    // Additional
                     'jimeng': 'https://jimeng.jianying.com/',
                     'doubao-image': 'https://www.doubao.com/',
                     'tongyi': 'https://tongyi.aliyun.com/wanxiang/',
                     'ernie-vilg': 'https://yiyan.baidu.com/',
-                    'aistudio': 'https://aistudio.google.com/prompts/new_chat?model=gemini-3-pro-image-preview',
-                    'kittl': 'https://www.kittl.com/create',
-                    'recraft': 'https://www.recraft.ai/create',
                     'reve': 'https://reve.art/generate',
-                    'freepik-ai': 'https://www.freepik.com/ai/image-generator'
+                    'freepik-ai': 'https://www.freepik.com/ai/image-generator',
+                    'keling': 'https://klingai.com/'
                 };
 
                 // Copy prompt to clipboard
                 navigator.clipboard.writeText(prompt).then(() => {
-                    toast(`✅ Đã copy prompt! Mở ${selectedModels.length} tool...`);
-                }).catch(() => { });
+                    toast(`📋 Đã copy prompt! Đang mở ${selectedModels.length} tool...`);
+                }).catch(() => {
+                    toast(`⚠️ Lỗi copy clipboard! Đang mở ${selectedModels.length} tool...`);
+                });
 
                 // Open all selected AI tools
-                selectedModels.forEach((checkbox, index) => {
-                    const url = aiUrls[checkbox.value];
+                selectedModels.forEach((btn, index) => {
+                    // Use dataset.ai instead of value
+                    const aiKey = btn.dataset.ai;
+                    let url = AI_URLS[aiKey];
+
+                    // Fallback or specific logic
+                    if (!url) {
+                        // Attempt generic
+                        url = 'https://gemini.google.com/app';
+                    }
+
+                    // For ChatGPT/Ideogram, append prompt if URL supports it ??
+                    // NO, most need paste. Just open base URL.
+
                     setTimeout(() => {
                         window.open(url, '_blank');
-                    }, index * 300); // Slight delay between opens
+                    }, index * 500); // 500ms delay to prevent popup blockers
                 });
+
+                // Increment Usage Count
+                const countEl = document.getElementById('createCount');
+                if (countEl) {
+                    let c = parseInt(countEl.innerText || '0');
+                    countEl.innerText = c + 1;
+                }
             }
 
             // 7. AI Assist Function - Smart Presets + Gemini API
@@ -17384,61 +17416,7 @@ Trả về JSON:`;
         }
 
 
-        // ==========================================
-        // CREATE TAB LOGIC - IMAGE GENERATION
-        // ==========================================
-        function generateAIImage() {
-            const prompt = document.getElementById('finalPrompt').value.trim();
-            if (!prompt) {
-                toast('⚠️ Chưa có prompt! Hãy bấm "Tạo Prompt" trước.', 'error');
-                return;
-            }
 
-            // Increment count
-            const countEl = document.getElementById('createCount');
-            if (countEl) {
-                let count = parseInt(countEl.textContent || '0');
-                count++;
-                countEl.textContent = count;
-            }
-
-            // Get selected AI
-            const activeBtn = document.querySelector('#aiIconGrid .ai-icon-btn.selected');
-            const aiKey = activeBtn ? activeBtn.dataset.ai : 'gemini-image';
-            const aiName = activeBtn ? activeBtn.title : 'Gemini';
-
-            // AI Service URLs
-            const AI_URLS = {
-                'chatgpt-dalle': 'https://chat.openai.com/?model=gpt-4-dalle',
-                'midjourney-web': 'https://www.midjourney.com/imagine',
-                'gemini-image': 'https://gemini.google.com/app',
-                'bing-image': 'https://www.bing.com/images/create',
-                'adobe-firefly': 'https://firefly.adobe.com/',
-                'leonardo-ai': 'https://app.leonardo.ai/',
-                'ideogram': 'https://ideogram.ai/',
-                'clipdrop': 'https://clipdrop.co/stable-diffusion',
-                'tensor-art': 'https://tensor.art/',
-                'seaart': 'https://www.seaart.ai/',
-                'playground-ai': 'https://playgroundai.com/',
-                'krea-ai': 'https://www.krea.ai/',
-                // Chinese
-                'liblib-ai': 'https://www.liblib.art/',
-                'civita-ai': 'https://civitai.com/',
-                'tiamat': 'https://tiamat.ai/'
-            };
-
-            const targetUrl = AI_URLS[aiKey] || 'https://gemini.google.com/app';
-
-            // Copy prompt to clipboard
-            navigator.clipboard.writeText(prompt).then(() => {
-                toast(`📋 Đã copy prompt! Đang mở ${aiName}...`);
-                // Open new tab
-                window.open(targetUrl, '_blank');
-            }).catch(() => {
-                toast(`⚠️ Lỗi copy clipboard. Đang mở ${aiName}...`);
-                window.open(targetUrl, '_blank');
-            });
-        }
 
         // ==========================================
         // MOBILE SIDEBAR TOGGLE
@@ -17579,8 +17557,8 @@ Trả về JSON:`;
             const clock = document.getElementById('headerClock');
             if (clock) {
                 // Formatting based on user request: vYYYY.MM.DD HH:MM
-                // v2026.01.19 16:55 - Director Tab Redesign
-                const version = `v2026.01.19 18:40`;
+                // v2026.01.20 08:55 - Fix Create Tab API
+                const version = `v2026.01.20 08:55`;
                 clock.textContent = version;
             }
         }
