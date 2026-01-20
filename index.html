@@ -17502,30 +17502,7 @@ Trả về JSON:`;
 
 
 
-    <!-- API Key Modal -->
-    <div class="modal" id="apiKeyModal">
-        <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header">
-                <h3>🔑 Gemini API Key</h3>
-                <button class="modal-close" onclick="closeApiKeyModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">API Key</label>
-                    <input type="password" class="form-input" id="geminiApiKeyInput"
-                        placeholder="Paste your Gemini API Key here..."
-                        style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--mac-border); background: var(--mac-input-bg); color: var(--mac-text);">
-                    <div style="font-size: 12px; color: var(--mac-text-secondary); margin-top: 4px;">
-                        Key is stored locally in your browser.
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeApiKeyModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveGeminiApiKey()">Save Key</button>
-            </div>
-        </div>
-    </div>
+    <!-- API Key Modal removed - Using the one at line 14874 instead -->
 
     <script>
         // API Key Logic
@@ -17533,13 +17510,13 @@ Trả về JSON:`;
         window.showApiKeyModal = function () {
             const key = localStorage.getItem('geminiApiKey');
             if (key) {
-                const input = document.getElementById('geminiApiKeyInput');
+                const input = document.getElementById('modalApiKeyInput');
                 if (input) input.value = key;
             }
             const modal = document.getElementById('apiKeyModal');
             if (modal) {
                 modal.classList.add('active');
-                modal.style.display = 'flex'; // Ensure visibility
+                modal.style.display = 'flex';
             }
         };
 
@@ -17552,7 +17529,7 @@ Trả về JSON:`;
         };
 
         window.saveGeminiApiKey = function () {
-            const input = document.getElementById('geminiApiKeyInput');
+            const input = document.getElementById('modalApiKeyInput');
             if (!input) return;
 
             const key = input.value.trim();
@@ -17592,8 +17569,8 @@ Trả về JSON:`;
             const clock = document.getElementById('headerClock');
             if (clock) {
                 // Formatting based on user request: vYYYY.MM.DD HH:MM
-                // v2026.01.20 10:30 - Fix AI Suggest Timeout & Validation
-                const version = `v2026.01.20 10:30`;
+                // v2026.01.20 11:15 - Fix duplicate API Key Modal
+                const version = `v2026.01.20 11:15`;
                 clock.textContent = version;
             }
         }
